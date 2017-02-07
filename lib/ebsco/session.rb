@@ -14,27 +14,54 @@ module EBSCO
     attr_writer :user_id, :password
 
     def initialize(options = {})
+      
+      if options.has_key? :user_id
+        @user_id = options[:user_id]
+      elsif ENV.has_key? 'EDS_USER_ID'
+        @user_id = ENV['EDS_USER_ID']
+      end
+
+      if options.has_key? :password
+        @password = options[:password]
+      elsif ENV.has_key? 'EDS_USER_PASSWORD'
+        @password = ENV['EDS_USER_PASSWORD']
+      end
+
+      if options.has_key? :profile
+        @profile = options[:profile]
+      elsif ENV.has_key? 'EDS_PROFILE'
+        @profile = ENV['EDS_PROFILE']
+      end
+      raise InvalidParameterError, 'Session must specify a valid api profile.' if blank?(@profile)
+
+      if options.has_key? :guest
+        @guest = options[:guest] ? 'y' : 'n'
+      elsif ENV.has_key? 'EDS_GUEST'
+        @guest = ENV['EDS_GUEST']
+      end
+
+      if options.has_key? :org
+        @org = options[:org]
+      elsif ENV.has_key? 'EDS_ORG'
+        @org = ENV['EDS_ORG']
+      end
+
       @is_ip_auth = false
-      @user_id = options[:user_id]
-      @password = options[:password]
-      @profile = options[:profile]
-      raise InvalidParameterError, 'Session must specify a valid api profile' if blank?(@profile)
-      @org = options[:org] || ''
-      @guest = options[:guest] ? 'y' : 'n'
+      @max_retries = 2
       @auth_token = create_auth_token
       @session_token = create_session_token
       @info = get_info
-      @max_retries = 2
+
     end
 
     # create auth token
     def create_auth_token
       if @auth_token.nil?
-        # ip authentication
-        if blank?(@user_id) || blank?(@password)
+        # ip auth
+        if blank?(@user_id) && blank?(@password)
           _response = do_request(:post, path: IP_AUTH_URL)
           @is_ip_auth = true
-        # uid authentication
+        # user auth
         else
           _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user_id, :Password => @password})
           @auth_token = _response['AuthToken']
@@ -71,11 +98,8 @@ module EBSCO
         @search_options = EBSCO::Options.new(options, @info)
       end
       puts JSON.pretty_generate(@search_options)
-      #puts @search_options.inspect
-
       _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
       #@search_results = EBSCO::Results.new(_response)
-
       # @current_search_terms = @search_results.searchterms
       #@search_results
 
@@ -94,7 +118,7 @@ module EBSCO
         faraday.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
         faraday.headers['User-Agent'] = USER_AGENT
         faraday.request :url_encoded
-        faraday.response :raise_error
+        #faraday.response :raise_error
         faraday.response :json, :content_type => /\bjson$/
         faraday.response :logger, Logger.new(LOG)
         faraday.adapter Faraday.default_adapter

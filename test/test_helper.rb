@@ -1,4 +1,5 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'ebsco'
-
 require 'minitest/autorun'
+require 'ebsco'
+require 'dotenv'
+
+Dotenv.load('.env.test')

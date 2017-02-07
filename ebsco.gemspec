@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday-detailed_logger', '~> 2.0'
   spec.add_dependency 'faraday_middleware', '~> 0.11'
   spec.add_dependency 'logger', '~> 1.2'
-  #spec.add_dependency 'hashie', '~> 0'
+  spec.add_dependency 'dotenv', '~> 0.11'
 
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
