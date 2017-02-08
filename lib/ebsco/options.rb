@@ -33,11 +33,17 @@ module EBSCO
     end
 
     def is_valid_action(action, info)
+      # actions in info that require an enumerated value (e.g., addlimiter(LA99:Bulgarian))
       _available_actions = info.available_actions
+      _defined_action = _available_actions.include? action
+      # actions not enumerated in info (e.g., GoToPage(3))
+      _available_standard_actions = ['GoToPage']
+      _standard_action = _available_standard_actions.any? { |std| action.include? std }
+      # actions in info that require a user supplied value (e.g., addlimiter(TI:value))
       _available_value_actions = %w{PG4 CS1 FM FT FR RV DT1 SO}
       _value_action = _available_value_actions.any? { |type| action.include? type }
-      _defined_action = _available_actions.include? action
-      if _value_action || _defined_action
+
+      if _value_action || _defined_action || _standard_action
         true
       else
         false

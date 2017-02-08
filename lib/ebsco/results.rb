@@ -83,6 +83,10 @@ module EBSCO
       CGI::parse(self.querystring)
     end
 
+    def page_number
+      @results['SearchRequest']['RetrievalCriteria']['PageNumber']
+    end
+
     def applied_facets
 
       af = []

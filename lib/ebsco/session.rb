@@ -51,6 +51,7 @@ module EBSCO
       @auth_token = create_auth_token
       @session_token = create_session_token
       @info = EBSCO::Info.new(do_request(:get, path: INFO_URL))
+      @current_page = 0
 
     end
 
@@ -93,15 +94,30 @@ module EBSCO
       end
       puts JSON.pretty_generate(@search_options)
       _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
-      #@search_results = EBSCO::Results.new(_response)
-      # @current_search_terms = @search_results.searchterms
-      #@search_results
+      @search_results = EBSCO::Results.new(_response)
+      #@current_search_terms = @search_results.searchterms
+      @current_page = @search_results.page_number
+      @search_results
 
     end
 
     # add actions to an existing search session
     def add_actions(actions)
       search(@search_options.add_actions(actions, @info))
+    end
+
+    def next_page
+      page = @current_page + 1
+      get_page(page)
+    end
+
+    def prev_page
+      page = max(1, @current_page - 1)
+      get_page(page)
+    end
+
+    def get_page(page = 1)
+      add_actions("GoToPage(#{page})")
     end
 
     def connection
