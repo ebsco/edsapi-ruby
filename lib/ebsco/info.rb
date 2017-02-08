@@ -4,11 +4,13 @@ module EBSCO
 
   class Info
 
-    attr_accessor :info, :criteria
+    attr_accessor :available_search_criteria, :view_result_settings, :application_settings, :api_settings
 
-    def initialize(info_raw)
-      @info = info_raw
-      @criteria = @info['AvailableSearchCriteria']
+    def initialize(info)
+      @available_search_criteria = info['AvailableSearchCriteria']
+      @view_result_settings = info['ViewResultSettings']
+      @application_settings = info['ApplicationSettings']
+      @api_settings = info['ApiSettings']
     end
 
     # ====================================================================================
@@ -16,7 +18,7 @@ module EBSCO
     # ====================================================================================
 
     def available_sorts (id = 'all')
-      @criteria.fetch('AvailableSorts',{}).select{|item| item['Id'] == id || id == 'all'}
+      @available_search_criteria.fetch('AvailableSorts',{}).select{|item| item['Id'] == id || id == 'all'}
     end
 
     # ====================================================================================
@@ -24,7 +26,7 @@ module EBSCO
     # ====================================================================================
 
     def search_fields (code = 'all')
-      @criteria.fetch('AvailableSearchFields',{}).select{|item| item['FieldCode'] == code || code == 'all'}
+      @available_search_criteria.fetch('AvailableSearchFields',{}).select{|item| item['FieldCode'] == code || code == 'all'}
     end
 
     # ====================================================================================
@@ -32,11 +34,11 @@ module EBSCO
     # ====================================================================================
 
     def available_search_modes (mode = 'all_available')
-      @criteria.fetch('AvailableSearchModes',{}).select{|item| item['Mode'] == mode || mode == 'all_available'}
+      @available_search_criteria.fetch('AvailableSearchModes',{}).select{|item| item['Mode'] == mode || mode == 'all_available'}
     end
 
     def default_search_mode
-      @criteria.fetch('AvailableSearchModes',{}).find{|item| item['DefaultOn'] == 'y'}['Mode']
+      @available_search_criteria.fetch('AvailableSearchModes',{}).find{|item| item['DefaultOn'] == 'y'}['Mode']
     end
 
     # ====================================================================================
@@ -44,18 +46,18 @@ module EBSCO
     # ====================================================================================
 
     def available_expander_ids
-      @criteria.fetch('AvailableExpanders',{}).map{|hash| hash['Id']}
+      @available_search_criteria.fetch('AvailableExpanders',{}).map{|hash| hash['Id']}
     end
 
     def default_expander_ids
-      @criteria.fetch('AvailableExpanders',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Id']}
+      @available_search_criteria.fetch('AvailableExpanders',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Id']}
     end
 
     def available_expanders (id = 'all')
       if id == 'all'
-        @criteria.fetch('AvailableExpanders',{})
+        @available_search_criteria.fetch('AvailableExpanders',{})
       else
-        @criteria.fetch('AvailableExpanders',{}).find{|item| item['Id'] == id}
+        @available_search_criteria.fetch('AvailableExpanders',{}).find{|item| item['Id'] == id}
       end
     end
 
@@ -64,24 +66,24 @@ module EBSCO
     # ====================================================================================
 
     def available_limiter_ids
-      @criteria.fetch('AvailableLimiters',{}).map{|hash| hash['Id']}
+      @available_search_criteria.fetch('AvailableLimiters',{}).map{|hash| hash['Id']}
     end
 
     def default_limiter_ids
-      @criteria.fetch('AvailableLimiters',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Id']}
+      @available_search_criteria.fetch('AvailableLimiters',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Id']}
     end
 
     def available_limiters (id = 'all')
       if id == 'all'
-        @criteria.fetch('AvailableLimiters',{})
+        @available_search_criteria.fetch('AvailableLimiters',{})
       else
-        @criteria.fetch('AvailableLimiters',{}).find{|item| item['Id'] == id}
+        @available_search_criteria.fetch('AvailableLimiters',{}).find{|item| item['Id'] == id}
       end
     end
 
     # get an array of limiter values for a Type=multiselectvalue limiter
     def available_limiter_values (id)
-      _limiter = @criteria.fetch('AvailableLimiters',{}).find{|item| item['Id'] == id}
+      _limiter = @available_search_criteria.fetch('AvailableLimiters',{}).find{|item| item['Id'] == id}
       if _limiter['Type'] == 'multiselectvalue'
         _limiter['LimiterValues'].map{|hash| hash['Value']}
       end
@@ -92,18 +94,18 @@ module EBSCO
     # ====================================================================================
 
     def available_related_content_types
-      @criteria.fetch('AvailableRelatedContent',{}).map{|hash| hash['Type']}
+      @available_search_criteria.fetch('AvailableRelatedContent',{}).map{|hash| hash['Type']}
     end
 
     def default_related_content_types
-      @criteria.fetch('AvailableRelatedContent',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Type']}
+      @available_search_criteria.fetch('AvailableRelatedContent',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Type']}
     end
 
     def available_related_content (type = 'all')
       if type == 'all'
-        @criteria.fetch('AvailableRelatedContent',{})
+        @available_search_criteria.fetch('AvailableRelatedContent',{})
       else
-        @criteria.fetch('AvailableRelatedContent',{}).find{|item| item['Type'] == type}
+        @available_search_criteria.fetch('AvailableRelatedContent',{}).find{|item| item['Type'] == type}
       end
     end
 
@@ -112,11 +114,11 @@ module EBSCO
     # ====================================================================================
 
     def did_you_mean (id = 'all')
-      @criteria.fetch('AvailableDidYouMeanOptions',{}).select{|item| item['Id'] == id || id == 'all'}
+      @available_search_criteria.fetch('AvailableDidYouMeanOptions',{}).select{|item| item['Id'] == id || id == 'all'}
     end
 
     def default_auto_suggest
-      @criteria.fetch('AvailableDidYouMeanOptions',{}).find{|item| item['Id'] == 'AutoSuggest'}['DefaultOn']
+      @available_search_criteria.fetch('AvailableDidYouMeanOptions',{}).find{|item| item['Id'] == 'AutoSuggest'}['DefaultOn']
     end
 
     # ====================================================================================
@@ -124,7 +126,7 @@ module EBSCO
     # ====================================================================================
 
     def default_results_per_page
-      @info['ViewResultSettings']['ResultsPerPage']
+      @view_result_settings['ResultsPerPage']
     end
 
     def max_results_per_page
@@ -136,7 +138,7 @@ module EBSCO
     end
 
     def default_result_list_view
-      @info['ViewResultSettings']['ResultListView']
+      @view_result_settings['ResultListView']
     end
 
     def default_highlight
@@ -148,7 +150,7 @@ module EBSCO
     # ====================================================================================
 
     def max_record_jump
-      @info['ApiSettings']['MaxRecordJumpAhead']
+      @api_settings['MaxRecordJumpAhead']
     end
 
     # ====================================================================================
@@ -156,7 +158,7 @@ module EBSCO
     # ====================================================================================
 
     def session_timeout
-      @info['ApplicationSettings']['SessionTimeout']
+      @application_settings['SessionTimeout']
     end
 
     # ====================================================================================
@@ -164,7 +166,7 @@ module EBSCO
     # ====================================================================================
 
     def available_actions
-      @info.deep_find('AddAction')
+      @available_search_criteria.deep_find('AddAction')
     end
 
   end

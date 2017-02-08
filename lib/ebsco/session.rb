@@ -10,7 +10,7 @@ module EBSCO
 
   class Session
 
-    attr_accessor :auth_token, :session_token, :guest
+    attr_accessor :auth_token, :session_token, :guest, :info
     attr_writer :user_id, :password
 
     def initialize(options = {})
@@ -50,7 +50,7 @@ module EBSCO
       @max_retries = 2
       @auth_token = create_auth_token
       @session_token = create_session_token
-      @info = get_info
+      @info = EBSCO::Info.new(do_request(:get, path: INFO_URL))
 
     end
 
@@ -83,12 +83,6 @@ module EBSCO
       do_request(:post, path: END_SESSION_URL, payload: {:SessionToken => @session_token})
       connection.headers['x-sessionToken'] = ''
       @session_token = ''
-    end
-
-    # get info
-    def get_info
-      _response = do_request(:get, path: INFO_URL)
-      EBSCO::Info.new(_response)
     end
 
     def search(options = {})
