@@ -86,24 +86,23 @@ module EBSCO
       @session_token = ''
     end
 
-    def search(options = {})
+    def search(options = {}, add_actions = false)
 
-      # create search options if this is a new search
-      if @search_options.nil?
+      # create/recreate the search options if nil or not passing actions
+      if @search_options.nil? || !add_actions
         @search_options = EBSCO::Options.new(options, @info)
       end
-      # puts JSON.pretty_generate(@search_options)
+      #puts JSON.pretty_generate(@search_options)
       _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
       @search_results = EBSCO::Results.new(_response)
       #@current_search_terms = @search_results.searchterms
       @current_page = @search_results.page_number
       @search_results
-
     end
 
     # add actions to an existing search session
     def add_actions(actions)
-      search(@search_options.add_actions(actions, @info))
+      search(@search_options.add_actions(actions, @info), true)
     end
 
     def next_page
@@ -164,11 +163,11 @@ module EBSCO
           # session token missing
           when '108', '109'
             @session_token = create_session_token
-            do_request(method, path, payload, attempt+1)
+            do_request(method, path: path, payload: payload, attempt: attempt+1)
           # auth token missing
           when '104', '107'
             @auth_token = create_auth_token
-            do_request(method, path, payload, attempt+1)
+            do_request(method, path: path, payload: payload, attempt: attempt+1)
           else
             raise ApiError, "EBSCO API returned error:\n" +
                 "Number: #{resp.body['ErrorNumber']}\n" +
