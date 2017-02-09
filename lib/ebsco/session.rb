@@ -92,7 +92,7 @@ module EBSCO
       if @search_options.nil?
         @search_options = EBSCO::Options.new(options, @info)
       end
-      puts JSON.pretty_generate(@search_options)
+      # puts JSON.pretty_generate(@search_options)
       _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
       @search_results = EBSCO::Results.new(_response)
       #@current_search_terms = @search_results.searchterms
@@ -112,8 +112,7 @@ module EBSCO
     end
 
     def prev_page
-      page = max(1, @current_page - 1)
-      get_page(page)
+      get_page([1, @current_page - 1].sort.last)
     end
 
     def get_page(page = 1)

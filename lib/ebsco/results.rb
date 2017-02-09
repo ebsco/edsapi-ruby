@@ -13,7 +13,7 @@ module EBSCO
     def initialize(search_results)
 
       @results = search_results
-      puts @results.inspect
+      # puts @results.inspect
 
       # GENERAL RECORDS
       @records = []

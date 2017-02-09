@@ -8,8 +8,35 @@ class EdsApiTests < Minitest::Test
   end
 
   # ====================================================================================
-  # SESSION TESTS
+  # CREATE SESSION
   # ====================================================================================
+
+  def test_create_session_with_user_credentials
+    session = EBSCO::Session.new({:user_id => ENV['EDS_USER_ID'], :password => ENV['EDS_USER_PASSWORD']})
+    assert session.session_token != nil, 'Expected session token not to be nil.'
+  end
+
+  def test_create_session_with_ip
+    public_ip = Net::HTTP.get URI 'https://api.ipify.org' || '127.0.0.1'
+    ClimateControl.modify EDS_USER_ID: '', EDS_USER_PASSWORD: '' do
+      if ENV.has_key? 'EDS_IP'
+        if public_ip.include? ENV['EDS_IP']
+          session = EBSCO::Session.new
+          assert session.session_token != nil, 'Expected session token not to be nil.'
+        else
+          e = assert_raises EBSCO::ApiError do
+            EBSCO::Session.new
+          end
+          assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
+        end
+      else
+        e = assert_raises EBSCO::ApiError do
+          EBSCO::Session.new
+        end
+        assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
+      end
+    end
+  end
 
   def test_create_session_missing_profile
     ClimateControl.modify EDS_PROFILE: '' do
@@ -35,31 +62,52 @@ class EdsApiTests < Minitest::Test
     assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
   end
 
-  def test_create_session_with_ip
-    public_ip = Net::HTTP.get URI 'https://api.ipify.org' || '127.0.0.1'
-    ClimateControl.modify EDS_USER_ID: '', EDS_USER_PASSWORD: '' do
-      if ENV.has_key? 'EDS_IP'
-        if public_ip.include? ENV['EDS_IP']
-          session = EBSCO::Session.new
-          assert session.session_token != nil, 'Expected session token not to be nil.'
-        else
-          e = assert_raises EBSCO::ApiError do
-            EBSCO::Session.new
-          end
-          assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
-        end
-      else
-        e = assert_raises EBSCO::ApiError do
-          EBSCO::Session.new
-        end
-        assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
-      end
-    end
+  # ====================================================================================
+  # PAGINATION
+  # ====================================================================================
+
+  def test_next_page
+    session = EBSCO::Session.new
+    results = session.search({query: 'economic development'})
+    assert results.page_number == 1
+    results = session.next_page
+    assert results.page_number == 2
+    session.end
   end
 
+  def test_get_page
+    session = EBSCO::Session.new
+    results = session.search({query: 'economic development'})
+    assert results.page_number == 1
+    results = session.get_page(10)
+    assert results.page_number == 10
+    session.end
+  end
+
+  def test_prev_page
+    session = EBSCO::Session.new
+    results = session.search({query: 'economic development'})
+    assert results.page_number == 1
+    results = session.next_page
+    assert results.page_number == 2
+    results = session.prev_page
+    assert results.page_number == 1
+    session.end
+  end
+
+  def test_prev_page_before_one
+    session = EBSCO::Session.new
+    results = session.search({query: 'economic development'})
+    assert results.page_number == 1
+    results = session.prev_page
+    assert results.page_number == 1
+    session.end
+  end
+
+  # todo: after page 250 ?
 
   # ====================================================================================
-  # INFO TESTS
+  # INFO
   # ====================================================================================
 
   def test_info_request
