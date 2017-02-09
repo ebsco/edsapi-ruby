@@ -76,7 +76,7 @@ module EBSCO
     end
 
     def query_string
-      @results['SearchRequestGet']['QueryString']
+      @results['SearchRequest']['QueryString']
     end
 
     def current_search
@@ -90,8 +90,7 @@ module EBSCO
     def applied_facets
 
       af = []
-
-      applied_facets_section = @results['SearchRequestGet'].fetch('SearchCriteriaWithActions',{}).fetch('FacetFiltersWithAction',{})
+      applied_facets_section = @results['SearchRequest'].fetch('SearchCriteriaWithActions',{}).fetch('FacetFiltersWithAction',{})
       applied_facets_section.each do |applied_facets|
         applied_facets.fetch('FacetValuesWithAction',{}).each do |applied_facet|
           af.push(applied_facet)
@@ -103,31 +102,24 @@ module EBSCO
 #					end
         end
       end
-
       af
     end
 
     def applied_limiters
-
       af = []
-
-      applied_limters_section = @results['SearchRequestGet'].fetch('SearchCriteriaWithActions',{}).fetch('LimitersWithAction',{})
+      applied_limters_section = @results['SearchRequest'].fetch('SearchCriteriaWithActions',{}).fetch('LimitersWithAction',{})
       applied_limters_section.each do |applied_limter|
         af.push(applied_limter)
       end
-
       af
     end
 
     def applied_expanders
-
       af = []
-
-      applied_expanders_section = @results['SearchRequestGet'].fetch('SearchCriteriaWithActions',{}).fetch('ExpandersWithAction',{})
+      applied_expanders_section = @results['SearchRequest'].fetch('SearchCriteriaWithActions',{}).fetch('ExpandersWithAction',{})
       applied_expanders_section.each do |applied_explander|
         af.push(applied_explander)
       end
-
       af
     end
 
@@ -181,21 +173,17 @@ module EBSCO
       nil
     end
 
-    def searchterms
-      queries = @results.fetch('SearchRequestGet',{}).fetch('SearchCriteriaWithActions',{}).fetch('QueriesWithAction',{})
-
+    def search_terms
       terms = []
+      queries = @results.fetch('SearchRequest',{}).fetch('SearchCriteriaWithActions',{}).fetch('QueriesWithAction',{})
       queries.each do |query|
         query['Query']['Term'].split.each do |word|
           terms.push(word)
         end
       end
-
       terms
     end
 
   end
-
-
 
 end

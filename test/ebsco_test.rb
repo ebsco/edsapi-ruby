@@ -14,6 +14,7 @@ class EdsApiTests < Minitest::Test
   def test_create_session_with_user_credentials
     session = EBSCO::Session.new({:user_id => ENV['EDS_USER_ID'], :password => ENV['EDS_USER_PASSWORD']})
     assert session.session_token != nil, 'Expected session token not to be nil.'
+    session.end
   end
 
   def test_create_session_with_ip
@@ -104,7 +105,86 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
-  # todo: after page 250 ?
+  def test_next_page_past_last_page
+    session = EBSCO::Session.new
+    results = session.search({query: 'economic development'})
+    assert results.page_number == 1
+    last_page = (results.stat_total_hits / results.retrieval_criteria['ResultsPerPage']).ceil
+    e = assert_raises EBSCO::ApiError do
+      session.get_page(last_page + 1)
+    end
+    assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
+  end
+
+  def test_next_page_with_only_one_page_of_results
+    session = EBSCO::Session.new
+    results = session.search({query: 'megaenzymes', results_per_page: 100})
+    assert results.page_number == 1
+    e = assert_raises EBSCO::ApiError do
+      session.get_page(10)
+    end
+    assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
+  end
+
+  # ====================================================================================
+  # AUTO SUGGEST or DID YOU MEAN
+  # ====================================================================================
+
+  def test_auto_suggest
+    session = EBSCO::Session.new
+    results = session.search({query: 'string thery', results_per_page: 1, auto_suggest: true})
+    assert results.did_you_mean == 'string theory'
+    session.end
+  end
+
+  def test_auto_suggest_off
+    session = EBSCO::Session.new
+    results = session.search({query: 'string thery', results_per_page: 1, auto_suggest: false})
+    assert results.did_you_mean.nil?
+    session.end
+  end
+
+  # ====================================================================================
+  # LIMITERS
+  # ====================================================================================
+
+  def test_known_limiters
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['FT:Y', 'RV:Y']})
+    refute_nil results
+    applied_limiters = results.applied_limiters.map{|hash| hash['Id']}
+    assert applied_limiters.include? 'FT'
+    assert applied_limiters.include? 'RV'
+    session.end
+  end
+
+  def test_unknown_limiters_ids
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['XX:Y', 'YY:Y']})
+    refute_nil results
+    applied_limiters = results.applied_limiters.map{|hash| hash['Id']}
+    assert applied_limiters.empty?
+    session.end
+  end
+
+  def test_unavailable_limiter_values
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:Gaelic']})
+    refute_nil results
+    applied_limiters = results.applied_limiters.map{|hash| hash['Id']}
+    assert applied_limiters.empty?
+    session.end
+  end
+
+  def test_some_unavailable_limiter_values
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:English,Gaelic']})
+    refute_nil results
+    lang_limiters = results.applied_limiters.find{|item| item['Id'] == 'LA99'}
+    lang_values = lang_limiters['LimiterValuesWithAction'][0].fetch('Value')
+    assert lang_values == 'English'
+    session.end
+  end
 
   # ====================================================================================
   # INFO
@@ -113,9 +193,8 @@ class EdsApiTests < Minitest::Test
   def test_info_request
     session = EBSCO::Session.new
     assert session.info.available_search_modes.length == 4
+    session.end
   end
 
-  def test_it_does_something_useful
-    assert true
-  end
+
 end
