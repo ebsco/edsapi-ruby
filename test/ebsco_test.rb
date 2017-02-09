@@ -53,7 +53,8 @@ class EdsApiTests < Minitest::Test
     e = assert_raises EBSCO::ApiError do
       EBSCO::Session.new({:profile => 'eds-none'})
     end
-    assert_match "EBSCO API returned error:\nNumber: 144\nDescription: Profile ID is not assocated with caller's credentials.\nDetails:\n", e.message
+    assert_match "EBSCO API returned error:\nNumber: 144\nDescription: Profile ID is not assocated with caller's" +
+                     " credentials.\nDetails:\n", e.message
   end
 
   def test_create_session_failed_user_credentials
@@ -145,6 +146,20 @@ class EdsApiTests < Minitest::Test
   end
 
   # ====================================================================================
+  # SEARCH
+  # ====================================================================================
+
+  def test_basic_search
+    session = EBSCO::Session.new
+    results_yellow = session.search({query: 'yellow', results_per_page: 1})
+    refute_nil results_yellow
+    results_yellow_blue = session.search({query: 'yellow blue', results_per_page: 1})
+    refute_nil results_yellow_blue
+    assert results_yellow.stat_total_hits > results_yellow_blue.stat_total_hits
+    session.end
+  end
+
+  # ====================================================================================
   # LIMITERS
   # ====================================================================================
 
@@ -185,6 +200,21 @@ class EdsApiTests < Minitest::Test
     assert lang_values == 'English'
     session.end
   end
+
+  # should be less than 10 result differences between the api and eds date syntax
+  def test_both_date_limiter_syntaxes
+    session = EBSCO::Session.new
+    results_api_date = session.search({query: 'volcano', limters: ['DT1:2014-01/2014-12']})
+    results_eds_date = session.search({query: 'volcano', limters: ['DT1:20140101-20141231']})
+    results_dif = (results_api_date.stat_total_hits - results_eds_date.stat_total_hits).abs
+    assert results_dif.between?(0, 10)
+    session.end
+  end
+
+  # ====================================================================================
+  # EXPANDERS
+  # ====================================================================================
+
 
   # ====================================================================================
   # INFO
