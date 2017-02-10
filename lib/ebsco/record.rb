@@ -3,13 +3,19 @@ require 'yaml'
 module EBSCO
 
   class Record
-    attr_accessor :record, :bib_entity, :bib_relationships, :dbs
+
+    attr_accessor :record, :bib_entity, :bib_relationships
+
+    DBS = YAML::load_file(File.join(__dir__, 'settings.yml'))['databases']
 
     def initialize(results_record)
-      @record = results_record
+      if results_record.key? 'Record'
+        @record = results_record['Record'] # single record returned by retrieve api
+      else
+        @record = results_record  # set of records returned by search api
+      end
       @bib_entity = @record.fetch('RecordInfo', {}).fetch('BibRecord', {}).fetch('BibEntity', {})
       @bib_relationships = @record.fetch('RecordInfo', {}).fetch('BibRecord', {}).fetch('BibRelationships', {})
-      @dbs = YAML::load_file(File.join(__dir__, 'settings.yml'))['databases']
     end
 
     def resultid
@@ -41,8 +47,8 @@ module EBSCO
     end
 
     def db_label
-      if @dbs.key?(self.dbid.upcase)
-        @dbs[self.dbid.upcase];
+      if DBS.key?(self.dbid.upcase)
+        DBS[self.dbid.upcase];
       else
         @record['Header']['DbLabel']
       end

@@ -100,6 +100,12 @@ module EBSCO
       @search_results
     end
 
+    def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
+      payload = {:DbId => dbid, :An => an, :HighlighTerms => highlight, :EbookPreferredFormat =>  ebook}
+      retrieve_response = do_request(:post, path: RETRIEVE_URL, payload: payload)
+      EBSCO::Record.new(retrieve_response)
+    end
+
     # add actions to an existing search session
     def add_actions(actions)
       search(@search_options.add_actions(actions, @info), true)
