@@ -10,8 +10,8 @@ module EBSCO
 
   class Session
 
-    attr_accessor :auth_token, :session_token, :guest, :info
-    attr_writer :user_id, :password
+    attr_accessor :auth_token, :session_token, :info, :search_options
+    attr_writer :user_id, :password, :guest, :profile
 
     def initialize(options = {})
       

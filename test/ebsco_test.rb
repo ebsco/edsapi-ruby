@@ -49,7 +49,6 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_with_unknown_profile
-    Dotenv.load('.env.test')
     e = assert_raises EBSCO::ApiError do
       EBSCO::Session.new({:profile => 'eds-none'})
     end
@@ -131,7 +130,7 @@ class EdsApiTests < Minitest::Test
   # AUTO SUGGEST or DID YOU MEAN
   # ====================================================================================
 
-  def test_auto_suggest
+  def test_auto_suggest_on
     session = EBSCO::Session.new
     results = session.search({query: 'string thery', results_per_page: 1, auto_suggest: true})
     assert results.did_you_mean == 'string theory'
@@ -142,6 +141,18 @@ class EdsApiTests < Minitest::Test
     session = EBSCO::Session.new
     results = session.search({query: 'string thery', results_per_page: 1, auto_suggest: false})
     assert results.did_you_mean.nil?
+    session.end
+  end
+
+  # ====================================================================================
+  # RELATED CONTENT
+  # ====================================================================================
+
+  def test_related_content_research_starters
+    session = EBSCO::Session.new
+    results = session.search({query: 'abraham lincoln', results_per_page: 5, related_content: ['rs']})
+    dbids = results.database_stats.map{|hash| hash[:id]}
+    assert dbids.include? 'ers'
     session.end
   end
 
@@ -162,12 +173,11 @@ class EdsApiTests < Minitest::Test
   # ====================================================================================
   # RETRIEVE
   # ====================================================================================
-  def test_retrieve
+  def test_retrieve_record
     session = EBSCO::Session.new
     record = session.retrieve({dbid: 'a9h', an: '12328402'})
     assert record.an == '12328402'
     session.end
-
   end
 
   # ====================================================================================
@@ -226,6 +236,13 @@ class EdsApiTests < Minitest::Test
   # EXPANDERS
   # ====================================================================================
 
+  def test_expander
+    session = EBSCO::Session.new
+    results = session.search({query: 'earthquake', expanders: ['fakeexpander:Y', 'fulltext:Y']})
+    refute_nil results
+    assert session.search_options.SearchCriteria.Expanders.include? 'fulltext'
+    assert !(session.search_options.SearchCriteria.Expanders.include? 'fakeexpander')
+  end
 
   # ====================================================================================
   # INFO

@@ -94,7 +94,7 @@ module EBSCO
     # ====================================================================================
 
     def available_related_content_types
-      @available_search_criteria.fetch('AvailableRelatedContent',{}).map{|hash| hash['Type']}
+      @available_search_criteria.fetch('AvailableRelatedContent',{})
     end
 
     def default_related_content_types
