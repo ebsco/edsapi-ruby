@@ -142,9 +142,9 @@ module EBSCO
     def do_request(method, path:, payload: nil, attempt: 0)
       resp = connection.send(method) do |req|
         case method
-          when :get, :delete
+          when :get
             req.url path
-          when :post, :put
+          when :post
             req.url path
             req.body = JSON.generate(payload)
           else
@@ -153,7 +153,7 @@ module EBSCO
       end
 
       if attempt > MAX_ATTEMPTS
-        raise ApiError, 'EBSCO API error:\nAttempts to create session token failed.'
+        raise ApiError, "EBSCO API error:\nMultiple attempts to perform request failed."
       end
 
       # errors originating from uidauth endpoint
@@ -170,7 +170,7 @@ module EBSCO
           when '108', '109'
             @session_token = create_session_token
             do_request(method, path: path, payload: payload, attempt: attempt+1)
-          # auth token missing
+          # auth token invalid
           when '104', '107'
             @auth_token = create_auth_token
             do_request(method, path: path, payload: payload, attempt: attempt+1)

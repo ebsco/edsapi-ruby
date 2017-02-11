@@ -17,6 +17,11 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
+  def test_create_session_with_using_all_env_vars
+    session = EBSCO::Session.new
+    refute_nil session
+  end
+
   def test_create_session_with_ip
     public_ip = Net::HTTP.get URI 'https://api.ipify.org' || '127.0.0.1'
     ClimateControl.modify EDS_USER_ID: '', EDS_USER_PASSWORD: '' do
@@ -58,7 +63,7 @@ class EdsApiTests < Minitest::Test
 
   def test_create_session_failed_user_credentials
     e = assert_raises EBSCO::ApiError do
-      EBSCO::Session.new({:profile => 'eds-api', :user_id => 'fake', :password => 'none'})
+      EBSCO::Session.new({:profile => 'eds-api', :user_id => 'fake', :password => 'none', :guest => false, :org => 'test'})
     end
     assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
   end
@@ -254,5 +259,43 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
+  # ====================================================================================
+  # MISC
+  # ====================================================================================
+
+  def test_api_request_with_unsupported_method
+    session = EBSCO::Session.new
+    e = assert_raises EBSCO::ApiError do
+      session.do_request(:put, path: 'testing')
+    end
+    assert e.message.include? "EBSCO API error:\nMethod put not supported for endpoint testing"
+    session.end
+  end
+
+  def test_api_request_beyond_max_attempt
+    session = EBSCO::Session.new
+    assert_raises EBSCO::ApiError do
+      session.do_request(:get, path: 'testing', attempt: 5)
+    end
+    session.end
+  end
+
+  def test_api_request_no_session_token_force_refresh
+    # should trigger 108
+    session = EBSCO::Session.new
+    session.session_token = ''
+    info = EBSCO::Info.new(session.do_request(:get, path: EBSCO::INFO_URL))
+    refute_nil info
+    session.end
+  end
+
+  def test_api_request_invalid_auth_token_force_refresh
+    # should trigger 104 and too many attempts failure
+    session = EBSCO::Session.new
+    session.auth_token = 'AB_-wWmVp56RKhVhP6olUUdZVLND3liTv2F7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ'
+    assert_raises EBSCO::ApiError do
+      EBSCO::Info.new(session.do_request(:get, path: EBSCO::INFO_URL))
+    end
+  end
 
 end
