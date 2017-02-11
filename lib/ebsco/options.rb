@@ -279,21 +279,4 @@ module EBSCO
 
   end
 
-     # todo: reimplement this logic
-      # # temporary fix while API SI resolves
-      # # catches case where user navigates past result page 250 and applies facet/limiter
-      # if (options.index('&action=') && (options.index('&action=') > 0))
-      #   if (options.index('&action=GoToPage(').nil? && options.index('&action=SetView(').nil?)
-      #     if (options.index('&pagenumber=') && (options.index('&pagenumber=') > 0))
-      #       beginSubstring = options.index('&pagenumber=') + 12
-      #       currentpage = options[beginSubstring..-1]
-      #       newOptions = options[0..beginSubstring-1]
-      #       endSubstring = currentpage.index('&') - 1
-      #       newOptionsEnd = currentpage[endSubstring+1..-1]
-      #       options = newOptions + "1" + newOptionsEnd
-      #     end
-      #   end
-      # end
-
-
 end
