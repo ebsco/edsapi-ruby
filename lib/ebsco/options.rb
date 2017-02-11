@@ -72,10 +72,10 @@ module EBSCO
       # ====================================================================================
       # if mode is provided make sure it is available, otherwise use default
       if options.key? :mode
-        if info.available_search_modes(options[:mode].downcase).empty?
-          @SearchMode = info.default_search_mode
-        else
+        if info.available_search_mode_types.include? options[:mode].downcase
           @SearchMode = options[:mode].downcase
+        else
+          @SearchMode = info.default_search_mode
         end
       else
         @SearchMode = info.default_search_mode
@@ -86,7 +86,7 @@ module EBSCO
       # ====================================================================================
       # info has nothing to say about include facets, default is 'y'
       if options.key? :include_facets
-        @IncludeFacets = options[:include_facts] ? 'y' : 'n'
+        @IncludeFacets = options[:include_facets] ? 'y' : 'n'
       else
         @IncludeFacets = 'y'
       end
@@ -128,11 +128,7 @@ module EBSCO
       if options.key? :auto_suggest
         @AutoSuggest = options[:auto_suggest] ? 'y' : 'n'
       else
-        if info.did_you_mean('AutoSuggest').empty?
-          @AutoSuggest = 'n'
-        else
-          @AutoSuggest = info.default_auto_suggest
-        end
+        @AutoSuggest = info.default_auto_suggest
       end
 
       # ====================================================================================
@@ -152,11 +148,7 @@ module EBSCO
       else
         _my_expanders = info.default_expander_ids
       end
-      if _my_expanders.empty?
-        @Expanders = nil
-      else
-        @Expanders = _my_expanders
-      end
+      @Expanders = _my_expanders
 
       # ====================================================================================
       # LIMITERS
@@ -207,9 +199,10 @@ module EBSCO
       _available_related_content_types = info.available_related_content_types
       if options.key? :related_content
         options[:related_content].each do |item|
-          # split on commas?
           if _available_related_content_types.include? item.downcase
             _available_related_content_types.push(item)
+          else
+            # silently ignore
           end
         end
         if _my_related_content.empty?
@@ -218,11 +211,7 @@ module EBSCO
       else
         _my_related_content = info.default_related_content_types
       end
-      if _my_related_content.empty?
-        @RelatedContent = nil
-      else
-        @RelatedContent = _my_related_content
-      end
+      @RelatedContent = _my_related_content
     end
   end
 
@@ -248,7 +237,7 @@ module EBSCO
       # RESULTS PER PAGE
       # ====================================================================================
       if options.key? :results_per_page
-        if options[:results_per_page] > 100
+        if options[:results_per_page] > info.max_results_per_page
           @ResultsPerPage = info.max_results_per_page
         else
           @ResultsPerPage = options[:results_per_page]

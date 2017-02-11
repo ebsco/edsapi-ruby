@@ -155,10 +155,16 @@ class EdsApiTests < Minitest::Test
 
   def test_related_content_research_starters
     session = EBSCO::Session.new
-    results = session.search({query: 'abraham lincoln', results_per_page: 5, related_content: ['rs']})
+    # puts 'RELATED CONTENT: ' + session.info.available_related_content_types.inspect
+    results = session.search({query: 'abraham lincoln', results_per_page: 5, related_content: ['rs','emp']})
     dbids = results.database_stats.map{|hash| hash[:id]}
     assert dbids.include? 'ers'
     session.end
+  end
+
+  def test_unknown_related_content_type
+    session = EBSCO::Session.new
+    results = session.search({query: 'abraham lincoln', results_per_page: 5, related_content: ['bogus','also bogus']})
   end
 
   # ====================================================================================
@@ -167,11 +173,82 @@ class EdsApiTests < Minitest::Test
 
   def test_basic_search
     session = EBSCO::Session.new
-    results_yellow = session.search({query: 'yellow', results_per_page: 1})
+    results_yellow = session.search({query: 'yellow', results_per_page: 1, mode: 'all', include_facets: false})
     refute_nil results_yellow
     results_yellow_blue = session.search({query: 'yellow blue', results_per_page: 1})
     refute_nil results_yellow_blue
     assert results_yellow.stat_total_hits > results_yellow_blue.stat_total_hits
+    session.end
+  end
+
+  def test_missing_query
+    session = EBSCO::Session.new
+    assert_raises EBSCO::InvalidParameterError do
+      session.search()
+    end
+    session.end
+  end
+
+  def test_unknown_search_mode
+    session = EBSCO::Session.new
+    results = session.search({query: 'yellow', results_per_page: 1, mode: 'bogus'})
+    refute_nil results
+    assert session.search_options.SearchCriteria.SearchMode == session.info.default_search_mode
+    session.end
+  end
+
+  # EBSCO::ApiError: EBSCO API returned error:
+  # Number: 145
+  # Description: Profile not configured for Publication features
+  def test_publication_feature_not_configured_in_profile
+    session = EBSCO::Session.new
+    assert_raises EBSCO::ApiError do
+      session.search({query: 'volcano', results_per_page: 1, publication_id: 'something'})
+    end
+    session.end
+  end
+
+  def test_sort_known
+    session = EBSCO::Session.new
+    session.search({query: 'volcano', results_per_page: 1, sort: 'relevance'})
+    assert session.search_options.SearchCriteria.Sort == 'relevance'
+    session.end
+  end
+
+  def test_sort_unknown
+    session = EBSCO::Session.new
+    session.search({query: 'volcano', results_per_page: 1, sort: 'bogus'})
+    assert session.search_options.SearchCriteria.Sort == 'relevance'
+    session.end
+  end
+
+  def test_sort_alias_newest
+    session = EBSCO::Session.new
+    session.search({query: 'volcano', results_per_page: 1, sort: 'newest'})
+    assert session.search_options.SearchCriteria.Sort == 'date'
+    session.end
+  end
+
+  def test_sort_alias_oldest
+    session = EBSCO::Session.new
+    session.search({query: 'volcano', results_per_page: 1, sort: 'oldest'})
+    assert session.search_options.SearchCriteria.Sort == 'date2'
+    session.end
+  end
+
+  # actions
+  # todo: verify in search options, add bogus
+  def test_add_single_action
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, actions: 'addfacetfilter(SubjectGeographic:massachusetts)'})
+    refute_nil results
+    session.end
+  end
+
+  def test_add_list_of_actions
+    session = EBSCO::Session.new
+    results = session.search({query: 'patriots', results_per_page: 1, actions: ['addfacetfilter(SubjectGeographic:massachusetts)', 'addlimiter(LA99:English)']})
+    refute_nil results
     session.end
   end
 
@@ -241,12 +318,21 @@ class EdsApiTests < Minitest::Test
   # EXPANDERS
   # ====================================================================================
 
-  def test_expander
+  def test_some_valid_expanders_in_list
     session = EBSCO::Session.new
-    results = session.search({query: 'earthquake', expanders: ['fakeexpander:Y', 'fulltext:Y']})
+    results = session.search({query: 'earthquake', expanders: ['fake expander', 'fulltext']})
     refute_nil results
     assert session.search_options.SearchCriteria.Expanders.include? 'fulltext'
-    assert !(session.search_options.SearchCriteria.Expanders.include? 'fakeexpander')
+    assert !(session.search_options.SearchCriteria.Expanders.include? 'fake expander')
+  end
+
+  def test_no_valid_expanders_in_list
+    session = EBSCO::Session.new
+    results = session.search({query: 'earthquake', expanders: ['fake expander', 'also bogus']})
+    refute_nil results
+    assert session.search_options.SearchCriteria.Expanders.include? 'fulltext'
+    assert !(session.search_options.SearchCriteria.Expanders.include? 'also bogus')
+    assert !(session.search_options.SearchCriteria.Expanders.include? 'fake expander')
   end
 
   # ====================================================================================
@@ -256,6 +342,48 @@ class EdsApiTests < Minitest::Test
   def test_info_request
     session = EBSCO::Session.new
     assert session.info.available_search_modes.length == 4
+    refute_nil session.info.available_sorts
+    refute_nil session.info.search_fields
+    refute_nil session.info.available_expanders
+    refute_nil session.info.available_expanders('fulltext')
+    refute_nil session.info.default_limiter_ids
+    refute_nil session.info.available_limiter_ids
+    refute_nil session.info.available_limiters
+    refute_nil session.info.max_record_jump
+    refute_nil session.info.session_timeout
+    refute_nil session.info.available_result_list_views
+    refute_nil session.info.max_results_per_page
+    refute_nil session.info.available_related_content
+    refute_nil session.info.available_related_content('rs')
+    refute_nil session.info.did_you_mean
+    refute_nil session.info.did_you_mean('AutoSuggest')
+    session.end
+  end
+
+  # ====================================================================================
+  # OPTIONS
+  # ====================================================================================
+
+  def test_options_retrieval_criteria
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', view: 'brief', results_per_page: 5, page_number: 2, highlight: false})
+    refute_nil results
+    session.end
+  end
+
+  def test_options_retrieval_criteria_unknown_view
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', view: 'notfound'})
+    refute_nil results
+    assert session.search_options.RetrievalCriteria.View == session.info.default_result_list_view
+    session.end
+  end
+
+  def test_options_too_many_results_per_page
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 105})
+    refute_nil results
+    assert session.search_options.RetrievalCriteria.ResultsPerPage == session.info.max_results_per_page
     session.end
   end
 

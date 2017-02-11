@@ -37,6 +37,10 @@ module EBSCO
       @available_search_criteria.fetch('AvailableSearchModes',{}).select{|item| item['Mode'] == mode || mode == 'all_available'}
     end
 
+    def available_search_mode_types
+      available_search_modes.map{|hash| hash['Mode']}
+    end
+
     def default_search_mode
       @available_search_criteria.fetch('AvailableSearchModes',{}).find{|item| item['DefaultOn'] == 'y'}['Mode']
     end
@@ -94,7 +98,7 @@ module EBSCO
     # ====================================================================================
 
     def available_related_content_types
-      @available_search_criteria.fetch('AvailableRelatedContent',{})
+      available_related_content.map{|hash| hash['Type'] }
     end
 
     def default_related_content_types
