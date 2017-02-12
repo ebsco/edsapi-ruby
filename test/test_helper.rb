@@ -8,5 +8,9 @@ SimpleCov.start do
   command_name 'Mintest'
 end
 
+require 'codecov'
+SimpleCov.formatter = SimpleCov::Formatter::Codecov
+CODECOV_TOKEN='cfc86a29-02eb-43f3-9903-7fd46f9a510d'
+
 require 'minitest/autorun'
 require 'ebsco'
