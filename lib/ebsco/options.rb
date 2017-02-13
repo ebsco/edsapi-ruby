@@ -64,7 +64,7 @@ module EBSCO
       if options.key? :query
         @Queries =  [{:Term => options[:query]}]
       else
-        raise InvalidParameterError, 'Required parameter: query is missing'
+        raise EBSCO::InvalidParameter, 'Required parameter: query is missing'
       end
 
       # ====================================================================================

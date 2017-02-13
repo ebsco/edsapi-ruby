@@ -32,7 +32,7 @@ module EBSCO
       elsif ENV.has_key? 'EDS_PROFILE'
         @profile = ENV['EDS_PROFILE']
       end
-      raise InvalidParameterError, 'Session must specify a valid api profile.' if blank?(@profile)
+      raise EBSCO::InvalidParameter, 'Session must specify a valid api profile.' if blank?(@profile)
 
       if options.has_key? :guest
         @guest = options[:guest] ? 'y' : 'n'
@@ -132,7 +132,7 @@ module EBSCO
         faraday.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
         faraday.headers['User-Agent'] = USER_AGENT
         faraday.request :url_encoded
-        #faraday.response :raise_error
+        faraday.use FaradayMiddleware::RaiseHttpException
         faraday.response :json, :content_type => /\bjson$/
         faraday.response :logger, Logger.new(LOG)
         faraday.adapter Faraday.default_adapter
@@ -140,48 +140,45 @@ module EBSCO
     end
 
     def do_request(method, path:, payload: nil, attempt: 0)
-      resp = connection.send(method) do |req|
-        case method
-          when :get
-            req.url path
-          when :post
-            req.url path
-            req.body = JSON.generate(payload)
-          else
-            raise ApiError, "EBSCO API error:\nMethod #{method} not supported for endpoint #{path}"
-        end
-      end
 
       if attempt > MAX_ATTEMPTS
-        raise ApiError, "EBSCO API error:\nMultiple attempts to perform request failed."
+        raise EBSCO::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
       end
 
-      # errors originating from uidauth endpoint
-      if resp.body['ErrorCode']
-        raise ApiError, "EBSCO API returned error:\n" +
-            "Code: #{resp.body['ErrorCode']}\n" +
-            "Reason: #{resp.body['Reason']}\n" +
-            "Details:\n#{resp.body['AdditionalDetail']}"
-      end
-      # errors originating from all other endpoints
-      if resp.body['ErrorNumber']
-        case resp.body['ErrorNumber']
-          # session token missing
-          when '108', '109'
-            @session_token = create_session_token
-            do_request(method, path: path, payload: payload, attempt: attempt+1)
-          # auth token invalid
-          when '104', '107'
-            @auth_token = create_auth_token
-            do_request(method, path: path, payload: payload, attempt: attempt+1)
-          else
-            raise ApiError, "EBSCO API returned error:\n" +
-                "Number: #{resp.body['ErrorNumber']}\n" +
-                "Description: #{resp.body['ErrorDescription']}\n" +
-                "Details:\n#{resp.body['DetailedErrorDescription']}"
+      begin
+        resp = connection.send(method) do |req|
+          case method
+            when :get
+              req.url path
+            when :post
+              req.url path
+              req.body = JSON.generate(payload)
+            else
+              raise EBSCO::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
+          end
+        end
+        resp.body
+      rescue Exception => e
+        if e.respond_to? 'fault'
+          error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
+          if not error_code.nil?
+            case error_code
+              # session token missing
+              when '108', '109'
+                @session_token = create_session_token
+                do_request(method, path: path, payload: payload, attempt: attempt+1)
+              # auth token invalid
+              when '104', '107'
+                @auth_token = create_auth_token
+                do_request(method, path: path, payload: payload, attempt: attempt+1)
+              else
+                raise e
+            end
+          end
+        else
+          raise e
         end
       end
-      resp.body
     end
 
     def blank?(var)
@@ -189,4 +186,5 @@ module EBSCO
     end
 
   end
+
 end

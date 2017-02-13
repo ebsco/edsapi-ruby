@@ -30,23 +30,23 @@ class EdsApiTests < Minitest::Test
           session = EBSCO::Session.new
           assert session.session_token != nil, 'Expected session token not to be nil.'
         else
-          e = assert_raises EBSCO::ApiError do
+          e = assert_raises EBSCO::BadRequest do
             EBSCO::Session.new
           end
-          assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
+          #assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
         end
       else
-        e = assert_raises EBSCO::ApiError do
+        e = assert_raises EBSCO::BadRequest do
           EBSCO::Session.new
         end
-        assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
+        #assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
       end
     end
   end
 
   def test_create_session_missing_profile
     ClimateControl.modify EDS_PROFILE: '' do
-      e = assert_raises EBSCO::InvalidParameterError do
+      e = assert_raises EBSCO::InvalidParameter do
         EBSCO::Session.new
       end
       assert_match 'Session must specify a valid api profile.', e.message
@@ -54,18 +54,15 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_with_unknown_profile
-    e = assert_raises EBSCO::ApiError do
+    e = assert_raises EBSCO::BadRequest do
       EBSCO::Session.new({:profile => 'eds-none'})
     end
-    assert_match "EBSCO API returned error:\nNumber: 144\nDescription: Profile ID is not assocated with caller's" +
-                     " credentials.\nDetails:\n", e.message
   end
 
   def test_create_session_failed_user_credentials
-    e = assert_raises EBSCO::ApiError do
+    e = assert_raises EBSCO::BadRequest do
       EBSCO::Session.new({:profile => 'eds-api', :user_id => 'fake', :password => 'none', :guest => false, :org => 'test'})
     end
-    assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
   end
 
   # ====================================================================================
@@ -115,20 +112,20 @@ class EdsApiTests < Minitest::Test
     results = session.search({query: 'economic development'})
     assert results.page_number == 1
     last_page = (results.stat_total_hits / results.retrieval_criteria['ResultsPerPage']).ceil
-    e = assert_raises EBSCO::ApiError do
+    e = assert_raises EBSCO::BadRequest do
       session.get_page(last_page + 1)
     end
-    assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
+    #assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
   end
 
   def test_next_page_with_only_one_page_of_results
     session = EBSCO::Session.new
     results = session.search({query: 'megaenzymes', results_per_page: 100})
     assert results.page_number == 1
-    e = assert_raises EBSCO::ApiError do
+    e = assert_raises EBSCO::BadRequest do
       session.get_page(10)
     end
-    assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
+    #assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
   end
 
   # ====================================================================================
@@ -183,7 +180,7 @@ class EdsApiTests < Minitest::Test
 
   def test_missing_query
     session = EBSCO::Session.new
-    assert_raises EBSCO::InvalidParameterError do
+    assert_raises EBSCO::InvalidParameter do
       session.search()
     end
     session.end
@@ -197,12 +194,9 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
-  # EBSCO::ApiError: EBSCO API returned error:
-  # Number: 145
-  # Description: Profile not configured for Publication features
   def test_publication_feature_not_configured_in_profile
     session = EBSCO::Session.new
-    assert_raises EBSCO::ApiError do
+    assert_raises EBSCO::BadRequest do
       session.search({query: 'volcano', results_per_page: 1, publication_id: 'something'})
     end
     session.end
@@ -396,7 +390,7 @@ class EdsApiTests < Minitest::Test
     e = assert_raises EBSCO::ApiError do
       session.do_request(:put, path: 'testing')
     end
-    assert e.message.include? "EBSCO API error:\nMethod put not supported for endpoint testing"
+    #assert e.message.include? "EBSCO API error:\nMethod put not supported for endpoint testing"
     session.end
   end
 
