@@ -16,12 +16,14 @@ module EBSCO
       end
       @bib_entity = @record.fetch('RecordInfo', {}).fetch('BibRecord', {}).fetch('BibEntity', {})
       @bib_relationships = @record.fetch('RecordInfo', {}).fetch('BibRecord', {}).fetch('BibRelationships', {})
+      @items = @record.fetch('Items', {})
     end
 
     def resultid
       @record['ResultId']
     end
 
+    # Header Info
     def an
       @record['Header']['An'].to_s
     end
@@ -30,10 +32,7 @@ module EBSCO
       @record['Header']['DbId'].to_s
     end
 
-    def plink
-      @record['Header']['PLink']
-    end
-
+    # only available from search not retrieve
     def score
       @record['Header']['RelevancyScore']
     end
@@ -54,6 +53,15 @@ module EBSCO
       end
     end
 
+    def access_level
+      @record['Header']['AccessLevel']
+    end
+
+    # plink
+    def plink
+      @record['PLink']
+    end
+
     def images (size_requested = 'all')
       returned_images = []
 
@@ -69,146 +77,29 @@ module EBSCO
     end
 
     def title
-      items = @record.fetch('Items',{})
-      if items.count > 0
-        items.each do |item|
-          if item['Group'] == 'Ti'
-            item['Data']
-          end
-        end
-      end
-
-      titles = @bib_entity.fetch('Titles', {})
-      if titles.count > 0
-        titles.each do |title|
-          if title['Type'] == 'main'
-            title['TitleFull']
-          end
-        end
-      end
-
-      nil
+      @items.find{|item| item['Group'] == 'Ti'}['Data'] ||
+          @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}['TitleFull']
     end
 
     def title_raw
-      titles = @bib_entity.fetch('Titles', {})
-      if titles.count > 0
-        titles.each do |title|
-          if title['Type'] == 'main'
-            title['TitleFull']
-          end
-        end
-      end
-      items = @record.fetch('Items',{})
-      if items.count > 0
-        items.each do |item|
-          if item['Group'] == 'Ti'
-            item['Data']
-          end
-        end
-      end
-      nil
+      @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}['TitleFull'] ||
+          @items.find{|item| item['Group'] == 'Ti'}['Data']
     end
 
     def authors
-
-      items = @record.fetch('Items',{})
-      if items.count > 0
-        items.each do |item|
-          if item['Group'] == 'Au'
-            item['Data']
-          end
-        end
-      end
-
-      contributors = @bib_relationships.fetch('HasContributorRelationships', {})
-
-      if contributors.count > 0
-        authors = []
-        contributors.each do |contributor|
-          names = contributor.fetch('PersonEntity',{})
-          authors.push(names['Name']['NameFull'])
-        end
-        author_str = authors.join('; ')
-        author_str
-      end
-
-      nil
+      @items.find{|item| item['Group'] == 'Au'}['Data'] || @bib_relationships.deep_find('NameFull').join('; ')
     end
 
     def authors_raw
-
-      contributors = @bib_relationships.fetch('HasContributorRelationships', {})
-
-      if contributors.count > 0
-        authors = []
-        contributors.each do |contributor|
-          names = contributor.fetch('PersonEntity',{})
-          authors.push(names['Name']['NameFull'])
-        end
-        authors
-      end
-
-      items = @record.fetch('Items',{})
-      if items.count > 0
-        items.each do |item|
-          if item['Group'] == 'Au'
-            [item['Data']]
-          end
-        end
-      end
-
-      []
+      @bib_relationships.deep_find('NameFull').join('; ') || @items.find{|item| item['Group'] == 'Au'}['Data']
     end
 
-
     def subjects
-
-      items = @record.fetch('Items',{})
-      if items.count > 0
-        items.each do |item|
-          if item['Group'] == 'Su'
-            item['Data']
-          end
-        end
-      end
-
-      subjects = @bib_entity.fetch('Subjects', {})
-
-      if subjects.count > 0
-        subs = []
-        subjects.each do |subject|
-          subs.push(subject['SubjectFull'])
-        end
-        subs_str = subs.join('; ')
-        subs_str
-      end
-
-      nil
+      @items.find{|item| item['Group'] == 'Su'}['Data'] || @bib_entity.fetch('Subjects', {}).map{|subject| subject}
     end
 
     def subjects_raw
-
-      subjects = @bib_entity.fetch('Subjects', {})
-
-      if subjects.count > 0
-        subs = []
-        subjects.each do |subject|
-          subs.push(subject)
-        end
-        subs
-      end
-
-      items = @record.fetch('Items',{})
-      if items.count > 0
-        items.each do |item|
-          if item['Group'] == 'Su'
-            [item['Data']]
-          end
-        end
-      end
-
-      []
+      @bib_entity.fetch('Subjects', {}).map{|subject| subject} || @items.find{|item| item['Group'] == 'Su'}['Data']
     end
 
     def languages
@@ -552,4 +443,17 @@ module EBSCO
     end
   end
 
+end
+
+# monkey patch
+class Hash
+  def deep_find(key, object=self, found=[])
+    if object.respond_to?(:key?) && object.key?(key)
+      found << object[key]
+    end
+    if object.is_a? Enumerable
+      found << object.collect { |*a| deep_find(key, a.last) }
+    end
+    found.flatten.compact
+  end
 end

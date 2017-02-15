@@ -21,14 +21,15 @@ module EBSCO
     def add_actions(actions, info)
       if actions.kind_of?(Array) && actions.count > 0
         actions.each do |item|
-          if is_valid_action(item, info)
-            @Actions.push item
-          end
+          #if is_valid_action(item, info)
+          @Actions.push item
+          #end
         end
       else
-        if is_valid_action(actions, info)
-           @Actions = [actions]
-        end
+        #if is_valid_action(actions, info)
+        @Actions = [actions]
+        #else
+        #end
       end
     end
 
@@ -54,7 +55,9 @@ module EBSCO
 
   class SearchCriteria
     include JSONable
-    attr_accessor :Queries, :SearchMode, :IncludeFacets, :Limiters, :Sort, :PublicationId, :RelatedContent, :AutoSuggest, :Expanders
+    attr_accessor :Queries, :SearchMode, :IncludeFacets, :FacetFilters, :Limiters, :Sort, :PublicationId,
+                  :RelatedContent, :AutoSuggest, :Expanders
+
     def initialize(options = {}, info)
 
       # ====================================================================================
@@ -89,6 +92,13 @@ module EBSCO
         @IncludeFacets = options[:include_facets] ? 'y' : 'n'
       else
         @IncludeFacets = 'y'
+      end
+
+      # ====================================================================================
+      # FACET FILTERS
+      # ====================================================================================
+      if options.key? :facet_filters
+        @FacetFilters = options[:facet_filters]
       end
 
       # ====================================================================================

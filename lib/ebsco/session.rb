@@ -47,7 +47,7 @@ module EBSCO
       end
 
       @is_ip_auth = false
-      @max_retries = 2
+      @max_retries = MAX_ATTEMPTS
       @auth_token = create_auth_token
       @session_token = create_session_token
       @info = EBSCO::Info.new(do_request(:get, path: INFO_URL))
@@ -55,30 +55,6 @@ module EBSCO
 
     end
 
-    # create auth token
-    def create_auth_token
-      if @auth_token.nil?
-        # ip auth
-        if blank?(@user_id) && blank?(@password)
-          _response = do_request(:post, path: IP_AUTH_URL)
-          @is_ip_auth = true
-        # user auth
-        else
-          _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user_id, :Password => @password})
-          @auth_token = _response['AuthToken']
-          @auth_timeout = _response['AuthTimeout']
-         end
-      end
-      @auth_token
-    end
-
-    # create session token
-    def create_session_token
-      _response = do_request(:post, path: CREATE_SESSION_URL, payload: {:Profile => @profile, :Guest => @guest})
-      @session_token = _response['SessionToken']
-    end
-
-    # end session
     def end
       # todo: catch when there is no valid session?
       do_request(:post, path: END_SESSION_URL, payload: {:SessionToken => @session_token})
@@ -124,21 +100,6 @@ module EBSCO
       add_actions("GoToPage(#{page})")
     end
 
-    def connection
-      Faraday.new(url: EDS_API_BASE) do |faraday|
-        faraday.headers['Content-Type'] = 'application/json;charset=UTF-8'
-        faraday.headers['Accept'] = 'application/json'
-        faraday.headers['x-sessionToken'] = @session_token ? @session_token : ''
-        faraday.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
-        faraday.headers['User-Agent'] = USER_AGENT
-        faraday.request :url_encoded
-        faraday.use FaradayMiddleware::RaiseHttpException
-        faraday.response :json, :content_type => /\bjson$/
-        faraday.response :logger, Logger.new(LOG)
-        faraday.adapter Faraday.default_adapter
-      end
-    end
-
     def do_request(method, path:, payload: nil, attempt: 0)
 
       if attempt > MAX_ATTEMPTS
@@ -180,6 +141,46 @@ module EBSCO
         end
       end
     end
+
+    private
+
+    def connection
+      Faraday.new(url: EDS_API_BASE) do |faraday|
+        faraday.headers['Content-Type'] = 'application/json;charset=UTF-8'
+        faraday.headers['Accept'] = 'application/json'
+        faraday.headers['x-sessionToken'] = @session_token ? @session_token : ''
+        faraday.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
+        faraday.headers['User-Agent'] = USER_AGENT
+        faraday.request :url_encoded
+        faraday.use FaradayMiddleware::RaiseHttpException
+        faraday.response :json, :content_type => /\bjson$/
+        faraday.response :logger, Logger.new(LOG)
+        faraday.adapter Faraday.default_adapter
+      end
+    end
+
+    def create_auth_token
+      if @auth_token.nil?
+        # ip auth
+        if blank?(@user_id) && blank?(@password)
+          _response = do_request(:post, path: IP_AUTH_URL)
+          @is_ip_auth = true
+          # user auth
+        else
+          _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user_id, :Password => @password})
+          @auth_token = _response['AuthToken']
+          @auth_timeout = _response['AuthTimeout']
+        end
+      end
+      @auth_token
+    end
+
+    def create_session_token
+      _response = do_request(:post, path: CREATE_SESSION_URL, payload: {:Profile => @profile, :Guest => @guest})
+      @session_token = _response['SessionToken']
+    end
+
+    # helper methods
 
     def blank?(var)
       var.nil? || var.respond_to?(:length) && var.length == 0

@@ -1,5 +1,4 @@
 require 'ebsco/record'
-require 'cgi'
 require 'yaml'
 
 module EBSCO
@@ -23,7 +22,7 @@ module EBSCO
 
       # RESEARCH STARTERS
       @research_starters = []
-      _related_records = @results.fetch(:SearchResult,{}).fetch(:RelatedContent,{}).fetch(:RelatedRecords,{})
+      _related_records = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedRecords',{})
       if _related_records.count > 0
         _related_records.each do |related_item|
           if related_item['Type'] == 'rs'
@@ -38,20 +37,20 @@ module EBSCO
       end
 
       # PUBLICATION MATCHES
-      # @publication_match = []
-      # _related_publications = @results['SearchResult']['RelatedContent']['RelatedPublications']
-      # if _related_publications.count > 0
-      #   _related_publications.each do |related_item|
-      #     if related_item['Type'] == 'emp'
-      #       _publication_matches = related_item.fetch('PublicationRecords',{})
-      #       if _publication_matches.count > 0
-      #         _publication_matches.each do |publication_record|
-      #           @publication_match.push(EBSCO::Record.new(publication_record))
-      #         end
-      #       end
-      #     end
-      #   end
-      # end
+      @publication_match = []
+      _related_publications = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedPublications',{})
+      if _related_publications.count > 0
+        _related_publications.each do |related_item|
+          if related_item['Type'] == 'emp'
+            _publication_matches = related_item.fetch('PublicationRecords',{})
+            if _publication_matches.count > 0
+              _publication_matches.each do |publication_record|
+                @publication_match.push(EBSCO::Record.new(publication_record))
+              end
+            end
+          end
+        end
+      end
 
     end
 
@@ -71,17 +70,18 @@ module EBSCO
       @results['SearchRequest']['RetrievalCriteria']
     end
 
+    # "Queries"=>[{"BooleanOperator"=>"AND", "Term"=>"volcano"}]
     def search_queries
       @results['SearchRequest']['SearchCriteria']['Queries']
     end
 
-    def query_string
-      @results['SearchRequest']['QueryString']
-    end
+    # def query_string
+    #   @results['SearchRequest']['QueryString']
+    # end
 
-    def current_search
-      CGI::parse(self.querystring)
-    end
+    # def current_search
+    #   CGI::parse(self.querystring)
+    # end
 
     def page_number
       @results['SearchRequest']['RetrievalCriteria']['PageNumber']

@@ -230,19 +230,33 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
-  # actions
-  # todo: verify in search options, add bogus
+  # ====================================================================================
+  # ACTIONS
+  # ====================================================================================
+
   def test_add_single_action
     session = EBSCO::Session.new
-    results = session.search({query: 'volcano', results_per_page: 1, actions: 'addfacetfilter(SubjectGeographic:massachusetts)'})
-    refute_nil results
+    results = session.search({query: 'earthquake'})
+    results2 = session.add_actions('addfacetfilter(SourceType:Academic Journals,SubjectEDS:earthquakes)')
+    assert results.stat_total_hits > results2.stat_total_hits
+    refute_nil results2.applied_facets
     session.end
   end
 
-  def test_add_list_of_actions
+  def test_add_multiple_actions
     session = EBSCO::Session.new
-    results = session.search({query: 'patriots', results_per_page: 1, actions: ['addfacetfilter(SubjectGeographic:massachusetts)', 'addlimiter(LA99:English)']})
-    refute_nil results
+    results = session.search({query: 'patriots', results_per_page: 1})
+    results2 = session.add_actions(['addfacetfilter(SubjectGeographic:massachusetts)', 'addlimiter(LA99:English)'])
+    assert results.stat_total_hits > results2.stat_total_hits
+    session.end
+  end
+
+  def test_add_unknown_action
+    session = EBSCO::Session.new
+    results = session.search({query: 'patriots', results_per_page: 1})
+    assert results.stat_total_hits > 0
+    results2 = session.add_actions('addfacetfilter(Bogus:massachusetts)')
+    assert results2.stat_total_hits == 0
     session.end
   end
 
@@ -251,7 +265,7 @@ class EdsApiTests < Minitest::Test
   # ====================================================================================
   def test_retrieve_record
     session = EBSCO::Session.new
-    record = session.retrieve({dbid: 'a9h', an: '12328402'})
+    record = session.retrieve({dbid: 'asn', an: '12328402'})
     assert record.an == '12328402'
     session.end
   end
@@ -419,5 +433,119 @@ class EdsApiTests < Minitest::Test
       EBSCO::Info.new(session.do_request(:get, path: EBSCO::INFO_URL))
     end
   end
+
+
+  # ====================================================================================
+  # RESULTS
+  # ====================================================================================
+
+  def test_results_list
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1})
+    assert results.records.length > 0
+    # puts "RESULTS:\n" + results.inspect
+    refute_nil results.stat_total_hits
+    refute_nil results.stat_total_time
+    refute_nil results.retrieval_criteria
+    refute_nil results.search_queries
+    refute_nil results.page_number
+    refute_nil results.search_criteria
+    assert results.search_terms == ['volcano']
+    session.end
+  end
+
+  def test_results_with_date_range
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['DT1:2014-01/2014-12']})
+    assert results.date_range[:mindate] == '2014-01'
+    assert results.date_range[:maxdate] == '2014-12'
+    session.end
+  end
+
+  def test_results_with_expanders
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, expanders: ['fulltext']})
+    refute_nil results.applied_expanders
+    session.end
+  end
+
+  def test_results_with_research_starters
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, related_content: ['rs']})
+    refute_nil results.research_starters
+    session.end
+  end
+
+  def test_results_with_related_publications
+    session = EBSCO::Session.new
+    results = session.search({query: 'new england journal of medicine', results_per_page: 1, related_content: ['emp']})
+    # puts 'PUB MATCH: ' + results.publication_match.inspect
+    refute_nil results.publication_match
+    session.end
+  end
+
+  def test_results_applied_facets
+    session = EBSCO::Session.new
+    facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'}, {'Id' => 'SourceType', 'Value' => 'News'}] }]
+    results = session.search({query: 'volcano', results_per_page: 1, facet_filters: facet_filters})
+    refute_nil results.applied_facets
+    session.end
+  end
+
+  def test_results_with_facets_via_actions
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1, actions: ['addfacetfilter(SubjectGeographic:hawaii)']})
+    refute_nil results.applied_facets
+    session.end
+  end
+
+  def test_results_all_available_facets
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1})
+    available_facets = results.facets
+    refute_nil available_facets
+    session.end
+  end
+
+  def test_results_find_available_facet
+    session = EBSCO::Session.new
+    results = session.search({query: 'volcano', results_per_page: 1})
+    find_facet = results.facets('SubjectEDS')
+    refute_nil find_facet
+    session.end
+  end
+
+  # ====================================================================================
+  # RECORD
+  # ====================================================================================
+
+  def test_record_from_retrieve
+    session = EBSCO::Session.new
+    record = session.retrieve({dbid: 'asn', an: '108974507'})
+    puts record.inspect
+    assert record.an == '108974507'
+    assert record.dbid == 'asn'
+    refute_nil record.plink
+    refute_nil record.pubtype
+    refute_nil record.pubtype_id
+    refute_nil record.resultid
+    refute_nil record.db_label
+    refute_nil record.access_level
+    refute_nil record.authors
+    puts 'AUTHORS: ' + record.authors.inspect
+    refute_nil record.authors_raw
+    puts 'AUTHORS RAW: ' + record.authors_raw.inspect
+    refute_nil record.title
+    puts 'TITLE: ' + record.title.inspect
+    refute_nil record.title_raw
+    puts 'TITLE RAW: ' + record.title_raw.inspect
+    refute_nil record.subjects
+    puts 'SUBJECTS: ' + record.subjects.inspect
+    refute_nil record.subjects_raw
+    puts 'SUBJECTS RAW: ' + record.subjects_raw.inspect
+
+    session.end
+  end
+
 
 end

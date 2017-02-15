@@ -134,7 +134,7 @@ module EBSCO
     end
 
     def max_results_per_page
-      100
+      MAX_RESULTS_PER_PAGE
     end
 
     def available_result_list_views
