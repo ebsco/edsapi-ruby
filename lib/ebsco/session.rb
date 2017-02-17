@@ -46,7 +46,6 @@ module EBSCO
         @org = ENV['EDS_ORG']
       end
 
-      @is_ip_auth = false
       @max_retries = MAX_ATTEMPTS
       @auth_token = create_auth_token
       @session_token = create_session_token
@@ -79,6 +78,7 @@ module EBSCO
     def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
       payload = {:DbId => dbid, :An => an, :HighlighTerms => highlight, :EbookPreferredFormat =>  ebook}
       retrieve_response = do_request(:post, path: RETRIEVE_URL, payload: payload)
+      #puts "RESPSONSE: \n" + retrieve_response.inspect
       EBSCO::Record.new(retrieve_response)
     end
 
@@ -154,7 +154,7 @@ module EBSCO
         faraday.request :url_encoded
         faraday.use FaradayMiddleware::RaiseHttpException
         faraday.response :json, :content_type => /\bjson$/
-        faraday.response :logger, Logger.new(LOG)
+        #faraday.response :logger, Logger.new(LOG)
         faraday.adapter Faraday.default_adapter
       end
     end
@@ -164,8 +164,7 @@ module EBSCO
         # ip auth
         if blank?(@user_id) && blank?(@password)
           _response = do_request(:post, path: IP_AUTH_URL)
-          @is_ip_auth = true
-          # user auth
+        # user auth
         else
           _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user_id, :Password => @password})
           @auth_token = _response['AuthToken']
