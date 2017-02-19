@@ -61,6 +61,10 @@ module EBSCO
       @session_token = ''
     end
 
+    # ====================================================================================
+    # SEARCH, QUERY, RETRIEVE
+    # ====================================================================================
+
     def search(options = {}, add_actions = false)
 
       # create/recreate the search options if nil or not passing actions
@@ -70,22 +74,63 @@ module EBSCO
       #puts JSON.pretty_generate(@search_options)
       _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
       @search_results = EBSCO::Results.new(_response)
-      #@current_search_terms = @search_results.searchterms
       @current_page = @search_results.page_number
       @search_results
+    end
+
+    def simple_search(query)
+      search({:query => query})
     end
 
     def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
       payload = {:DbId => dbid, :An => an, :HighlighTerms => highlight, :EbookPreferredFormat =>  ebook}
       retrieve_response = do_request(:post, path: RETRIEVE_URL, payload: payload)
-      #puts "RESPSONSE: \n" + retrieve_response.inspect
       EBSCO::Record.new(retrieve_response)
     end
 
-    # add actions to an existing search session
-    def add_actions(actions)
-      search(@search_options.add_actions(actions, @info), true)
+    def clear_search
+      add_actions 'ClearSearch()'
     end
+
+    def clear_queries
+      add_actions 'ClearQueries()'
+    end
+
+    def add_query(query)
+      add_actions "AddQuery(#{query})"
+    end
+
+    def remove_query(query_id)
+      add_actions "RemoveQuery(#{query_id})"
+    end
+
+    def set_sort(val)
+      add_actions "SetSort(#{val})"
+    end
+
+    def set_search_mode(mode)
+      add_actions "SetSearchMode(#{mode})"
+    end
+
+    def set_view(view)
+      add_actions "SetView(#{view})"
+    end
+
+    def set_highlight(val)
+      add_actions "SetHighlight(#{val})"
+    end
+
+    def results_per_page(num)
+      add_actions "SetResultsPerPage(#{num})"
+    end
+
+    def include_related_content(val)
+      add_actions "includerealatedcontent(#{val})"
+    end
+
+    # ====================================================================================
+    # PAGINATION
+    # ====================================================================================
 
     def next_page
       page = @current_page + 1
@@ -97,7 +142,101 @@ module EBSCO
     end
 
     def get_page(page = 1)
-      add_actions("GoToPage(#{page})")
+      add_actions "GoToPage(#{page})"
+    end
+
+    def move_page(num)
+      add_actions "MovePage(#{num})"
+    end
+
+    def reset_page
+      add_actions 'ResetPaging()'
+    end
+
+    # ====================================================================================
+    # FACETS
+    # ====================================================================================
+
+    # 'y' or 'n'
+    def set_include_facets(val)
+      add_actions "SetIncludeFacets(#{val})"
+    end
+
+    def clear_facets
+      add_actions 'ClearFacetFilters()'
+    end
+
+    def add_facet(facet_id, facet_val)
+      add_actions "AddFacetFilters(#{facet_id}:#{facet_val})"
+    end
+
+    def remove_facet(group_id)
+      add_actions "RemoveFacetFilter(#{group_id})"
+    end
+
+    def remove_facet_value(group_id, facet_id, facet_val)
+      add_actions "RemoveFacetFilterValue(#{group_id},#{facet_id}:#{facet_val})"
+    end
+
+    # ====================================================================================
+    # LIMITERS
+    # ====================================================================================
+
+    def clear_limiters
+      add_actions 'ClearLimiters()'
+    end
+
+    def add_limiter(id, val)
+      add_actions "AddLimiter(#{id}:#{val})"
+    end
+
+    def remove_limiter(id)
+      add_actions "RemoveLimiter(#{id})"
+    end
+
+    def remove_limiter_value(id, val)
+      add_actions "RemoveLimiterValue(#{id}:#{val})"
+    end
+
+    # ====================================================================================
+    # EXPANDERS
+    # ====================================================================================
+
+    def clear_expander
+      add_actions 'ClearExpander()'
+    end
+
+    def add_expander(val)
+      add_actions "AddExpander(#{val})"
+    end
+
+    def remove_expander(val)
+      add_actions "RemoveExpander(#{val})"
+    end
+
+    # ====================================================================================
+    # PUBLICATION (this is only used for profiles configured for publication searching)
+    # ====================================================================================
+
+    def add_publication(pub_id)
+      add_actions "AddPublication(#{pub_id})"
+    end
+
+    def remove_publication(pub_id)
+      add_actions "RemovePublication(#{pub_id})"
+    end
+
+    def remove_all_publications
+      add_actions 'RemovePublication()'
+    end
+
+    # ====================================================================================
+    # INTERNAL METHODS
+    # ====================================================================================
+
+    # add actions to an existing search session
+    def add_actions(actions)
+      search(@search_options.add_actions(actions, @info), true)
     end
 
     def do_request(method, path:, payload: nil, attempt: 0)
