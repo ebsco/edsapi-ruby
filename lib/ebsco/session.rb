@@ -17,14 +17,14 @@ module EBSCO
       
       if options.has_key? :user_id
         @user_id = options[:user_id]
-      elsif ENV.has_key? 'EDS_USER_ID'
-        @user_id = ENV['EDS_USER_ID']
+      elsif ENV.has_key? 'EDS_USER'
+        @user_id = ENV['EDS_USER']
       end
 
       if options.has_key? :password
         @password = options[:password]
-      elsif ENV.has_key? 'EDS_USER_PASSWORD'
-        @password = ENV['EDS_USER_PASSWORD']
+      elsif ENV.has_key? 'EDS_PASS'
+        @password = ENV['EDS_PASS']
       end
 
       if options.has_key? :profile
@@ -44,6 +44,12 @@ module EBSCO
         @org = options[:org]
       elsif ENV.has_key? 'EDS_ORG'
         @org = ENV['EDS_ORG']
+      end
+
+      if options.has_key? :auth
+        @auth_type = options[:auth]
+      elsif ENV.has_key? 'EDS_AUTH'
+        @auth_type = ENV['EDS_AUTH']
       end
 
       @max_retries = MAX_ATTEMPTS
@@ -88,44 +94,57 @@ module EBSCO
       EBSCO::Record.new(retrieve_response)
     end
 
+    # Clear all specified query expressions, facet filters, limiters and expanders, and set the page number back to 1.
     def clear_search
       add_actions 'ClearSearch()'
     end
 
+    # Clears all queries and facet filters, and set the page number back to 1; limiters and expanders are not modified.
     def clear_queries
       add_actions 'ClearQueries()'
     end
 
+    # Add a query to the search request. When a query is added, it will be assigned an ordinal, which will be exposed
+    # in the search response message. It also removes any specified facet filters and sets the page number to 1.
     def add_query(query)
       add_actions "AddQuery(#{query})"
     end
 
+    # Removes query from the currently specified search. It also removes any specified facet filters and sets the
+    # page number to 1.
     def remove_query(query_id)
-      add_actions "RemoveQuery(#{query_id})"
+      add_actions "removequery(#{query_id})"
     end
 
+    # Sets the sort for the search. The available sorts for the specified databases can be obtained from the API’s
+    # INFO method (Please see related documentation.) Sets the page number back to 1.
     def set_sort(val)
       add_actions "SetSort(#{val})"
     end
 
+    # Sets the search mode. The available search modes are returned from the info method.
     def set_search_mode(mode)
       add_actions "SetSearchMode(#{mode})"
     end
 
+    # Specifies the view parameter. The view representes the amount of data to return with the search.
     def set_view(view)
       add_actions "SetView(#{view})"
     end
 
+    # Sets whether or not to turn highlighting on or off (y|n).
     def set_highlight(val)
       add_actions "SetHighlight(#{val})"
     end
 
+    # Sets the page size on the search request.
     def results_per_page(num)
       add_actions "SetResultsPerPage(#{num})"
     end
 
+    # A related content type to additionally search for and include with the search results.
     def include_related_content(val)
-      add_actions "includerealatedcontent(#{val})"
+      add_actions "includerelatedcontent(#{val})"
     end
 
     # ====================================================================================
@@ -141,14 +160,18 @@ module EBSCO
       get_page([1, @current_page - 1].sort.last)
     end
 
+    # Sets the page number on the search request.
     def get_page(page = 1)
       add_actions "GoToPage(#{page})"
     end
 
+    # Increments the current page number by the value specified. If the current page was 5 and the specified value
+    # was 2, the page number would be set to 7.
     def move_page(num)
       add_actions "MovePage(#{num})"
     end
 
+    # Sets the page number back to 1.
     def reset_page
       add_actions 'ResetPaging()'
     end
@@ -167,7 +190,7 @@ module EBSCO
     end
 
     def add_facet(facet_id, facet_val)
-      add_actions "AddFacetFilters(#{facet_id}:#{facet_val})"
+      add_actions "AddFacetFilter(#{facet_id}:#{facet_val})"
     end
 
     def remove_facet(group_id)
@@ -202,8 +225,8 @@ module EBSCO
     # EXPANDERS
     # ====================================================================================
 
-    def clear_expander
-      add_actions 'ClearExpander()'
+    def clear_expanders
+      add_actions 'ClearExpanders()'
     end
 
     def add_expander(val)
@@ -236,6 +259,7 @@ module EBSCO
 
     # add actions to an existing search session
     def add_actions(actions)
+      # todo: create search options if nil?
       search(@search_options.add_actions(actions, @info), true)
     end
 
@@ -301,7 +325,7 @@ module EBSCO
     def create_auth_token
       if @auth_token.nil?
         # ip auth
-        if blank?(@user_id) && blank?(@password)
+        if (blank?(@user_id) && blank?(@password)) || @auth_type.casecmp('ip') == 0
           _response = do_request(:post, path: IP_AUTH_URL)
         # user auth
         else

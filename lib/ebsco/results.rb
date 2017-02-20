@@ -55,7 +55,8 @@ module EBSCO
     end
 
     def stat_total_hits
-      @results['SearchResult']['Statistics']['TotalHits']
+      _hits = @results.fetch('SearchResult',{}).fetch('Statistics',{}).fetch('TotalHits',{})
+      _hits == {} ? 0 : _hits
     end
 
     def stat_total_time
@@ -64,6 +65,10 @@ module EBSCO
 
     def search_criteria
       @results['SearchRequest']['SearchCriteria']
+    end
+
+    def search_criteria_with_actions
+      @results['SearchRequest']['SearchCriteriaWithActions']
     end
 
     def retrieval_criteria
@@ -84,7 +89,7 @@ module EBSCO
     # end
 
     def page_number
-      @results['SearchRequest']['RetrievalCriteria']['PageNumber']
+      @results['SearchRequest']['RetrievalCriteria']['PageNumber'] || 1
     end
 
     def applied_facets
