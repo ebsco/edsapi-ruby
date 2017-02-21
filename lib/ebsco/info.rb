@@ -170,7 +170,7 @@ module EBSCO
     # ====================================================================================
 
     def available_actions
-      @available_search_criteria.deep_find('AddAction')
+      @available_search_criteria.deep_find_results('AddAction')
     end
 
   end
@@ -179,7 +179,7 @@ end
 
 # monkey patch
 class Hash
-  def deep_find(key, object=self, found=[])
+  def deep_find_results(key, object=self, found=[])
     if object.respond_to?(:key?) && object.key?(key)
       found << object[key]
     end
