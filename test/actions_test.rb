@@ -2,6 +2,12 @@ require_relative 'test_helper'
 
 class EdsApiTests < Minitest::Test
 
+  def test_available_actions
+    session = EBSCO::Session.new
+    refute_nil session.info.available_actions
+    session.end
+  end
+
   def test_add_single_action
     session = EBSCO::Session.new
     results = session.search({query: 'earthquake'})

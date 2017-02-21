@@ -23,7 +23,7 @@ class EdsApiTests < Minitest::Test
 
   def test_unavailable_limiter_values
     session = EBSCO::Session.new
-    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:Gaelic']})
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:PigLatin']})
     refute_nil results
     applied_limiters = results.applied_limiters.map{|hash| hash['Id']}
     assert applied_limiters.empty?
@@ -32,11 +32,12 @@ class EdsApiTests < Minitest::Test
 
   def test_some_unavailable_limiter_values
     session = EBSCO::Session.new
-    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:English,Gaelic']})
+    results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:French,PigLatin']})
+    #puts results.applied_limiters.inspect
     refute_nil results
     lang_limiters = results.applied_limiters.find{|item| item['Id'] == 'LA99'}
     lang_values = lang_limiters['LimiterValuesWithAction'][0].fetch('Value')
-    assert lang_values == 'English'
+    assert lang_values == 'French'
     session.end
   end
 

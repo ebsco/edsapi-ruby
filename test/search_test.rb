@@ -43,10 +43,11 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
-  def test_publication_feature_not_configured_in_profile
+  def test_search_in_publication
     session = EBSCO::Session.new
-    assert_raises EBSCO::BadRequest do
-      session.search({query: 'volcano', results_per_page: 1, publication_id: 'something'})
+    if session.publication_match_in_profile
+      results = session.search({query: 'volcano', results_per_page: 1, publication_id: 'eric'})
+      refute_nil results
     end
     session.end
   end

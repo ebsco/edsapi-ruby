@@ -3,8 +3,9 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_create_session_with_user_credentials
-    session = EBSCO::Session.new({:user_id => ENV['EDS_USER'], :password => ENV['EDS_PASS']})
-    assert session.session_token != nil, 'Expected session token not to be nil.'
+    session = EBSCO::Session.new({:user_id => ENV['EDS_USER'], :password => ENV['EDS_PASS'], :auth => 'user'})
+    refute_nil session.session_token, 'Expected session token not to be nil.'
+    refute_nil session.auth_token, 'Expected auth token not to be nil.'
     session.end
   end
 
