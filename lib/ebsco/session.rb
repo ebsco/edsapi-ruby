@@ -50,6 +50,8 @@ module EBSCO
         @auth_type = options[:auth]
       elsif ENV.has_key? 'EDS_AUTH'
         @auth_type = ENV['EDS_AUTH']
+      else
+        @auth_type = 'user'
       end
 
       @max_retries = MAX_ATTEMPTS
@@ -305,6 +307,31 @@ module EBSCO
       end
     end
 
+    # attempts to query profile capabilities
+    # dummy search just to get the list of available databases
+    def get_available_databases
+      search({query: 'supercalifragilisticexpialidocious-supercalifragilisticexpialidocious',
+              results_per_page: 1,
+              mode: 'all',
+              include_facets: false}).database_stats
+    end
+
+    def get_available_database_ids
+      get_available_databases.map{|item| item[:id]}
+    end
+
+    def dbid_in_profile(dbid)
+      get_available_database_ids.include? dbid
+    end
+
+    def publication_match_in_profile
+      @info.available_related_content_types.include? 'emp'
+    end
+
+    def research_starters_match_in_profile
+      @info.available_related_content_types.include? 'rs'
+    end
+
     private
 
     def connection
@@ -331,8 +358,7 @@ module EBSCO
         else
           _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user_id, :Password => @password})
           @auth_token = _response['AuthToken']
-          @auth_timeout = _response['AuthTimeout']
-        end
+       end
       end
       @auth_token
     end
