@@ -128,6 +128,15 @@ module EBSCO
       af
     end
 
+    def applied_publications
+      retval = []
+      applied_publications_section = @results['SearchRequest'].fetch('SearchCriteriaWithActions',{}).fetch('PublicationWithAction',{})
+      applied_publications_section.each do |item|
+        retval.push(item)
+      end
+      retval
+    end
+
     def database_stats
       databases = []
       databases_facet = @results['SearchResult']['Statistics']['Databases']
