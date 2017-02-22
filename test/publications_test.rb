@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_add_publication
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     if session.publication_match_in_profile
       results = session.search({query: 'earthquake', results_per_page: 1})
       results2 = session.add_publication('eric')
@@ -13,7 +13,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_publication
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     if session.publication_match_in_profile
       results = session.search({query: 'earthquake', results_per_page: 1})
       results2 = session.add_publication('eric')
@@ -25,7 +25,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_all_publications
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     if session.publication_match_in_profile
       results = session.search({query: 'earthquake', results_per_page: 1})
       results2 = session.add_publication('eric')

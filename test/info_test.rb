@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_info_request
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     assert session.info.available_search_modes.length == 4
     refute_nil session.info.available_sorts
     refute_nil session.info.search_fields

@@ -4,7 +4,7 @@ require 'json'
 class EdsApiTests < Minitest::Test
 
   def test_results_list
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1})
     assert results.records.length > 0
     # puts "RESULTS:\n" + results.inspect
@@ -19,7 +19,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_date_range
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1, limiters: ['DT1:2014-01/2014-12']})
     assert results.date_range[:mindate] == '2014-01'
     assert results.date_range[:maxdate] == '2014-12'
@@ -27,21 +27,21 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_expanders
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1, expanders: ['fulltext']})
     refute_nil results.applied_expanders
     session.end
   end
 
   def test_results_with_research_starters
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1, related_content: ['rs']})
     refute_nil results.research_starters
     session.end
   end
 
   def test_results_with_related_publications
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'new england journal of medicine', results_per_page: 1, related_content: ['emp']})
     # puts 'PUB MATCH: ' + results.publication_match.inspect
     refute_nil results.publication_match
@@ -49,7 +49,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_applied_facets
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                          {'Id' => 'SourceType', 'Value' => 'News'}] }]
     results = session.search({query: 'volcano', results_per_page: 1, facet_filters: facet_filters})
@@ -58,14 +58,14 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_facets_via_actions
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1, actions: ['addfacetfilter(SubjectGeographic:hawaii)']})
     refute_nil results.applied_facets
     session.end
   end
 
   def test_results_all_available_facets
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1})
     available_facets = results.facets
     refute_nil available_facets
@@ -73,7 +73,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_find_available_facet
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'volcano', results_per_page: 1})
     find_facet = results.facets('SubjectEDS')
     refute_nil find_facet
@@ -83,7 +83,7 @@ class EdsApiTests < Minitest::Test
   def test_clear_search
     facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                          {'Id' => 'SourceType', 'Value' => 'News'}] }]
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'earthquake',
                               results_per_page: 1,
                               limiters: ['FT:Y', 'LA99:English'],
@@ -110,7 +110,7 @@ class EdsApiTests < Minitest::Test
   def test_clear_queries
     facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                          {'Id' => 'SourceType', 'Value' => 'News'}] }]
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'earthquake',
                               results_per_page: 1,
                               limiters: ['FT:Y', 'LA99:English'],
@@ -137,7 +137,7 @@ class EdsApiTests < Minitest::Test
   def test_add_remove_query
     facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                          {'Id' => 'SourceType', 'Value' => 'News'}] }]
-    session = EBSCO::Session.new
+    session = EBSCO::EDS::Session.new
     results = session.search({query: 'earthquake',
                               results_per_page: 1,
                               limiters: ['FT:Y', 'LA99:English'],

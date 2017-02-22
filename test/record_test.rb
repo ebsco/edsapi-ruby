@@ -4,7 +4,7 @@ class EdsApiTests < Minitest::Test
 
   # JOURNAL ARTICLE, SINGLE AUTHOR
   def test_retrieve_journal_article
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'asn'
       record = session.retrieve({dbid: 'asn', an: '108974507'})
       assert record.accession_number == '108974507'
@@ -45,7 +45,7 @@ class EdsApiTests < Minitest::Test
 
   # JOURNAL, MULTIPLE ARTICLES
   def test_retrieve_journal_multiple_authors
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'asn'
       record = session.retrieve({dbid: 'asn', an: '119572050'})
       refute_nil record.subjects_geographic
@@ -57,7 +57,7 @@ class EdsApiTests < Minitest::Test
 
   # EBOOK
   def test_retrieve_ebook
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'e000xna'
       record = session.retrieve({dbid: 'e000xna', an: '553416'})
       assert record.publisher_info == 'Newcastle upon Tyne : Cambridge Scholars Publishing. 2009'
@@ -76,7 +76,7 @@ class EdsApiTests < Minitest::Test
 
   # CONFERENCE PROCEEDINGS
   def test_retrieve_conference
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'asn'
       record = session.retrieve({dbid: 'asn', an: '118411536'})
       assert record.document_type == 'Article'
@@ -88,7 +88,7 @@ class EdsApiTests < Minitest::Test
 
   # NEWS ARTICLE, FULLTEXT
   def test_retrieve_newspaper
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'asn'
       record = session.retrieve({dbid: 'asn', an: '112761583'})
       assert record.document_type == 'Article'
@@ -102,7 +102,7 @@ class EdsApiTests < Minitest::Test
 
   # SCORE
   def test_retrieve_score
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'cat02060a'
       record = session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690112'})
     end
@@ -112,7 +112,7 @@ class EdsApiTests < Minitest::Test
 
   # BOOK
   def test_retrieve_book
-    session = EBSCO::Session.new({:guest => false})
+    session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'cat02060a'
       record = session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690122'})
       #puts record.to_yaml
