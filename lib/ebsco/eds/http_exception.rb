@@ -13,21 +13,21 @@ module FaradayMiddleware
         case response.status
           when 200
           when 400
-            raise EBSCO::BadRequest.new(error_message(response))
+            raise EBSCO::EDS::BadRequest.new(error_message(response))
           # when 401
-          #   raise EBSCO::Unauthorized.new
+          #   raise EBSCO::EDS::Unauthorized.new
           # when 403
-          #   raise EBSCO::Forbidden.new
+          #   raise EBSCO::EDS::Forbidden.new
           # when 404
-          #   raise EBSCO::NotFound.new
+          #   raise EBSCO::EDS::NotFound.new
           # when 429
-          #   raise EBSCO::TooManyRequests.new
+          #   raise EBSCO::EDS::TooManyRequests.new
           # when 500
-          #   raise EBSCO::InternalServerError.new
+          #   raise EBSCO::EDS::InternalServerError.new
           # when 503
-          #   raise EBSCO::ServiceUnavailable.new
+          #   raise EBSCO::EDS::ServiceUnavailable.new
           else
-            raise EBSCO::BadRequest.new(error_message(response))
+            raise EBSCO::EDS::BadRequest.new(error_message(response))
         end
       end
     end

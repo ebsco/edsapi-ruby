@@ -36,7 +36,7 @@ module EBSCO
       #
       # ==== Example
       # Once you have environment variables set, simply create a session like this:
-      #   session = EBSCO::Session.new
+      #   session = EBSCO::EDS::Session.new
       #
       # ===  2. \Options
       # * +:auth+
@@ -47,7 +47,7 @@ module EBSCO
       # * +:org+
       #
       # ==== Example
-      #   session = EBSCO::Session.new {
+      #   session = EBSCO::EDS::Session.new {
       #     :auth => 'user',
       #     :profile => 'edsapi',
       #     :user => 'joe'
@@ -74,7 +74,7 @@ module EBSCO
         elsif ENV.has_key? 'EDS_PROFILE'
           @profile = ENV['EDS_PROFILE']
         end
-        raise EBSCO::InvalidParameter, 'Session must specify a valid api profile.' if blank?(@profile)
+        raise EBSCO::EDS::InvalidParameter, 'Session must specify a valid api profile.' if blank?(@profile)
 
         if options.has_key? :guest
           @guest = options[:guest] ? 'y' : 'n'
@@ -99,7 +99,7 @@ module EBSCO
         @max_retries = MAX_ATTEMPTS
         @auth_token = create_auth_token
         @session_token = create_session_token
-        @info = EBSCO::Info.new(do_request(:get, path: INFO_URL))
+        @info = EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
         @current_page = 0
 
       end
@@ -135,11 +135,11 @@ module EBSCO
 
         # create/recreate the search options if nil or not passing actions
         if @search_options.nil? || !add_actions
-          @search_options = EBSCO::Options.new(options, @info)
+          @search_options = EBSCO::EDS::Options.new(options, @info)
         end
         #puts JSON.pretty_generate(@search_options)
         _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
-        @search_results = EBSCO::Results.new(_response)
+        @search_results = EBSCO::EDS::Results.new(_response)
         @current_page = @search_results.page_number
         @search_results
       end
@@ -177,7 +177,7 @@ module EBSCO
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
         payload = {:DbId => dbid, :An => an, :HighlightTerms => highlight, :EbookPreferredFormat =>  ebook}
         retrieve_response = do_request(:post, path: RETRIEVE_URL, payload: payload)
-        EBSCO::Record.new(retrieve_response)
+        EBSCO::EDS::Record.new(retrieve_response)
       end
 
       # :category: Search & Retrieve Methods
@@ -491,7 +491,7 @@ module EBSCO
       def do_request(method, path:, payload: nil, attempt: 0) # :nodoc:
 
         if attempt > MAX_ATTEMPTS
-          raise EBSCO::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
+          raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
         end
 
         begin
@@ -503,7 +503,7 @@ module EBSCO
                 req.url path
                 req.body = JSON.generate(payload)
               else
-                raise EBSCO::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
+                raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
             end
           end
           resp.body

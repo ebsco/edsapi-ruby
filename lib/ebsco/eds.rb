@@ -1,10 +1,10 @@
-require 'eds/version'
-require 'eds/session'
-require 'eds/info'
-require 'eds/results'
-require 'eds/record'
-require 'eds/error'
-require 'eds/http_exception'
+require 'ebsco/eds/version'
+require 'ebsco/eds/session'
+require 'ebsco/eds/info'
+require 'ebsco/eds/results'
+require 'ebsco/eds/record'
+require 'ebsco/eds/error'
+require 'ebsco/eds/http_exception'
 
 module EBSCO
 
