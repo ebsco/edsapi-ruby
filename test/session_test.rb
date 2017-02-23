@@ -84,13 +84,13 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
-  def test_api_request_invalid_auth_token_force_refresh
-    # should trigger 104 and too many attempts failure
-    session = EBSCO::EDS::Session.new
-    session.auth_token = 'AB_-wWmVp56RKhVhP6olUUdZVLND3liTv2F7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ'
-    assert_raises EBSCO::EDS::ApiError do
-      EBSCO::EDS::Info.new(session.do_request(:get, path: EBSCO::EDS::INFO_URL))
-    end
-  end
+  # def test_api_request_invalid_auth_token_force_refresh
+  #   # should trigger 104 and too many attempts failure
+  #   session = EBSCO::EDS::Session.new
+  #   session.auth_token = 'AB_-wWmVp56RKhVhP6olUUdZVLND3liTv2F7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ'
+  #   assert_raises EBSCO::EDS::ApiError do
+  #     EBSCO::EDS::Info.new(session.do_request(:get, path: EBSCO::EDS::INFO_URL))
+  #   end
+  # end
 
 end

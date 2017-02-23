@@ -37,7 +37,7 @@ class EdsApiTests < Minitest::Test
       assert record.plink == 'http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=108974507'
       assert_nil record.access_level
       assert record.retrieve_options == {'an'=>'108974507', 'dbid'=>'asn'}
-      assert record.fulltext_links.first == record.best_fulltext_link
+      assert record.fulltext_links.first == record.fulltext_link
       assert record.all_links == record.fulltext_links
     end
     session.end

@@ -17,6 +17,7 @@ module EBSCO
       # Array of EBSCO::EDS::Record Exact Publication Matches
       attr_reader :publication_match
 
+      # Lookup table of databases that have their labels suppressed in the response.
       DBS = YAML::load_file(File.join(__dir__, 'settings.yml'))['databases']
 
       # Creates search results from the \EDS API search response. It includes information about the results and a list
