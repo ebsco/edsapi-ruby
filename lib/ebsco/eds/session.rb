@@ -518,6 +518,7 @@ module EBSCO
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
                 # auth token invalid
                 when '104', '107'
+                  @auth_token = nil
                   @auth_token = create_auth_token
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
                 else
