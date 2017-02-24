@@ -1,4 +1,4 @@
-# EBSCO Discovery Service Ruby Gem
+![EDS Logo](https://discovery.ebsco.com/files/pulse-images/EDS-logo_1LINE.png)
 
 A Ruby interface to the EBSCO Discovery Services API.
 
