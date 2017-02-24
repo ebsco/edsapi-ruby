@@ -1,5 +1,6 @@
 require 'yaml'
 require 'json'
+require 'bibtex'
 
 module EBSCO
 
@@ -37,8 +38,9 @@ module EBSCO
                           .fetch('BibRecord', {})
                           .fetch('BibRelationships', {})
                           .fetch('IsPartOfRelationships', {})[0]
-      end
 
+        @bibtex = BibTeX::Entry.new
+      end
 
       # \Options hash containing accession number and database ID. This can be passed to the retrieve method.
       def retrieve_options
@@ -411,9 +413,78 @@ module EBSCO
 
         links
       end
-
+      
       #:nodoc: all
       # No need to document methods below
+
+      # Experimental bibtex support.
+      def retrieve_bibtex
+
+        @bibtex.key = self.accession_number
+        @bibtex.title = self.title
+        if self.bib_authors_list.length > 0
+          @bibtex.author = self.bib_authors_list.join(' and ').chomp
+        end
+        @bibtex.year = self.publication_year.to_i
+
+        # bibtex type
+        _type = self.publication_type
+        case _type
+          when 'Academic Journal'
+            @bibtex.type = :article
+            @bibtex.journal = self.source_title
+            if self.issue
+              @bibtex.issue = self.issue
+            end
+            if self.volume
+              @bibtex.number = self.volume
+            end
+            if self.page_start && self.page_count
+              @bibtex.pages = self.page_start + '-' + (self.page_start.to_i + self.page_count.to_i-1).to_s
+            end
+            if self.bib_publication_month
+              @bibtex.month = self.bib_publication_month.to_i
+            end
+          when 'Conference'
+            @bibtex.type = :conference
+            @bibtex.booktitle = self.source_title
+            if self.issue
+              @bibtex.issue = self.issue
+            end
+            if self.volume
+              @bibtex.number = self.volume
+            end
+            if self.page_start && self.page_count
+              @bibtex.pages = self.page_start + '-' + (self.page_start.to_i + self.page_count.to_i-1).to_s
+            end
+            if self.bib_publication_month
+              @bibtex.month = self.bib_publication_month.to_i
+            end
+            if self.publisher_info
+              @bibtex.publisher = self.publisher_info
+            end
+            if self.series
+              @bibtex.series = self.series
+            end
+          when 'Book', 'eBook'
+            @bibtex.type = :book
+            if self.publisher_info
+              @bibtex.publisher = self.publisher_info
+            end
+            if self.series
+              @bibtex.series = self.series
+            end
+            if self.bib_publication_month
+              @bibtex.month = self.bib_publication_month.to_i
+            end
+            if self.isbns
+              @bibtex.isbn = self.isbns.first
+            end
+          else
+            @bibtex.type = :other
+        end
+        @bibtex
+      end
 
       # ====================================================================================
       # HEADER: DbId, DbLabel, An, PubType, PubTypeId, AccessLevel
@@ -487,6 +558,10 @@ module EBSCO
 
       def bib_authors
         @bib_relationships.deep_find('NameFull').join('; ')
+      end
+
+      def bib_authors_list
+        @bib_relationships.deep_find('NameFull')
       end
 
       def bib_subjects
@@ -566,6 +641,11 @@ module EBSCO
       def bib_publication_year
         _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
         _date['Y']
+      end
+
+      def bib_publication_month
+        _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
+        _date['M']
       end
 
       def bib_volume

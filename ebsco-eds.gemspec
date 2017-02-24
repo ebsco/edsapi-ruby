@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dotenv', '~> 0.11'
   spec.add_dependency 'climate_control', '~> 0'
   spec.add_dependency 'require_all', '~> 1.3'
+  spec.add_dependency 'bibtex-ruby', '~> 4.0'
 
   spec.add_development_dependency 'bundler', '~> 1.13'
   spec.add_development_dependency 'rake', '~> 10.0'
