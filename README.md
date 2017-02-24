@@ -122,6 +122,8 @@ record.title
 
 #### Search and Retrieve Methods
 
+---------------------------------------
+
 **add_actions(actions)**
 
 Add actions to an existing search session.
@@ -222,6 +224,8 @@ results.did_you_mean
 
 #### Setter Methods
 
+---------------------------------------
+
 Use these methods to apply new configuration settings to an existing search.
 
 **include_related_content(val)**
@@ -283,6 +287,8 @@ results = session.set_view('detailed')
 
 #### Publication Methods
 
+---------------------------------------
+
 **add_publication(pub_id)**
 
 Specifies a publication to search within. Sets the pages number back to 1.
@@ -304,6 +310,8 @@ results = session.remove_publication('eric')
 ```
 
 #### Profile Query Methods
+
+---------------------------------------
 
 **dbid_in_profile(dbid)**
 
@@ -328,6 +336,8 @@ Determine if research starters are available in the profile. Returns Boolean.
 
 #### Pagination Methods
 
+---------------------------------------
+
 **get_page(page = 1)**
 
 Get a specified page of results Returns search Results.
@@ -350,6 +360,8 @@ Get the previous page of results.
 Get the first page of results.
 
 #### Limiter Methods
+
+---------------------------------------
 
 **add_limiter(id, val)**
 
@@ -381,6 +393,8 @@ results = session.remove_limiter_value('LA99','French')
 
 #### Facet Methods
 
+---------------------------------------
+
 **add_facet(facet_id, facet_val)**
 
 Adds a facet filter to the search request. Sets the page number back to 1.
@@ -411,6 +425,8 @@ results = session.remove_facet_value(2, 'DE', 'Psychology')
 ```
 
 #### Expander Methods
+
+---------------------------------------
 
 **add_expander(val)**
 
@@ -453,6 +469,8 @@ Array of EBSCO::EDS::Record Research Starters.
 Raw search results as a hash.
 
 #### Methods
+
+---------------------------------------
 
 **applied_expanders()**
 
@@ -628,11 +646,15 @@ Time it took to complete the search in milliseconds.
 
 #### Attributes
 
+---------------------------------------
+
 **record[RW]**
 
 Raw record as returned by the EDS API via search or retrieve
 
 #### Methods
+
+---------------------------------------
 
 **abstract()**
 
