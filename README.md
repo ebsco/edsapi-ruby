@@ -2,7 +2,7 @@
 
 A Ruby interface to the EBSCO Discovery Services API.
 
-[![Build Status](https://travis-ci.org/bmckinney/ebsco-eds-api-gem.svg?branch=master)](https://travis-ci.org/bmckinney/ebsco-eds-api-gem)
+[![Build Status](https://travis-ci.org/bmckinney/ebsco-eds-api-gem.svg)](https://travis-ci.org/bmckinney/ebsco-eds-api-gem)
 [![codecov](https://codecov.io/gh/bmckinney/ebsco-eds-api-gem/branch/master/graph/badge.svg)](https://codecov.io/gh/bmckinney/ebsco-eds-api-gem/branch/master)
 
 
