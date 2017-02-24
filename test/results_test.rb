@@ -146,21 +146,20 @@ class EdsApiTests < Minitest::Test
                               facet_filters: facet_filters})
     refute_nil results
     results = session.get_page(3)
-    #puts results.search_criteria_with_actions.to_yaml
     assert results.page_number == 3
     assert results.search_queries.length == 1
     assert results.applied_facets.length > 0
     assert results.applied_limiters.length > 0
     assert results.applied_expanders.length > 0
     results = session.add_query('AND,California')
-    #puts results.search_criteria_with_actions.to_yaml
+    refute_nil results.search_criteria_with_actions
     assert results.search_queries.length == 2
     assert results.page_number == 1
     assert results.applied_facets == []
-
     # remove_query appears broke in API, only recognizes the first query for some reason
-    #results = session.remove_query(2)
-    #puts results.to_yaml
+    # EdsApiTests#test_add_remove_query:
+    # EBSCO::EDS::BadRequest: {"DetailedErrorDescription"=>"The RemoveQuery Action must specify a valid expression
+    # ordinal to remove. Invalid Action: removequery(2)", "ErrorDescription"=>"Invalid Argument Value", "ErrorNumber"=>"112"}
     results = session.remove_query(1)
     assert results.search_queries.nil?
 
