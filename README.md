@@ -1,6 +1,10 @@
-![EDS Logo](https://discovery.ebsco.com/files/pulse-images/EDS-logo_1LINE.png)
+<img src="https://discovery.ebsco.com/files/pulse-images/EDS-logo_1LINE.png"/>
 
 A Ruby interface to the EBSCO Discovery Services API.
+
+[![Build Status](https://travis-ci.org/bmckinney/ebsco-eds-api-gem.svg?branch=develop)](https://travis-ci.org/bmckinney/ebsco-eds-api-gem)
+[![codecov](https://codecov.io/gh/bmckinney/ebsco-eds-api-gem/branch/develop/graph/badge.svg)](https://codecov.io/gh/bmckinney/ebsco-eds-api-gem)
+
 
 ## Installation
 
