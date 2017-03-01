@@ -66,6 +66,46 @@ module EBSCO
   
       end
 
+      # returns solr search response format
+      def to_solr
+
+        hl_hash = {}
+        solr_docs = []
+
+        if stat_total_hits > 0
+          @records.each { |record|
+
+            # todo: add solr hl.tag.pre and hl.tag.post to retrieval criteria
+            if retrieval_criteria.fetch('Highlight',{}) == 'y'
+              hl_title = record.title.gsub('&lt;highlight&gt;', '<em>').gsub('&lt;/highlight&gt;', '</em>')
+              hl_hash.update({ record.database_id + '-' + record.accession_number => { 'title_display' => [hl_title]} })
+              #hl_hash.merge title_hl
+            end
+
+            solr_docs.push(record.to_hash)
+          }
+        end
+
+        # solr response
+        {
+            'responseHeader' => {
+              'status' => 0,
+              'QTime' => stat_total_time,
+              'params' => {
+                  'q' => search_terms.join(' '),
+                  'wt' => 'json'
+              }
+            },
+            'response' => {
+               'numFound' => stat_total_hits.to_i,
+               'start' => page_number-1,
+               'docs' => solr_docs
+            },
+            'highlighting' => hl_hash
+        }
+
+      end
+
       # Total number of results found.
       def stat_total_hits
         _hits = @results.fetch('SearchResult',{}).fetch('Statistics',{}).fetch('TotalHits',{})
@@ -284,9 +324,11 @@ module EBSCO
       def search_terms
         terms = []
         queries = @results.fetch('SearchRequest',{}).fetch('SearchCriteriaWithActions',{}).fetch('QueriesWithAction',{})
-        queries.each do |query|
-          query['Query']['Term'].split.each do |word|
-            terms.push(word)
+        unless queries.nil?
+          queries.each do |query|
+            query['Query']['Term'].split.each do |word|
+              terms.push(word)
+            end
           end
         end
         terms

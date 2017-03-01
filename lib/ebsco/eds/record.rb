@@ -656,6 +656,13 @@ module EBSCO
         @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
       end
 
+      def to_hash
+        hash = {}
+        hash['id'] = database_id + '-' + accession_number
+        hash['title_display'] = title.gsub('&lt;highlight&gt;', '').gsub('&lt;/highlight&gt;', '')
+        hash
+      end
+
     end # Class Record
   end # Module EDS
 end # Module EBSCO
