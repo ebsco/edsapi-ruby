@@ -29,9 +29,9 @@ class EdsApiTests < Minitest::Test
 
   def test_missing_query
     session = EBSCO::EDS::Session.new
-    assert_raises EBSCO::EDS::InvalidParameter do
-      session.search()
-    end
+    results = session.search
+    refute_nil results
+    assert results.stat_total_hits == 0
     session.end
   end
 
