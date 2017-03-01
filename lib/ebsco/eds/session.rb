@@ -57,6 +57,9 @@ module EBSCO
       #   }
       def initialize(options = {})
 
+        @auth_token = ''
+        @session_token = ''
+
         if options.has_key? :user
           @user = options[:user]
         elsif ENV.has_key? 'EDS_USER'
@@ -101,6 +104,7 @@ module EBSCO
         @session_token = create_session_token
         @info = EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
         @current_page = 0
+        @search_options = nil
 
       end
 
@@ -590,7 +594,7 @@ module EBSCO
       end
 
       def create_auth_token
-        if @auth_token.nil?
+        if blank?(@auth_token)
           # ip auth
           if (blank?(@user) && blank?(@pass)) || @auth_type.casecmp('ip') == 0
             _response = do_request(:post, path: IP_AUTH_URL)
@@ -599,7 +603,7 @@ module EBSCO
           else
             _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user, :Password => @pass})
             @auth_token = _response['AuthToken']
-         end
+          end
         end
         @auth_token
       end

@@ -92,8 +92,8 @@ module EBSCO
 
               # add blacklight search_fields
               _field_code = ''
-              if options.has_key? :search_field
-                _field = options[:search_field]
+              if options.has_key? 'search_field'
+                _field = options['search_field']
                 case _field
                   when 'author'
                     _field_code = 'AU'
