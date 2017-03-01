@@ -501,7 +501,9 @@ module EBSCO
                 req.url path
               when :post
                 req.url path
-                req.body = JSON.generate(payload)
+                unless payload.nil?
+                  req.body = JSON.generate(payload)
+                end
               else
                 raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
             end
@@ -592,6 +594,7 @@ module EBSCO
           # ip auth
           if (blank?(@user) && blank?(@pass)) || @auth_type.casecmp('ip') == 0
             _response = do_request(:post, path: IP_AUTH_URL)
+            @auth_token = _response['AuthToken']
           # user auth
           else
             _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user, :Password => @pass})
