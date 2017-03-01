@@ -3,7 +3,7 @@ require 'json'
 
 class EdsApiTests < Minitest::Test
 
-  def test_basic_search
+  def test_basic_solr_search
     session = EBSCO::EDS::Session.new
     results_yellow = session.search({'q' => 'yellow'})
     refute_nil results_yellow

@@ -104,7 +104,7 @@ class EdsApiTests < Minitest::Test
   def test_retrieve_score
     session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'cat02060a'
-      record = session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690112'})
+      session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690112'})
     end
     session.end
 
