@@ -133,12 +133,14 @@ module EBSCO
             # ====================================================================================
             # sort
             # ====================================================================================
-            when :sort
+            when :sort, 'sort'
               if info.available_sorts(value.downcase).empty?
-                if value.downcase == 'newest'
+                if value.downcase == 'newest' || value.downcase == 'pub_date_sort desc'
                   @Sort = 'date'
-                elsif value.downcase == 'oldest'
+                elsif value.downcase == 'oldest' || value.downcase == 'pub_date_sort asc'
                   @Sort = 'date2'
+                elsif value.downcase == 'score desc'
+                  @Sort = 'relevance'
                 else
                   @Sort = 'relevance'
                 end
@@ -269,11 +271,11 @@ module EBSCO
             # ====================================================================================
             # page number
             # ====================================================================================
-            when :page_number
-              @PageNumber = value
+            when :page_number, 'page'
+              @PageNumber = value.to_i
             # solr starts at page 0
-            when :start
-              @PageNumber = value + 1
+            when 'start'
+              @PageNumber = value.to_i + 1
 
             # ====================================================================================
             # highlight

@@ -69,6 +69,7 @@ module EBSCO
       # returns solr search response format
       def to_solr
 
+        solr_start = (page_number-1) * results_per_page
         hl_hash = {}
         solr_docs = []
 
@@ -93,12 +94,14 @@ module EBSCO
               'QTime' => stat_total_time,
               'params' => {
                   'q' => search_terms.join(' '),
-                  'wt' => 'json'
+                  'wt' => 'json',
+                  'start' => solr_start,
+                  'rows' => results_per_page
               }
             },
             'response' => {
                'numFound' => stat_total_hits.to_i,
-               'start' => page_number-1,
+               'start' => solr_start,
                'docs' => solr_docs
             },
             'highlighting' => hl_hash
@@ -161,6 +164,11 @@ module EBSCO
       # Current page number for the results. Returns an integer.
       def page_number
         @results['SearchRequest']['RetrievalCriteria']['PageNumber'] || 1
+      end
+
+      # Results per page. Returns an integer.
+      def results_per_page
+        @results['SearchRequest']['RetrievalCriteria']['ResultsPerPage'] || 20
       end
 
       # List of facets applied to the search.
