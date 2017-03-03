@@ -27,7 +27,7 @@ class EdsApiTests < Minitest::Test
   def test_remove_all_publications
     session = EBSCO::EDS::Session.new
     if session.publication_match_in_profile
-      results = session.search({query: 'earthquake', results_per_page: 1})
+      session.search({query: 'earthquake', results_per_page: 1})
       results2 = session.add_publication('eric')
       assert results2.applied_publications.length != []
       results3 = session.remove_all_publications

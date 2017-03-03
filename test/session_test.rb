@@ -21,13 +21,13 @@ class EdsApiTests < Minitest::Test
           session = EBSCO::EDS::Session.new
           assert session.session_token != nil, 'Expected session token not to be nil.'
         else
-          e = assert_raises EBSCO::EDS::BadRequest do
+          assert_raises EBSCO::EDS::BadRequest do
             EBSCO::EDS::Session.new
           end
           #assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
         end
       else
-        e = assert_raises EBSCO::EDS::BadRequest do
+        assert_raises EBSCO::EDS::BadRequest do
           EBSCO::EDS::Session.new
         end
         #assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
@@ -45,25 +45,23 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_with_unknown_profile
-    e = assert_raises EBSCO::EDS::BadRequest do
+    assert_raises EBSCO::EDS::BadRequest do
       EBSCO::EDS::Session.new({:profile => 'eds-none'})
     end
   end
 
   def test_create_session_failed_user_credentials
-    ClimateControl.modify EDS_AUTH: 'user' do
-      e = assert_raises EBSCO::EDS::BadRequest do
-        EBSCO::EDS::Session.new({:profile => 'eds-api', :auth => 'user', :user => 'fake', :pass => 'none', :guest => false, :org => 'test'})
+      assert_raises EBSCO::EDS::BadRequest do
+         EBSCO::EDS::Session.new({:profile => 'eds-api', :auth => 'user', :user => 'fake', :pass => 'none',
+                                      :guest => false, :org => 'test'})
       end
-    end
   end
 
   def test_api_request_with_unsupported_method
     session = EBSCO::EDS::Session.new
-    e = assert_raises EBSCO::EDS::ApiError do
+    assert_raises EBSCO::EDS::ApiError do
       session.do_request(:put, path: 'testing')
     end
-    #assert e.message.include? "EBSCO API error:\nMethod put not supported for endpoint testing"
     session.end
   end
 

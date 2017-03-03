@@ -635,17 +635,33 @@ module EBSCO
 
       def bib_publication_date
         _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
-        _date['Y'] + '-' + _date['M'] + '-' + _date['D']
+        if _date
+          if _date.has_key?('Y') && _date.has_key?('M') && _date.has_key?('D')
+            _date['Y'] + '-' + _date['M'] + '-' + _date['D']
+          else
+            nil
+          end
+        else
+          nil
+        end
       end
 
       def bib_publication_year
         _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
-        _date['Y']
+        if _date
+          _date.has_key?('Y') ? _date['Y'] : nil
+        else
+          nil
+        end
       end
 
       def bib_publication_month
         _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
-        _date['M']
+        if _date
+          _date.has_key?('M') ? _date['M'] : nil
+        else
+          nil
+        end
       end
 
       def bib_volume
@@ -654,6 +670,14 @@ module EBSCO
 
       def bib_issue
         @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
+      end
+
+      def to_hash
+        hash = {}
+        hash['id'] = database_id + '-' + accession_number
+        hash['title_display'] = title.gsub('&lt;highlight&gt;', '').gsub('&lt;/highlight&gt;', '')
+        hash['pub_date'] = publication_year
+        hash
       end
 
     end # Class Record

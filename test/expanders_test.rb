@@ -40,6 +40,7 @@ class EdsApiTests < Minitest::Test
   def test_clear_expanders
     session = EBSCO::EDS::Session.new
     results = session.search({query: 'patriots', results_per_page: 1, expanders: ['thesaurus']})
+    refute_nil results
     results2 = session.add_expander('thesaurus,fulltext,relatedsubjects')
     assert results2.applied_expanders.length == 3
     results3 = session.clear_expanders

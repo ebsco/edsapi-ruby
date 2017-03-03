@@ -66,6 +66,61 @@ module EBSCO
   
       end
 
+      # returns solr search response format
+      def to_solr
+
+        solr_start = (page_number-1) * results_per_page
+        hl_hash = {}
+        solr_docs = []
+
+        if stat_total_hits > 0
+          @records.each { |record|
+
+            # todo: add solr hl.tag.pre and hl.tag.post to retrieval criteria
+            if retrieval_criteria.fetch('Highlight',{}) == 'y'
+              hl_title = record.title.gsub('&lt;highlight&gt;', '<em>').gsub('&lt;/highlight&gt;', '</em>')
+              hl_hash.update({ record.database_id + '-' + record.accession_number => { 'title_display' => [hl_title]} })
+              #hl_hash.merge title_hl
+            end
+
+            solr_docs.push(record.to_hash)
+          }
+        end
+
+        # solr response
+        {
+            'responseHeader' => {
+              'status' => 0,
+              'QTime' => stat_total_time,
+              'params' => {
+                  'q' => search_terms.join(' '),
+                  'wt' => 'ruby',
+                  'start' => solr_start,
+                  'rows' => results_per_page,
+                  'facet' => true,
+                  'f.subject_topic_facet.facet.limit' => 21,
+                  'f.language_facet.facet.limit' => 11,
+
+              }
+            },
+            'response' => {
+               'numFound' => stat_total_hits.to_i,
+               'start' => solr_start,
+               'docs' => solr_docs
+            },
+            'highlighting' => hl_hash,
+            'facet_counts' =>
+                {
+                    'facet_fields' => {
+                        'format' => solr_facets('SourceType'),
+                        'language_facet' => solr_facets('Language'),
+                        'subject_topic_facet' => solr_facets('SubjectEDS')
+                    }
+                }
+        }
+
+      end
+
       # Total number of results found.
       def stat_total_hits
         _hits = @results.fetch('SearchResult',{}).fetch('Statistics',{}).fetch('TotalHits',{})
@@ -121,6 +176,11 @@ module EBSCO
       # Current page number for the results. Returns an integer.
       def page_number
         @results['SearchRequest']['RetrievalCriteria']['PageNumber'] || 1
+      end
+
+      # Results per page. Returns an integer.
+      def results_per_page
+        @results['SearchRequest']['RetrievalCriteria']['ResultsPerPage'] || 20
       end
 
       # List of facets applied to the search.
@@ -254,6 +314,21 @@ module EBSCO
         facets_hash
       end
 
+      def solr_facets (facet_provided_id = 'all')
+        facet_values = []
+        available_facets = @results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+        available_facets.each do |available_facet|
+          if available_facet['Id'] == facet_provided_id || facet_provided_id == 'all'
+            available_facet['AvailableFacetValues'].each do |available_facet_value|
+              facet_value = available_facet_value['Value']
+              facet_count = available_facet_value['Count']
+              facet_values.push(facet_value, facet_count)
+            end
+          end
+        end
+        facet_values
+      end
+
       # Returns a hash of the date range available for the search.
       # ==== Example
       #   {:mindate=>"1501-01", :maxdate=>"2018-04", :minyear=>"1501", :maxyear=>"2018"}
@@ -284,9 +359,11 @@ module EBSCO
       def search_terms
         terms = []
         queries = @results.fetch('SearchRequest',{}).fetch('SearchCriteriaWithActions',{}).fetch('QueriesWithAction',{})
-        queries.each do |query|
-          query['Query']['Term'].split.each do |word|
-            terms.push(word)
+        unless queries.nil?
+          queries.each do |query|
+            query['Query']['Term'].split.each do |word|
+              terms.push(word)
+            end
           end
         end
         terms
