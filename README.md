@@ -7,6 +7,10 @@ A Ruby interface to the EBSCO Discovery Services API.
 [![Dependency Status](https://gemnasium.com/badges/github.com/ebsco/edsapi-ruby.svg)](https://gemnasium.com/github.com/ebsco/edsapi-ruby)
 [![Gitter](https://badges.gitter.im/ebsco/edsapi-ruby.svg)](https://gitter.im/ebsco/edsapi-ruby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+## Dependencies
+
+* Ruby 2.1+
+
 ## Installation
 
 Add this line to your application's Gemfile:
