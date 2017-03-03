@@ -94,9 +94,13 @@ module EBSCO
               'QTime' => stat_total_time,
               'params' => {
                   'q' => search_terms.join(' '),
-                  'wt' => 'json',
+                  'wt' => 'ruby',
                   'start' => solr_start,
-                  'rows' => results_per_page
+                  'rows' => results_per_page,
+                  'facet' => true,
+                  'f.subject_topic_facet.facet.limit' => 21,
+                  'f.language_facet.facet.limit' => 11,
+
               }
             },
             'response' => {
@@ -104,7 +108,15 @@ module EBSCO
                'start' => solr_start,
                'docs' => solr_docs
             },
-            'highlighting' => hl_hash
+            'highlighting' => hl_hash,
+            'facet_counts' =>
+                {
+                    'facet_fields' => {
+                        'format' => solr_facets('SourceType'),
+                        'language_facet' => solr_facets('Language'),
+                        'subject_topic_facet' => solr_facets('SubjectEDS')
+                    }
+                }
         }
 
       end
@@ -300,6 +312,21 @@ module EBSCO
           end
         end
         facets_hash
+      end
+
+      def solr_facets (facet_provided_id = 'all')
+        facet_values = []
+        available_facets = @results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+        available_facets.each do |available_facet|
+          if available_facet['Id'] == facet_provided_id || facet_provided_id == 'all'
+            available_facet['AvailableFacetValues'].each do |available_facet_value|
+              facet_value = available_facet_value['Value']
+              facet_count = available_facet_value['Count']
+              facet_values.push(facet_value, facet_count)
+            end
+          end
+        end
+        facet_values
       end
 
       # Returns a hash of the date range available for the search.

@@ -10,12 +10,45 @@ module EBSCO
       def initialize(options = {}, info)
   
         @SearchCriteria = EBSCO::EDS::SearchCriteria.new(options, info)
-  
+
         @RetrievalCriteria = EBSCO::EDS::RetrievalCriteria.new(options, info)
   
         @Actions = []
-        if options.has_key? :actions
-          add_actions(options[:actions], info)
+
+        options.each do |key, value|
+
+          case key
+
+            when :actions
+              add_actions(options[:actions], info)
+
+            # solr facet translation
+            # "f"=>{"format"=>["eBooks"]}
+            when 'f'
+              if value.has_key?('format')
+                format_list = value['format']
+                format_list.each do |item|
+                  @Actions.push "addfacetfilter(SourceType:#{item})"
+                end
+              end
+              if value.has_key?('language_facet')
+                lang_list = value['language_facet']
+                lang_list.each do |item|
+                  @Actions.push "addfacetfilter(Language:#{item})"
+                end
+              end
+              if value.has_key?('subject_topic_facet')
+                subj_list = value['subject_topic_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(SubjectEDS:#{item})"
+                end
+              end
+
+              puts 'ACTIONS: ' + @Actions.inspect
+
+            else
+
+          end
         end
   
       end
@@ -61,7 +94,6 @@ module EBSCO
                     :RelatedContent, :AutoSuggest, :Expanders
   
       def initialize(options = {}, info)
-
 
         # defaults
         @SearchMode = info.default_search_mode
@@ -273,6 +305,7 @@ module EBSCO
             # ====================================================================================
             when :page_number, 'page'
               @PageNumber = value.to_i
+              puts 'NEW PAGE: ' + @PageNumber.inspect
             # solr starts at page 0
             when 'start'
               @PageNumber = value.to_i + 1
