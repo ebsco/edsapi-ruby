@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['bmckinney@ebsco.com, efrierson@ebsco.com']
   spec.summary       = 'Summary: EBSCO EDS API'
   spec.description   = 'Description: EBSCO EDS API'
-  spec.homepage      = 'https://ebsco.com/ruby'
+  spec.homepage      = 'https://github.com/ebsco/edsapi-ruby'
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -33,13 +33,13 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday-detailed_logger', '~> 2.0'
   spec.add_dependency 'faraday_middleware', '~> 0.11'
   spec.add_dependency 'logger', '~> 1.2'
-  spec.add_dependency 'dotenv', '~> 0.11'
+  spec.add_dependency 'dotenv', '~> 2.2'
   spec.add_dependency 'climate_control', '~> 0'
   spec.add_dependency 'require_all', '~> 1.3'
   spec.add_dependency 'bibtex-ruby', '~> 4.0'
 
   spec.add_development_dependency 'bundler', '~> 1.13'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'simplecov', '~> 0'
   spec.add_development_dependency 'codecov', '~> 0.1'

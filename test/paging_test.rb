@@ -45,7 +45,7 @@ class EdsApiTests < Minitest::Test
     results = session.search({query: 'economic development'})
     assert results.page_number == 1
     last_page = (results.stat_total_hits / results.retrieval_criteria['ResultsPerPage']).ceil
-    e = assert_raises EBSCO::EDS::BadRequest do
+    assert_raises EBSCO::EDS::BadRequest do
       session.get_page(last_page + 1)
     end
     #assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"
@@ -55,7 +55,7 @@ class EdsApiTests < Minitest::Test
     session = EBSCO::EDS::Session.new
     results = session.search({query: 'megaenzymes', results_per_page: 100})
     assert results.page_number == 1
-    e = assert_raises EBSCO::EDS::BadRequest do
+    assert_raises EBSCO::EDS::BadRequest do
       session.get_page(10)
     end
     #assert e.message.include? "Number: 138\nDescription: Max Record Retrieval Exceeded"

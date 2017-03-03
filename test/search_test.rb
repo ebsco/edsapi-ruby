@@ -29,9 +29,9 @@ class EdsApiTests < Minitest::Test
 
   def test_missing_query
     session = EBSCO::EDS::Session.new
-    assert_raises EBSCO::EDS::InvalidParameter do
-      session.search()
-    end
+    results = session.search
+    refute_nil results
+    assert results.stat_total_hits == 0
     session.end
   end
 
@@ -106,17 +106,20 @@ class EdsApiTests < Minitest::Test
   def test_unknown_related_content_type
     session = EBSCO::EDS::Session.new
     results = session.search({query: 'abraham lincoln', results_per_page: 5, related_content: ['bogus','also bogus']})
+    refute_nil results
+    session.end
   end
 
   def test_setter_methods
     session = EBSCO::EDS::Session.new
-    results = session.search({query: 'volcano'})
-    results = session.set_sort('date')
-    results = session.set_search_mode('any')
-    results = session.set_view('title')
-    results = session.set_highlight('n')
-    results = session.results_per_page(2)
+    session.search({query: 'volcano'})
+    session.set_sort('date')
+    session.set_search_mode('any')
+    session.set_view('title')
+    session.set_highlight('n')
+    session.results_per_page(2)
     results = session.include_related_content('rs')
+    refute_nil results
     session.end
   end
 
