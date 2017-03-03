@@ -305,7 +305,7 @@ module EBSCO
             # ====================================================================================
             when :page_number, 'page'
               @PageNumber = value.to_i
-              puts 'NEW PAGE: ' + @PageNumber.inspect
+              # puts 'NEW PAGE: ' + @PageNumber.inspect
             # solr starts at page 0
             when 'start'
               @PageNumber = value.to_i + 1
