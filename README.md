@@ -31,6 +31,7 @@ Or install it yourself as:
 
 - [Configuration](https://github.com/ebsco/edsapi-ruby/wiki/Configuration)
 - [Quick Start](https://github.com/ebsco/edsapi-ruby/wiki/Quick-Start)
+- [Blacklight Support](https://github.com/ebsco/edsapi-ruby/wiki/Solr-and-Blacklight-Support)
 
 ### Models
 
