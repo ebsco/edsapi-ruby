@@ -672,11 +672,15 @@ module EBSCO
         @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
       end
 
+      # this is used to generate solr fields
       def to_hash
         hash = {}
         hash['id'] = database_id + '-' + accession_number
         hash['title_display'] = title.gsub('&lt;highlight&gt;', '').gsub('&lt;/highlight&gt;', '')
         hash['pub_date'] = publication_year
+        hash['author_display'] = authors.to_s
+        hash['format'] = publication_type.to_s
+        hash['language_facet'] = languages.join(', ')
         hash
       end
 
