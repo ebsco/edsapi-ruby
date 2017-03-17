@@ -57,8 +57,8 @@ module EBSCO
       #   }
       def initialize(options = {})
 
-        @auth_token = ''
         @session_token = ''
+        @auth_token = ''
 
         if options.has_key? :user
           @user = options[:user]
@@ -100,8 +100,19 @@ module EBSCO
         end
 
         @max_retries = MAX_ATTEMPTS
-        @auth_token = create_auth_token
-        @session_token = create_session_token
+
+        if options.has_key? :auth_token
+          @auth_token = options[:auth_token]
+        else
+          @auth_token = create_auth_token
+        end
+
+        if options.has_key? :session_token
+          @session_token = options[:session_token]
+        else
+          @session_token = create_session_token
+        end
+
         @info = EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
         @current_page = 0
         @search_options = nil
