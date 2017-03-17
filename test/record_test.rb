@@ -25,7 +25,7 @@ class EdsApiTests < Minitest::Test
       refute_nil record.issns
       assert record.doi == '10.1038/nchembio.1883'
       assert record.bib_doi == '10.1038/nchembio.1883'
-      assert record.subjects.include? 'Enterobactin'
+      assert record.subjects.include? 'ENTEROBACTIN'
       assert record.volume == '11'
       assert record.issue == '9'
       assert record.publication_date == '2015-09-01'
