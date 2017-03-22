@@ -154,7 +154,7 @@ module EBSCO
         end
         #puts JSON.pretty_generate(@search_options)
         _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
-        @search_results = EBSCO::EDS::Results.new(_response)
+        @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters)
         @current_page = @search_results.page_number
         @search_results
       end

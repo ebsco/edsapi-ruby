@@ -22,9 +22,10 @@ module EBSCO
 
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
-      def initialize(search_results)
+      def initialize(search_results, additional_limiters = {})
   
         @results = search_results
+        @limiters = additional_limiters
 
         # convert all results to a list of records
         @records = []
@@ -79,7 +80,7 @@ module EBSCO
             # todo: add solr hl.tag.pre and hl.tag.post to retrieval criteria
             if retrieval_criteria.fetch('Highlight',{}) == 'y'
               hl_title = record.title.gsub('&lt;highlight&gt;', '<em>').gsub('&lt;/highlight&gt;', '</em>')
-              hl_hash.update({ record.database_id + '-' + record.accession_number => { 'title_display' => [hl_title]} })
+              hl_hash.update({ record.database_id + '__' + record.accession_number => { 'title_display' => [hl_title]} })
               #hl_hash.merge title_hl
             end
 
@@ -112,13 +113,40 @@ module EBSCO
             'facet_counts' =>
                 {
                     'facet_fields' => {
+                        'search_limiters' => solr_search_limiters,
                         'format' => solr_facets('SourceType'),
                         'language_facet' => solr_facets('Language'),
-                        'subject_topic_facet' => solr_facets('SubjectEDS')
+                        'subject_topic_facet' => solr_facets('SubjectEDS'),
+                        'publisher_facet' => solr_facets('Publisher'),
+                        'journal_facet' => solr_facets('Journal'),
+                        'geographic_facet' => solr_facets('SubjectGeographic'),
+                        'category_facet' => solr_facets('Category'),
+                        'content_provider_facet' => solr_facets('ContentProvider'),
+                        'library_location_facet' => solr_facets('LocationLibrary')
                     }
                 }
         }
 
+      end
+
+      # Translate limiters found in calls to Info endpoint into solr facet fields if they are turned on
+      def solr_search_limiters
+        search_limiters = []
+        if stat_total_hits.to_i > 0
+          _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
+          if _ft_limiter['DefaultOn'] == 'y'
+            search_limiters.push('Full Text').push('')
+          end
+          _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
+          if _rv_limiter['DefaultOn'] == 'y'
+            search_limiters.push('Peer Reviewed').push('')
+          end
+          _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
+          if _ft1_limiter['DefaultOn'] == 'y'
+            search_limiters.push('Available in Library Collection').push('')
+          end
+        end
+        search_limiters
       end
 
       # Total number of results found.

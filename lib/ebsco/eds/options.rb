@@ -43,8 +43,56 @@ module EBSCO
                   @Actions.push "addfacetfilter(SubjectEDS:#{item})"
                 end
               end
-
-              puts 'ACTIONS: ' + @Actions.inspect
+              if value.has_key?('geographic_facet')
+                subj_list = value['geographic_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(SubjectGeographic:#{item})"
+                end
+              end
+              if value.has_key?('publisher_facet')
+                subj_list = value['publisher_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(Publisher:#{item})"
+                end
+              end
+              if value.has_key?('journal_facet')
+                subj_list = value['journal_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(Journal:#{item})"
+                end
+              end
+              if value.has_key?('category_facet')
+                subj_list = value['category_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(Category:#{item})"
+                end
+              end
+              if value.has_key?('content_provider_facet')
+                subj_list = value['content_provider_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(ContentProvider:#{item})"
+                end
+              end
+              if value.has_key?('library_location_facet')
+                subj_list = value['library_location_facet']
+                subj_list.each do |item|
+                  @Actions.push "addfacetfilter(LocationLibrary:#{item})"
+                end
+              end
+              if value.has_key?('search_limiters')
+                subj_list = value['search_limiters']
+                subj_list.each do |item|
+                  if item == 'Full Text'
+                    @Actions.push "addlimiter(FT:y)"
+                  end
+                  if item == 'Peer Reviewed'
+                    @Actions.push "addlimiter(RV:y)"
+                  end
+                  if item == 'Available in Library Collection'
+                    @Actions.push "addlimiter(FT1:y)"
+                  end
+                end
+              end
 
             else
 
@@ -260,7 +308,6 @@ module EBSCO
 
           end
 
-
         end
 
       end
@@ -323,14 +370,12 @@ module EBSCO
                 @Highlight = 'n'
               end
 
-
             else
 
           end
 
         end
 
-  
       end
   
     end

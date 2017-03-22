@@ -675,13 +675,50 @@ module EBSCO
       # this is used to generate solr fields
       def to_hash
         hash = {}
-        hash['id'] = database_id + '-' + accession_number
-        hash['title_display'] = title.gsub('&lt;highlight&gt;', '').gsub('&lt;/highlight&gt;', '')
-        hash['pub_date'] = publication_year
-        hash['author_display'] = authors.to_s
-        hash['format'] = publication_type.to_s
-        hash['language_facet'] = languages.join(', ')
+        if database_id && accession_number
+          safe_an = accession_number.gsub(/\./,'_')
+          hash['id'] = database_id + '__' + safe_an
+        end
+        if !title.nil?
+          hash['title_display'] = title.gsub('&lt;highlight&gt;', '').gsub('&lt;/highlight&gt;', '')
+        end
+        if publication_year
+          hash['pub_date'] = publication_year
+        end
+        if authors
+          hash['author_display'] = authors.to_s
+        end
+        if publication_type
+          hash['format'] = publication_type.to_s
+        end
+        if languages
+          if languages.kind_of?(Array)
+            hash['language_facet'] = languages.join(', ')
+          else
+            hash['language_facet'] = languages.to_s
+          end
+        end
+        if publisher_info
+          hash['pub_info'] = publisher_info
+        end
+        if abstract
+          hash['abstract'] = abstract
+        end
         hash
+      end
+
+      def to_solr
+        # solr response
+        {
+            'responseHeader' => {
+                'status' => 0
+           },
+            'response' => {
+                'numFound' => 1,
+                'start' => 0,
+                'docs' => [to_hash]
+            }
+        }
       end
 
     end # Class Record
