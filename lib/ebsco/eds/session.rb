@@ -59,6 +59,7 @@ module EBSCO
 
         @session_token = ''
         @auth_token = ''
+        @guest = 'y'
 
         if options.has_key? :user
           @user = options[:user]
@@ -148,15 +149,22 @@ module EBSCO
       #   results = session.search({query: 'volcano', results_per_page: 1, publication_id: 'eric', include_facets: false})
       def search(options = {}, add_actions = false)
 
-        # create/recreate the search options if nil or not passing actions
-        if @search_options.nil? || !add_actions
-          @search_options = EBSCO::EDS::Options.new(options, @info)
+        # Only perform a search when there are query terms since certain EDS profiles will throw errors when
+        # given empty queries
+        if (options.keys & %w[query q]).any?
+          # create/recreate the search options if nil or not passing actions
+          if @search_options.nil? || !add_actions
+            @search_options = EBSCO::EDS::Options.new(options, @info)
+          end
+          # puts JSON.pretty_generate(@search_options)
+          _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
+          @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
+          @current_page = @search_results.page_number
+          @search_results
+        else
+          @search_results = EBSCO::EDS::Results.new(empty_results)
         end
-        #puts JSON.pretty_generate(@search_options)
-        _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
-        @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters)
-        @current_page = @search_results.page_number
-        @search_results
+
       end
 
       # :category: Search & Retrieve Methods
@@ -627,6 +635,44 @@ module EBSCO
       # helper methods
       def blank?(var)
         var.nil? || var.respond_to?(:length) && var.length == 0
+      end
+
+      # used to reliably create empty results when there are no search terms provided
+      def empty_results
+        {
+            'SearchRequest'=>
+                {
+                    'SearchCriteria'=>
+                        {
+                            'Queries'=>nil,
+                            'SearchMode'=>'',
+                            'IncludeFacets'=>'y',
+                            'Sort'=>'relevance',
+                            'AutoSuggest'=>'n'
+                        },
+                    'RetrievalCriteria'=>
+                        {
+                            'View'=>'brief',
+                            'ResultsPerPage'=>20,
+                            'Highlight'=>'y'
+                        },
+                    'SearchCriteriaWithActions'=>
+                        {
+                            'QueriesWithAction'=>nil
+                        }
+                },
+            'SearchResult'=>
+                {
+                    'Statistics'=>
+                        {
+                            'TotalHits'=>0,
+                            'TotalSearchTime'=>62,
+                            'Databases'=>[]
+                        },
+                    'Data'=> {'RecordFormat'=>'EP Display'},
+                    'AvailableCriteria'=>{'DateRange'=>{'MinDate'=>'0001-01', 'MaxDate'=>'0001-01'}}
+                }
+        }
       end
 
     end

@@ -26,20 +26,20 @@ module EBSCO
 
         @items = @record.fetch('Items', {})
 
-        @bib_entity = @record.fetch('RecordInfo', {})
-                          .fetch('BibRecord', {})
-                          .fetch('BibEntity', {})
+        # @bib_entity = @record.fetch('RecordInfo', {})
+        #                   .fetch('BibRecord', {})
+        #                   .fetch('BibEntity', {})
+        #
+        # @bib_relationships = @record.fetch('RecordInfo', {})
+        #                          .fetch('BibRecord', {})
+        #                          .fetch('BibRelationships', {})
+        #
+        # @bib_part = @record.fetch('RecordInfo', {})
+        #                   .fetch('BibRecord', {})
+        #                   .fetch('BibRelationships', {})
+        #                   .fetch('IsPartOfRelationships', {})[0]
 
-        @bib_relationships = @record.fetch('RecordInfo', {})
-                                 .fetch('BibRecord', {})
-                                 .fetch('BibRelationships', {})
-
-        @bib_part = @record.fetch('RecordInfo', {})
-                          .fetch('BibRecord', {})
-                          .fetch('BibRelationships', {})
-                          .fetch('IsPartOfRelationships', {})[0]
-
-        @bibtex = BibTeX::Entry.new
+        #@bibtex = BibTeX::Entry.new
       end
 
       # \Options hash containing accession number and database ID. This can be passed to the retrieve method.
@@ -77,7 +77,11 @@ module EBSCO
 
       # The title.
       def title
-        get_item_data_by_name('Title') || bib_title
+        _title = get_item_data_by_name('Title') || bib_title
+        if _title.nil?
+          _title = 'This title is unavailable for guests, please login to see more information.'
+        end
+        _title
       end
 
       # The source title (e.g., Journal)
@@ -553,23 +557,43 @@ module EBSCO
       # ====================================================================================
 
       def bib_title
-        @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}['TitleFull']
+        if @bib_entity
+          @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}['TitleFull']
+        else
+          nil
+        end
       end
 
       def bib_authors
-        @bib_relationships.deep_find('NameFull').join('; ')
+        if @bib_relationships
+          @bib_relationships.deep_find('NameFull').join('; ')
+        else
+          nil
+        end
       end
 
       def bib_authors_list
-        @bib_relationships.deep_find('NameFull')
+        if @bib_relationships
+          @bib_relationships.deep_find('NameFull')
+        else
+          nil
+        end
       end
 
       def bib_subjects
-        @bib_entity.deep_find('SubjectFull')
+        if @bib_entity
+          @bib_entity.deep_find('SubjectFull')
+        else
+          nil
+        end
       end
 
       def bib_languages
-        @bib_entity.fetch('Languages', {}).map{|lang| lang['Text']}
+        if @bib_entity
+          @bib_entity.fetch('Languages', {}).map{|lang| lang['Text']}
+        else
+          nil
+        end
       end
 
       # def bib_pages
@@ -577,15 +601,27 @@ module EBSCO
       # end
 
       def bib_page_count
-        @bib_entity.deep_find('PageCount').first
+        if @bib_entity
+          @bib_entity.deep_find('PageCount').first
+        else
+          nil
+        end
       end
 
       def bib_page_start
-        @bib_entity.deep_find('StartPage').first
+        if @bib_entity
+          @bib_entity.deep_find('StartPage').first
+        else
+          nil
+        end
       end
 
       def bib_doi
-        @bib_entity.fetch('Identifiers',{}).find{|item| item['Type'] == 'doi'}['Value']
+        if @bib_entity
+          @bib_entity.fetch('Identifiers',{}).find{|item| item['Type'] == 'doi'}['Value']
+        else
+          nil
+        end
       end
 
       # ====================================================================================
@@ -593,51 +629,79 @@ module EBSCO
       # ====================================================================================
 
       def bib_source_title
-        @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).find{|item| item['Type'] == 'main'}['TitleFull']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).find{|item| item['Type'] == 'main'}['TitleFull']
+        else
+          nil
+        end
       end
 
       def bib_issn_print
-        @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-print'}['Value']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-print'}['Value']
+        else
+          nil
+        end
       end
 
       def bib_issn_electronic
-        @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-electronic'}['Value']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-electronic'}['Value']
+        else
+          nil
+        end
       end
 
       def bib_issns
         issns = []
-        @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).each do |id|
-          if id['Type'].include?('issn') && !id['Type'].include?('locals')
-            issns.push(id['Value'])
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).each do |id|
+            if id['Type'].include?('issn') && !id['Type'].include?('locals')
+              issns.push(id['Value'])
+            end
           end
         end
         issns
       end
 
       def bib_isbn_print
-        @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-print'}['Value']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-print'}['Value']
+        else
+          nil
+        end
       end
 
       def bib_isbn_electronic
-        @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-electronic'}['Value']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-electronic'}['Value']
+        else
+          nil
+        end
       end
 
       # todo: make this generic and take an optional parameter for type
       def bib_isbns
         isbns = []
-        @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).each do |id|
-          if id['Type'].include?('isbn') && !id['Type'].include?('locals')
-            isbns.push(id['Value'])
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).each do |id|
+            if id['Type'].include?('isbn') && !id['Type'].include?('locals')
+              isbns.push(id['Value'])
+            end
           end
         end
         isbns
       end
 
       def bib_publication_date
-        _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
-        if _date
-          if _date.has_key?('Y') && _date.has_key?('M') && _date.has_key?('D')
-            _date['Y'] + '-' + _date['M'] + '-' + _date['D']
+        if @bib_part
+          _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
+          if _date
+            if _date.has_key?('Y') && _date.has_key?('M') && _date.has_key?('D')
+              _date['Y'] + '-' + _date['M'] + '-' + _date['D']
+            else
+              nil
+            end
           else
             nil
           end
@@ -647,29 +711,45 @@ module EBSCO
       end
 
       def bib_publication_year
-        _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
-        if _date
-          _date.has_key?('Y') ? _date['Y'] : nil
+        if @bib_part
+          _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
+          if _date
+            _date.has_key?('Y') ? _date['Y'] : nil
+          else
+            nil
+          end
         else
           nil
         end
       end
 
       def bib_publication_month
-        _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
-        if _date
-          _date.has_key?('M') ? _date['M'] : nil
+        if @bib_part
+          _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
+          if _date
+            _date.has_key?('M') ? _date['M'] : nil
+          else
+            nil
+          end
         else
           nil
         end
       end
 
       def bib_volume
-        @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'volume'}['Value']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'volume'}['Value']
+        else
+          nil
+        end
       end
 
       def bib_issue
-        @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
+        if @bib_part
+          @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
+        else
+          nil
+        end
       end
 
       # this is used to generate solr fields

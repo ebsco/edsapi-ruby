@@ -22,6 +22,11 @@ module EBSCO
             when :actions
               add_actions(options[:actions], info)
 
+            # SOLR: Need to add page actions whenever other actions are present since the other actions
+            # will always reset the page to 1 even though a PageNumber is present in RetrievalCriteria.
+            when 'page'
+              @Actions.push "GoToPage(#{value.to_i})"
+
             # solr facet translation
             # "f"=>{"format"=>["eBooks"]}
             when 'f'
@@ -140,7 +145,7 @@ module EBSCO
       include JSONable
       attr_accessor :Queries, :SearchMode, :IncludeFacets, :FacetFilters, :Limiters, :Sort, :PublicationId,
                     :RelatedContent, :AutoSuggest, :Expanders
-  
+
       def initialize(options = {}, info)
 
         # defaults
@@ -352,7 +357,6 @@ module EBSCO
             # ====================================================================================
             when :page_number, 'page'
               @PageNumber = value.to_i
-              # puts 'NEW PAGE: ' + @PageNumber.inspect
             # solr starts at page 0
             when 'start'
               @PageNumber = value.to_i + 1

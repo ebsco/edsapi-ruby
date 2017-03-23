@@ -22,15 +22,31 @@ module EBSCO
 
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
-      def initialize(search_results, additional_limiters = {})
+      def initialize(search_results, additional_limiters = {}, raw_options = {})
   
         @results = search_results
         @limiters = additional_limiters
+        @raw_options = raw_options
 
         # convert all results to a list of records
         @records = []
         if stat_total_hits > 0
-          @results['SearchResult']['Data']['Records'].each { |record| @records.push(EBSCO::EDS::Record.new(record)) }
+          @results['SearchResult']['Data']['Records'].each { |record|
+
+            @records.push(EBSCO::EDS::Record.new(record))
+
+            # # records hidden in guest mode
+            # if record['Header']['AccessLevel']
+            #   if record['Header']['AccessLevel'].to_i > 1
+            #     @records.push(EBSCO::EDS::Record.new(record))
+            #   else
+            #     @records.push(EBSCO::EDS::Record.new(record))
+            #   end
+            # else
+            #   @records.push(EBSCO::EDS::Record.new(record))
+            # end
+
+          }
         end
   
         # create a special list of research starter records
