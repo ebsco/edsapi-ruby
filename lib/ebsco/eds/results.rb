@@ -23,7 +23,7 @@ module EBSCO
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
       def initialize(search_results, additional_limiters = {}, raw_options = {})
-  
+
         @results = search_results
         @limiters = additional_limiters
         @raw_options = raw_options
@@ -48,7 +48,7 @@ module EBSCO
 
           }
         end
-  
+
         # create a special list of research starter records
         @research_starters = []
         _related_records = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedRecords',{})
@@ -64,7 +64,7 @@ module EBSCO
             end
           end
         end
-  
+
         # create a special list of exact match publications
         @publication_match = []
         _related_publications = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedPublications',{})
@@ -80,7 +80,7 @@ module EBSCO
             end
           end
         end
-  
+
       end
 
       # returns solr search response format
@@ -95,7 +95,7 @@ module EBSCO
 
             # todo: add solr hl.tag.pre and hl.tag.post to retrieval criteria
             if retrieval_criteria.fetch('Highlight',{}) == 'y'
-              hl_title = record.title.gsub('&lt;highlight&gt;', '<em>').gsub('&lt;/highlight&gt;', '</em>')
+              hl_title = record.title.gsub('<highlight>', '<em>').gsub('</highlight>', '</em>')
               hl_hash.update({ record.database_id + '__' + record.accession_number => { 'title_display' => [hl_title]} })
               #hl_hash.merge title_hl
             end
@@ -107,23 +107,23 @@ module EBSCO
         # solr response
         {
             'responseHeader' => {
-              'status' => 0,
-              'QTime' => stat_total_time,
-              'params' => {
-                  'q' => search_terms.join(' '),
-                  'wt' => 'ruby',
-                  'start' => solr_start,
-                  'rows' => results_per_page,
-                  'facet' => true,
-                  'f.subject_topic_facet.facet.limit' => 21,
-                  'f.language_facet.facet.limit' => 11,
+                'status' => 0,
+                'QTime' => stat_total_time,
+                'params' => {
+                    'q' => search_terms.join(' '),
+                    'wt' => 'ruby',
+                    'start' => solr_start,
+                    'rows' => results_per_page,
+                    'facet' => true,
+                    'f.subject_topic_facet.facet.limit' => 21,
+                    'f.language_facet.facet.limit' => 11,
 
-              }
+                }
             },
             'response' => {
-               'numFound' => stat_total_hits.to_i,
-               'start' => solr_start,
-               'docs' => solr_docs
+                'numFound' => stat_total_hits.to_i,
+                'start' => solr_start,
+                'docs' => solr_docs
             },
             'highlighting' => hl_hash,
             'facet_counts' =>
@@ -209,7 +209,7 @@ module EBSCO
       def retrieval_criteria
         @results['SearchRequest']['RetrievalCriteria']
       end
-  
+
       # Queries used to produce the results. Returns an array of query hashes.
       # ==== Example
       #    [{"BooleanOperator"=>"AND", "Term"=>"volcano"}]
@@ -412,7 +412,7 @@ module EBSCO
         end
         terms
       end
-  
+
     end
 
   end
