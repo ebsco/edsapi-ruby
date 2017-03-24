@@ -247,12 +247,20 @@ module EBSCO
 
       # Cover image - thumbnail size link
       def cover_thumb_url
-        images('thumb').first[:src]
+        if images('thumb').any?
+          images('thumb').first[:src]
+        else
+          nil
+        end
       end
 
       # Cover image - medium size link
       def cover_medium_url
-        images('medium').first[:src]
+        if images('medium').any?
+          images('medium').first[:src]
+        else
+          nil
+        end
       end
 
       # Word count for fulltext.
@@ -797,6 +805,12 @@ module EBSCO
         end
         if abstract
           hash['abstract'] = abstract
+        end
+        if cover_thumb_url
+          hash['cover_thumb_url'] = cover_thumb_url
+        end
+        if cover_medium_url
+          hash['cover_medium_url'] = cover_medium_url
         end
         hash
       end
