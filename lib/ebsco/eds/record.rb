@@ -26,20 +26,20 @@ module EBSCO
 
         @items = @record.fetch('Items', {})
 
-        # @bib_entity = @record.fetch('RecordInfo', {})
-        #                   .fetch('BibRecord', {})
-        #                   .fetch('BibEntity', {})
-        #
-        # @bib_relationships = @record.fetch('RecordInfo', {})
-        #                          .fetch('BibRecord', {})
-        #                          .fetch('BibRelationships', {})
-        #
-        # @bib_part = @record.fetch('RecordInfo', {})
-        #                   .fetch('BibRecord', {})
-        #                   .fetch('BibRelationships', {})
-        #                   .fetch('IsPartOfRelationships', {})[0]
+        @bib_entity = @record.fetch('RecordInfo', {})
+                          .fetch('BibRecord', {})
+                          .fetch('BibEntity', {})
 
-        #@bibtex = BibTeX::Entry.new
+        @bib_relationships = @record.fetch('RecordInfo', {})
+                                 .fetch('BibRecord', {})
+                                 .fetch('BibRelationships', {})
+
+        @bib_part = @record.fetch('RecordInfo', {})
+                          .fetch('BibRecord', {})
+                          .fetch('BibRelationships', {})
+                          .fetch('IsPartOfRelationships', {})[0]
+
+        @bibtex = BibTeX::Entry.new
       end
 
       # \Options hash containing accession number and database ID. This can be passed to the retrieve method.

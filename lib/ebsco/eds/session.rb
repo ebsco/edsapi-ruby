@@ -149,22 +149,32 @@ module EBSCO
       #   results = session.search({query: 'volcano', results_per_page: 1, publication_id: 'eric', include_facets: false})
       def search(options = {}, add_actions = false)
 
-        # Only perform a search when there are query terms since certain EDS profiles will throw errors when
-        # given empty queries
-        if (options.keys & %w[query q]).any?
-          # create/recreate the search options if nil or not passing actions
-          if @search_options.nil? || !add_actions
-            @search_options = EBSCO::EDS::Options.new(options, @info)
+        # use existing/updated SearchOptions
+        if options.empty?
+          if @search_options.nil?
+            @search_results = EBSCO::EDS::Results.new(empty_results)
+          else
+            _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
+            @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
+            @current_page = @search_results.page_number
+            @search_results
           end
-          # puts JSON.pretty_generate(@search_options)
-          _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
-          @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
-          @current_page = @search_results.page_number
-          @search_results
         else
-          @search_results = EBSCO::EDS::Results.new(empty_results)
+          # Only perform a search when there are query terms since certain EDS profiles will throw errors when
+          # given empty queries
+          if (options.keys & %w[query q]).any? || options.has_key?(:query)
+            # create/recreate the search options if nil or not passing actions
+            if @search_options.nil? || !add_actions
+              @search_options = EBSCO::EDS::Options.new(options, @info)
+            end
+            _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
+            @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
+            @current_page = @search_results.page_number
+            @search_results
+          else
+            @search_results = EBSCO::EDS::Results.new(empty_results)
+          end
         end
-
       end
 
       # :category: Search & Retrieve Methods
@@ -252,8 +262,8 @@ module EBSCO
       # ==== Examples
       #   results = session.add_actions('addfacetfilter(SubjectGeographic:massachusetts)')
       def add_actions(actions)
-        # todo: create search options if nil?
-        search(@search_options.add_actions(actions, @info), true)
+        @search_options.add_actions(actions, @info)
+        search()
       end
 
       # :category: Setter Methods
