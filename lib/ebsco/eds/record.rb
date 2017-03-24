@@ -530,21 +530,29 @@ module EBSCO
 
       # look up by 'Name' and return 'Data'
       def get_item_data_by_name(name)
-        _item_property = @items.find{|item| item['Name'] == name}
-        if _item_property.nil?
+        if @items.empty?
           nil
         else
-          _item_property['Data']
+          _item_property = @items.find{|item| item['Name'] == name}
+          if _item_property.nil?
+            nil
+          else
+            _item_property['Data']
+          end
         end
       end
 
       # look up by 'Label' and return 'Data'
       def get_item_data_by_label(label)
-        _item_property = @items.find{|item| item['Label'] == label}
-        if _item_property.nil?
+        if @items.empty?
           nil
         else
-          _item_property['Data']
+          _item_property = @items.find{|item| item['Label'] == label}
+          if _item_property.nil?
+            nil
+          else
+            _item_property['Data']
+          end
         end
       end
 
@@ -557,7 +565,7 @@ module EBSCO
       # ====================================================================================
 
       def bib_title
-        if @bib_entity
+        if @bib_entity && @bib_entity.fetch('Titles', {}).any?
           @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}['TitleFull']
         else
           nil
@@ -589,7 +597,7 @@ module EBSCO
       end
 
       def bib_languages
-        if @bib_entity
+        if @bib_entity && @bib_entity.fetch('Languages', {}).any?
           @bib_entity.fetch('Languages', {}).map{|lang| lang['Text']}
         else
           nil
@@ -617,7 +625,7 @@ module EBSCO
       end
 
       def bib_doi
-        if @bib_entity
+        if @bib_entity && @bib_entity.fetch('Identifiers',{}).any?
           @bib_entity.fetch('Identifiers',{}).find{|item| item['Type'] == 'doi'}['Value']
         else
           nil
@@ -629,7 +637,7 @@ module EBSCO
       # ====================================================================================
 
       def bib_source_title
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).find{|item| item['Type'] == 'main'}['TitleFull']
         else
           nil
@@ -637,7 +645,7 @@ module EBSCO
       end
 
       def bib_issn_print
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-print'}['Value']
         else
           nil
@@ -645,7 +653,7 @@ module EBSCO
       end
 
       def bib_issn_electronic
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-electronic'}['Value']
         else
           nil
@@ -654,7 +662,7 @@ module EBSCO
 
       def bib_issns
         issns = []
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).each do |id|
             if id['Type'].include?('issn') && !id['Type'].include?('locals')
               issns.push(id['Value'])
@@ -665,7 +673,7 @@ module EBSCO
       end
 
       def bib_isbn_print
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-print'}['Value']
         else
           nil
@@ -673,7 +681,7 @@ module EBSCO
       end
 
       def bib_isbn_electronic
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-electronic'}['Value']
         else
           nil
@@ -683,7 +691,7 @@ module EBSCO
       # todo: make this generic and take an optional parameter for type
       def bib_isbns
         isbns = []
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).each do |id|
             if id['Type'].include?('isbn') && !id['Type'].include?('locals')
               isbns.push(id['Value'])
@@ -694,7 +702,7 @@ module EBSCO
       end
 
       def bib_publication_date
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).any?
           _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
           if _date
             if _date.has_key?('Y') && _date.has_key?('M') && _date.has_key?('D')
@@ -711,7 +719,7 @@ module EBSCO
       end
 
       def bib_publication_year
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).any?
           _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
           if _date
             _date.has_key?('Y') ? _date['Y'] : nil
@@ -724,7 +732,7 @@ module EBSCO
       end
 
       def bib_publication_month
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).any?
           _date = @bib_part.fetch('BibEntity',{}).fetch('Dates',{}).find{|item| item['Type'] == 'published'}
           if _date
             _date.has_key?('M') ? _date['M'] : nil
@@ -737,7 +745,7 @@ module EBSCO
       end
 
       def bib_volume
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'volume'}['Value']
         else
           nil
@@ -745,7 +753,7 @@ module EBSCO
       end
 
       def bib_issue
-        if @bib_part
+        if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).any?
           @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
         else
           nil
