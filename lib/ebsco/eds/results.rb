@@ -11,11 +11,13 @@ module EBSCO
       # Raw results as Hash
       attr_reader :results
       # Array of EBSCO::EDS::Record results
-      attr_reader :records
+      attr_accessor :records
       # Array of EBSCO::EDS::Record Research Starters
       attr_reader :research_starters
       # Array of EBSCO::EDS::Record Exact Publication Matches
       attr_reader :publication_match
+
+      attr_accessor :stat_total_hits
 
       # Lookup table of databases that have their labels suppressed in the response.
       DBS = YAML::load_file(File.join(__dir__, 'settings.yml'))['databases']
@@ -23,14 +25,14 @@ module EBSCO
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
       def initialize(search_results, additional_limiters = {}, raw_options = {})
-  
+
         @results = search_results
         @limiters = additional_limiters
         @raw_options = raw_options
 
         # convert all results to a list of records
         @records = []
-        if stat_total_hits > 0
+        if @results['SearchResult']['Data']['Records']
           @results['SearchResult']['Data']['Records'].each { |record|
 
             @records.push(EBSCO::EDS::Record.new(record))
@@ -48,7 +50,7 @@ module EBSCO
 
           }
         end
-  
+
         # create a special list of research starter records
         @research_starters = []
         _related_records = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedRecords',{})
@@ -64,7 +66,7 @@ module EBSCO
             end
           end
         end
-  
+
         # create a special list of exact match publications
         @publication_match = []
         _related_publications = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedPublications',{})
@@ -80,7 +82,7 @@ module EBSCO
             end
           end
         end
-  
+
       end
 
       # returns solr search response format
@@ -90,55 +92,69 @@ module EBSCO
         hl_hash = {}
         solr_docs = []
 
-        if stat_total_hits > 0
+        if @records.any?
           @records.each { |record|
 
             # todo: add solr hl.tag.pre and hl.tag.post to retrieval criteria
-            if retrieval_criteria.fetch('Highlight',{}) == 'y'
-              hl_title = record.title.gsub('&lt;highlight&gt;', '<em>').gsub('&lt;/highlight&gt;', '</em>')
+            if retrieval_criteria && retrieval_criteria.fetch('Highlight',{}) == 'y'
+              hl_title = record.title.gsub('<highlight>', '<em>').gsub('</highlight>', '</em>')
               hl_hash.update({ record.database_id + '__' + record.accession_number => { 'title_display' => [hl_title]} })
               #hl_hash.merge title_hl
             end
-
             solr_docs.push(record.to_hash)
           }
         end
 
+        status = 0
+        wt = 'ruby'
+        qtime = stat_total_time
+        qterms = search_terms.join(' ')
+        rows = results_per_page
+        num_found = stat_total_hits.to_i
+        search_limiters = solr_search_limiters
+        format = solr_facets('SourceType')
+        language_facet = solr_facets('Language')
+        subject_topic_facet = solr_facets('SubjectEDS')
+        publisher_facet = solr_facets('Publisher')
+        journal_facet = solr_facets('Journal')
+        geographic_facet = solr_facets('SubjectGeographic')
+        category_facet = solr_facets('Category')
+        content_provider_facet = solr_facets('ContentProvider')
+        library_location_facet = solr_facets('LocationLibrary')
+        facet = true
+
         # solr response
         {
             'responseHeader' => {
-              'status' => 0,
-              'QTime' => stat_total_time,
-              'params' => {
-                  'q' => search_terms.join(' '),
-                  'wt' => 'ruby',
-                  'start' => solr_start,
-                  'rows' => results_per_page,
-                  'facet' => true,
-                  'f.subject_topic_facet.facet.limit' => 21,
-                  'f.language_facet.facet.limit' => 11,
-
-              }
+                'status' => status,
+                'QTime' => qtime,
+                'params' => {
+                    'q' => qterms,
+                    'wt' => wt,
+                    'start' => solr_start,
+                    'rows' => rows,
+                    'facet' => facet
+                }
             },
             'response' => {
-               'numFound' => stat_total_hits.to_i,
-               'start' => solr_start,
-               'docs' => solr_docs
+                'numFound' => num_found,
+                'start' => solr_start,
+                'docs' => solr_docs
             },
             'highlighting' => hl_hash,
             'facet_counts' =>
                 {
                     'facet_fields' => {
-                        'search_limiters' => solr_search_limiters,
-                        'format' => solr_facets('SourceType'),
-                        'language_facet' => solr_facets('Language'),
-                        'subject_topic_facet' => solr_facets('SubjectEDS'),
-                        'publisher_facet' => solr_facets('Publisher'),
-                        'journal_facet' => solr_facets('Journal'),
-                        'geographic_facet' => solr_facets('SubjectGeographic'),
-                        'category_facet' => solr_facets('Category'),
-                        'content_provider_facet' => solr_facets('ContentProvider'),
-                        'library_location_facet' => solr_facets('LocationLibrary')
+                        'search_limiters' => search_limiters,
+                        'format' => format,
+                        'language_facet' => language_facet,
+                        'subject_topic_facet' => subject_topic_facet,
+                        'publisher_facet' => publisher_facet,
+                        'journal_facet' => journal_facet,
+                        'geographic_facet' => geographic_facet,
+                        'category_facet' => category_facet,
+                        'content_provider_facet' => content_provider_facet,
+                        'library_location_facet' => library_location_facet
                     }
                 }
         }
@@ -149,17 +165,19 @@ module EBSCO
       def solr_search_limiters
         search_limiters = []
         if stat_total_hits.to_i > 0
-          _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
-          if _ft_limiter['DefaultOn'] == 'y'
-            search_limiters.push('Full Text').push('')
-          end
-          _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
-          if _rv_limiter['DefaultOn'] == 'y'
-            search_limiters.push('Peer Reviewed').push('')
-          end
-          _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
-          if _ft1_limiter['DefaultOn'] == 'y'
-            search_limiters.push('Available in Library Collection').push('')
+          if @limiters.any?
+            _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
+            if _ft_limiter['DefaultOn'] == 'y'
+              search_limiters.push('Full Text').push('')
+            end
+            _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
+            if _rv_limiter['DefaultOn'] == 'y'
+              search_limiters.push('Peer Reviewed').push('')
+            end
+            _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
+            if _ft1_limiter['DefaultOn'] == 'y'
+              search_limiters.push('Available in Library Collection').push('')
+            end
           end
         end
         search_limiters
@@ -209,7 +227,7 @@ module EBSCO
       def retrieval_criteria
         @results['SearchRequest']['RetrievalCriteria']
       end
-  
+
       # Queries used to produce the results. Returns an array of query hashes.
       # ==== Example
       #    [{"BooleanOperator"=>"AND", "Term"=>"volcano"}]
@@ -412,7 +430,7 @@ module EBSCO
         end
         terms
       end
-  
+
     end
 
   end

@@ -213,6 +213,22 @@ module EBSCO
         EBSCO::EDS::Record.new(retrieve_response)
       end
 
+      def solr_retrieve_list(list: [], highlight: nil, ebook: 'ebook-pdf')
+        records = []
+        if list.any?
+          list.each { |id|
+            dbid = id.split('__').first
+            accession = id.split('__').last
+            accession.gsub!(/_/, '.')
+            records.push retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: ebook)
+          }
+        end
+        r = empty_results(records.length)
+        results = EBSCO::EDS::Results.new(r)
+        results.records = records
+        results.to_solr
+      end
+
       # :category: Search & Retrieve Methods
       # Invalidates the session token. End Session should be called when you know a user has logged out.
       def end
@@ -648,7 +664,7 @@ module EBSCO
       end
 
       # used to reliably create empty results when there are no search terms provided
-      def empty_results
+      def empty_results(hits = 0)
         {
             'SearchRequest'=>
                 {
@@ -675,8 +691,8 @@ module EBSCO
                 {
                     'Statistics'=>
                         {
-                            'TotalHits'=>0,
-                            'TotalSearchTime'=>62,
+                            'TotalHits'=>hits,
+                            'TotalSearchTime'=>0,
                             'Databases'=>[]
                         },
                     'Data'=> {'RecordFormat'=>'EP Display'},

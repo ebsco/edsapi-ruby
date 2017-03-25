@@ -1,6 +1,7 @@
 require 'yaml'
 require 'json'
 require 'bibtex'
+require 'cgi'
 
 module EBSCO
 
@@ -35,9 +36,9 @@ module EBSCO
                                  .fetch('BibRelationships', {})
 
         @bib_part = @record.fetch('RecordInfo', {})
-                          .fetch('BibRecord', {})
-                          .fetch('BibRelationships', {})
-                          .fetch('IsPartOfRelationships', {})[0]
+                        .fetch('BibRecord', {})
+                        .fetch('BibRelationships', {})
+                        .fetch('IsPartOfRelationships', {})[0]
 
         @bibtex = BibTeX::Entry.new
       end
@@ -77,31 +78,35 @@ module EBSCO
 
       # The title.
       def title
-        _title = get_item_data_by_name('Title') || bib_title
-        if _title.nil?
-          _title = 'This title is unavailable for guests, please login to see more information.'
+        _retval = get_item_data_by_name('Title') || bib_title
+        # todo: make this configurable
+        if _retval.nil?
+          _retval = 'This title is unavailable for guests, please login to see more information.'
         end
-        _title
+        CGI.unescapeHTML(_retval)
       end
 
       # The source title (e.g., Journal)
       def source_title
-        bib_source_title || get_item_data_by_name('TitleSource')
+        _retval = bib_source_title || get_item_data_by_name('TitleSource')
+        _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
       # Other alternative titles.
       def other_titles
-        get_item_data_by_name('TitleAlt')
+        _retval = get_item_data_by_name('TitleAlt')
+        _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
       # The abstract
       def abstract
-        get_item_data_by_name('Abstract')
+        _retval = get_item_data_by_name('Abstract')
+        _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
       # The list of authors
       def authors
-         bib_authors || get_item_data_by_name('Author')
+        bib_authors || get_item_data_by_name('Author')
       end
 
       # The author affiliations
@@ -131,7 +136,8 @@ module EBSCO
 
       # Notes
       def notes
-        get_item_data_by_name('Note')
+        _retval = get_item_data_by_name('Note')
+        _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
       # Languages
@@ -241,12 +247,20 @@ module EBSCO
 
       # Cover image - thumbnail size link
       def cover_thumb_url
-        images('thumb').first[:src]
+        if images('thumb').any?
+          images('thumb').first[:src]
+        else
+          nil
+        end
       end
 
       # Cover image - medium size link
       def cover_medium_url
-        images('medium').first[:src]
+        if images('medium').any?
+          images('medium').first[:src]
+        else
+          nil
+        end
       end
 
       # Word count for fulltext.
@@ -417,7 +431,7 @@ module EBSCO
 
         links
       end
-      
+
       #:nodoc: all
       # No need to document methods below
 
@@ -768,7 +782,7 @@ module EBSCO
           hash['id'] = database_id + '__' + safe_an
         end
         if !title.nil?
-          hash['title_display'] = title.gsub('&lt;highlight&gt;', '').gsub('&lt;/highlight&gt;', '')
+          hash['title_display'] = title.gsub('<highlight>', '').gsub('</highlight>', '')
         end
         if publication_year
           hash['pub_date'] = publication_year
@@ -792,6 +806,12 @@ module EBSCO
         if abstract
           hash['abstract'] = abstract
         end
+        if cover_thumb_url
+          hash['cover_thumb_url'] = cover_thumb_url
+        end
+        if cover_medium_url
+          hash['cover_medium_url'] = cover_medium_url
+        end
         hash
       end
 
@@ -800,7 +820,7 @@ module EBSCO
         {
             'responseHeader' => {
                 'status' => 0
-           },
+            },
             'response' => {
                 'numFound' => 1,
                 'start' => 0,
