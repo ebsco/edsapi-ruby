@@ -36,57 +36,66 @@ module EBSCO
                   @Actions.push "addfacetfilter(SourceType:#{item})"
                 end
               end
+
               if value.has_key?('language_facet')
                 lang_list = value['language_facet']
                 lang_list.each do |item|
                   @Actions.push "addfacetfilter(Language:#{item})"
                 end
               end
+
               if value.has_key?('subject_topic_facet')
                 subj_list = value['subject_topic_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(SubjectEDS:#{item})"
                 end
               end
+
               if value.has_key?('geographic_facet')
                 subj_list = value['geographic_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(SubjectGeographic:#{item})"
                 end
               end
+
               if value.has_key?('publisher_facet')
                 subj_list = value['publisher_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(Publisher:#{item})"
                 end
               end
+
               if value.has_key?('journal_facet')
                 subj_list = value['journal_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(Journal:#{item})"
                 end
               end
+
               if value.has_key?('category_facet')
                 subj_list = value['category_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(Category:#{item})"
                 end
               end
+
               if value.has_key?('content_provider_facet')
                 subj_list = value['content_provider_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(ContentProvider:#{item})"
                 end
               end
+
               if value.has_key?('library_location_facet')
                 subj_list = value['library_location_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(LocationLibrary:#{item})"
                 end
               end
+
               if value.has_key?('search_limiters')
-                subj_list = value['search_limiters']
-                subj_list.each do |item|
+                _list = value['search_limiters']
+                _list.each do |item|
                   if item == 'Full Text'
                     @Actions.push "addlimiter(FT:y)"
                   end
@@ -95,6 +104,34 @@ module EBSCO
                   end
                   if item == 'Available in Library Collection'
                     @Actions.push "addlimiter(FT1:y)"
+                  end
+                end
+              end
+
+              if value.has_key?('pub_date_facet')
+                _list = value['pub_date_facet']
+                _this_year = Date.today.year
+                _this_month = Date.today.month
+                _list.each do |item|
+                  if item == 'This year'
+                    _range = _this_year.to_s + '-01/' + _this_year.to_s + '-' + _this_month.to_s
+                    @Actions.push "addlimiter(DT1:#{_range})"
+                  end
+                  if item == 'Last 3 years'
+                    _range = (_this_year-3).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
+                    @Actions.push "addlimiter(DT1:#{_range})"
+                  end
+                  if item == 'Last 10 years'
+                    _range = (_this_year-10).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
+                    @Actions.push "addlimiter(DT1:#{_range})"
+                  end
+                  if item == 'Last 50 years'
+                    _range = (_this_year-50).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
+                    @Actions.push "addlimiter(DT1:#{_range})"
+                  end
+                  if item == 'More than 50 years ago'
+                    _range = '0000-01/' + (_this_year-50).to_s + '-12'
+                    @Actions.push "addlimiter(DT1:#{_range})"
                   end
                 end
               end
