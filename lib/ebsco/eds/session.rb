@@ -108,15 +108,23 @@ module EBSCO
           @auth_token = create_auth_token
         end
 
-        if options.has_key? :session_token
+        if options.key? :session_token
           @session_token = options[:session_token]
         else
           @session_token = create_session_token
         end
 
-        @info = EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
+        @info ||= EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
         @current_page = 0
         @search_options = nil
+
+        # DEBUG
+        # if options.key? :caller
+        #   puts 'CREATE SESSION CALLER: ' + options[:caller].inspect
+        #   puts 'CALLER OPTIONS: ' + options.inspect
+        # end
+        # puts 'AUTH TOKEN: ' + @auth_token.inspect
+        # puts 'SESSION TOKEN: ' + @session_token.inspect
 
       end
 
@@ -208,9 +216,11 @@ module EBSCO
       #   record = session.retrieve({dbid: 'asn', an: '108974507'})
       #
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
-        payload = {:DbId => dbid, :An => an, :HighlightTerms => highlight, :EbookPreferredFormat =>  ebook}
+        payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
         retrieve_response = do_request(:post, path: RETRIEVE_URL, payload: payload)
-        EBSCO::EDS::Record.new(retrieve_response)
+        record = EBSCO::EDS::Record.new(retrieve_response)
+        # puts 'RECORD: ' + record.pretty_inspect
+        record
       end
 
       def solr_retrieve_list(list: [], highlight: nil, ebook: 'ebook-pdf')
@@ -558,10 +568,10 @@ module EBSCO
             end
           end
           resp.body
-        rescue Exception => e
+        rescue StandardError => e
           if e.respond_to? 'fault'
             error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
-            if not error_code.nil?
+            unless error_code.nil?
               case error_code
                 # session token missing
                 when '108', '109'
