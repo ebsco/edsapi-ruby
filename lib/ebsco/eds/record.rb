@@ -22,7 +22,7 @@ module EBSCO
         if results_record.key? 'Record'
           @record = results_record['Record'] # single record returned by retrieve api
         else
-          @record = results_record  # set of records returned by search api
+          @record = results_record # set of records returned by search api
         end
 
         @items = @record.fetch('Items', {})
@@ -79,7 +79,7 @@ module EBSCO
       # The title.
       def title
         _retval = get_item_data_by_name('Title') || bib_title
-        # todo: make this configurable
+        # TODO: make this configurable
         if _retval.nil?
           _retval = 'This title is unavailable for guests, please login to see more information.'
         end
@@ -811,6 +811,9 @@ module EBSCO
         end
         if cover_medium_url
           hash['cover_medium_url'] = cover_medium_url
+        end
+        if all_links
+          hash['links'] = all_links
         end
         hash
       end

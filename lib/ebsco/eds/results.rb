@@ -121,6 +121,7 @@ module EBSCO
         category_facet = solr_facets('Category')
         content_provider_facet = solr_facets('ContentProvider')
         library_location_facet = solr_facets('LocationLibrary')
+        pub_date_facet = solr_pub_date_facets
         facet = true
 
         # solr response
@@ -149,6 +150,7 @@ module EBSCO
                         'format' => format,
                         'language_facet' => language_facet,
                         'subject_topic_facet' => subject_topic_facet,
+                        'pub_date_facet' => pub_date_facet,
                         'publisher_facet' => publisher_facet,
                         'journal_facet' => journal_facet,
                         'geographic_facet' => geographic_facet,
@@ -159,6 +161,24 @@ module EBSCO
                 }
         }
 
+      end
+
+      # Publication date facets:
+      # - This year
+      # - Last 3 years
+      # - Last 10 years
+      # - Last 50 years
+      # - More than 50 years ago
+      def solr_pub_date_facets
+        pub_date_facets = []
+        if stat_total_hits.to_i > 0
+          pub_date_facets.push('This year').push('')
+          pub_date_facets.push('Last 3 years').push('')
+          pub_date_facets.push('Last 10 years').push('')
+          pub_date_facets.push('Last 50 years').push('')
+          pub_date_facets.push('More than 50 years ago').push('')
+        end
+        pub_date_facets
       end
 
       # Translate limiters found in calls to Info endpoint into solr facet fields if they are turned on
