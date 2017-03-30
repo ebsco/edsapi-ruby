@@ -10,7 +10,7 @@ A Ruby interface to the EBSCO Discovery Services API.
 
 ## Dependencies
 
-* Ruby 2.1+
+* Ruby 2.2+
 
 ## Installation
 
