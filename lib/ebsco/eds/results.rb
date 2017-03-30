@@ -19,9 +19,6 @@ module EBSCO
 
       attr_accessor :stat_total_hits
 
-      # Lookup table of databases that have their labels suppressed in the response.
-      DBS = YAML::load_file(File.join(__dir__, 'settings.yml'))['databases']
-
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
       def initialize(search_results, additional_limiters = {}, raw_options = {})
@@ -344,11 +341,7 @@ module EBSCO
         databases = []
         databases_facet = @results['SearchResult']['Statistics']['Databases']
         databases_facet.each do |database|
-          if DBS.key?(database['Id'].upcase)
-            db_label = DBS[database['Id'].upcase];
-          else
-            db_label = database['Label']
-          end
+          db_label = database['Label']
           databases.push({id: database['Id'], hits: database['Hits'], label: db_label})
         end
         databases

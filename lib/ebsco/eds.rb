@@ -4,7 +4,6 @@ require 'ebsco/eds/info'
 require 'ebsco/eds/results'
 require 'ebsco/eds/record'
 require 'ebsco/eds/error'
-require 'ebsco/eds/http_exception'
 
 module EBSCO
 

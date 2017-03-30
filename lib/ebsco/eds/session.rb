@@ -5,6 +5,8 @@ require 'faraday'
 require 'faraday_middleware'
 require 'logger'
 require 'json'
+require 'active_support'
+require 'faraday_eds_middleware'
 
 module EBSCO
 
@@ -56,6 +58,10 @@ module EBSCO
       #     :org => 'Acme University'
       #   }
       def initialize(options = {})
+
+
+        cache_dir = File.join(ENV['TMPDIR'] || '/tmp', 'faraday_eds_cache')
+        @cache_store = ActiveSupport::Cache::FileStore.new cache_dir
 
         @session_token = ''
         @auth_token = ''
@@ -114,7 +120,7 @@ module EBSCO
           @session_token = create_session_token
         end
 
-        @info ||= EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
+        @info = EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
         @current_page = 0
         @search_options = nil
 
@@ -634,43 +640,47 @@ module EBSCO
       private
 
       def connection
-        Faraday.new(url: EDS_API_BASE) do |faraday|
-          faraday.headers['Content-Type'] = 'application/json;charset=UTF-8'
-          faraday.headers['Accept'] = 'application/json'
-          faraday.headers['x-sessionToken'] = @session_token ? @session_token : ''
-          faraday.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
-          faraday.headers['User-Agent'] = USER_AGENT
-          faraday.request :url_encoded
-          faraday.use FaradayMiddleware::RaiseHttpException
-          faraday.response :json, :content_type => /\bjson$/
-          #faraday.response :logger, Logger.new(LOG)
-          faraday.adapter Faraday.default_adapter
+        logger = Logger.new(LOG)
+        logger.level = Logger::DEBUG
+        Faraday.new(url: EDS_API_BASE) do |conn|
+          conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
+          conn.headers['Accept'] = 'application/json'
+          conn.headers['x-sessionToken'] = @session_token ? @session_token : ''
+          conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
+          conn.headers['User-Agent'] = USER_AGENT
+          conn.request :url_encoded
+          conn.use :eds_middleware, store: @cache_store
+          conn.response :json, content_type: /\bjson$/
+          conn.response :logger, logger
+          conn.adapter Faraday.default_adapter
         end
       end
 
       def create_auth_token
         if blank?(@auth_token)
           # ip auth
-          if (blank?(@user) && blank?(@pass)) || @auth_type.casecmp('ip') == 0
-            _response = do_request(:post, path: IP_AUTH_URL)
-            @auth_token = _response['AuthToken']
+          if (blank?(@user) && blank?(@pass)) || @auth_type.casecmp('ip').zero?
+            resp = do_request(:post, path: IP_AUTH_URL)
           # user auth
           else
-            _response = do_request(:post, path: UID_AUTH_URL, payload: {:UserId => @user, :Password => @pass})
-            @auth_token = _response['AuthToken']
+            resp = do_request(:post, path: UID_AUTH_URL, payload:
+                { UserId: @user, Password: @pass })
           end
         end
+        @auth_token = resp['AuthToken']
         @auth_token
       end
 
       def create_session_token
-        _response = do_request(:post, path: CREATE_SESSION_URL, payload: {:Profile => @profile, :Guest => @guest})
-        @session_token = _response['SessionToken']
+        resp = do_request(:get, path: CREATE_SESSION_URL +
+            '?profile=' + @profile + '&guest=' + @guest +
+            '&displaydatabasename=y')
+        @session_token = resp['SessionToken']
       end
 
       # helper methods
       def blank?(var)
-        var.nil? || var.respond_to?(:length) && var.length == 0
+        var.nil? || var.respond_to?(:length) && var.empty?
       end
 
       # used to reliably create empty results when there are no search terms provided

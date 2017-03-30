@@ -13,9 +13,6 @@ module EBSCO
       # Raw record as returned by the \EDS API via search or retrieve
       attr_reader :record
 
-      # Lookup table of databases that have their labels suppressed in the response.
-      DBS = YAML::load_file(File.join(__dir__, 'settings.yml'))['databases']
-
       # Creates a search or retrieval result record
       def initialize(results_record)
 
@@ -530,7 +527,7 @@ module EBSCO
       end
 
       def header_db_label
-        DBS[self.database_id.upcase] || @record['Header']['DbLabel']
+        @record['Header']['DbLabel']
       end
 
       # not sure the rules for when this appears or not - RecordInfo.AccessInfo?

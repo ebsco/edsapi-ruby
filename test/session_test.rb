@@ -51,10 +51,10 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_failed_user_credentials
-      assert_raises EBSCO::EDS::BadRequest do
-         EBSCO::EDS::Session.new({:profile => 'eds-api', :auth => 'user', :user => 'fake', :pass => 'none',
-                                      :guest => false, :org => 'test'})
-      end
+    clear_cache
+    assert_raises EBSCO::EDS::BadRequest do
+      EBSCO::EDS::Session.new({:profile => 'eds-api', :auth => 'user', :user => 'fake', :pass => 'none', :guest => false, :org => 'test'})
+    end
   end
 
   def test_api_request_with_unsupported_method
@@ -74,9 +74,11 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_api_request_no_session_token_force_refresh
+    clear_cache
     # should trigger 108
     session = EBSCO::EDS::Session.new
     session.session_token = ''
+    clear_cache
     info = EBSCO::EDS::Info.new(session.do_request(:get, path: EBSCO::EDS::INFO_URL))
     refute_nil info
     session.end
@@ -90,5 +92,11 @@ class EdsApiTests < Minitest::Test
   #     EBSCO::EDS::Info.new(session.do_request(:get, path: EBSCO::EDS::INFO_URL))
   #   end
   # end
+
+  def clear_cache
+    cache_dir = File.join(ENV['TMPDIR'] || '/tmp', 'faraday_eds_cache')
+    cache_store = ActiveSupport::Cache::FileStore.new cache_dir
+    cache_store.clear
+  end
 
 end
