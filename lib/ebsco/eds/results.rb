@@ -122,6 +122,7 @@ module EBSCO
         facet = true
 
         # solr response
+        solr_response =
         {
             'responseHeader' => {
                 'status' => status,
@@ -158,6 +159,43 @@ module EBSCO
                 }
         }
 
+        solr_response.update(solr_spellcheck) if solr_spellcheck
+        solr_response
+      end
+
+      #
+      # Example:
+      #
+      # "spellcheck":{
+      #     "suggestions":[
+      #         "blesing",{
+      #         "numFound":1,
+      #         "startOffset":0,
+      #         "endOffset":7,
+      #         "origFreq":0,
+      #         "suggestion":[{
+      #                           "word":"blessings",
+      #                           "freq":1}]}],
+      #     "correctlySpelled":false}}
+      def solr_spellcheck
+        unless did_you_mean.nil?
+          {
+              'spellcheck' => {
+                  'suggestions' => [
+                      search_terms.first.to_s, {
+                      'numFound' => 1,
+                      'startOffset' => 0,
+                      'endOffset' => 7,
+                      'origFreq' => 0,
+                      'suggestion' => [{
+                          'word' => did_you_mean.to_s,
+                          'freq' => 1 }]
+                    }
+                  ],
+                      'correctlySpelled' => false
+              }
+          }
+        end
       end
 
       # Publication date facets:
