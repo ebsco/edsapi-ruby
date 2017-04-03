@@ -1,5 +1,7 @@
 require 'yaml'
 require 'json'
+require 'citeproc'
+require 'csl/styles'
 require 'bibtex'
 require 'cgi'
 
@@ -75,7 +77,8 @@ module EBSCO
 
       # The title.
       def title
-        _retval = get_item_data_by_name('Title') || bib_title
+        # _retval = get_item_data_by_name('Title') || bib_title
+        _retval = bib_title || get_item_data_by_name('Title')
         # TODO: make this configurable
         if _retval.nil?
           _retval = 'This title is unavailable for guests, please login to see more information.'
@@ -209,7 +212,7 @@ module EBSCO
 
       # List of ISBNs
       def isbns
-        bib_isbns | item_related_isbns
+        bib_isbns || item_related_isbns
       end
 
       # Print ISBN
@@ -435,8 +438,8 @@ module EBSCO
       # Experimental bibtex support.
       def retrieve_bibtex
 
-        @bibtex.key = self.accession_number
-        @bibtex.title = self.title
+        @bibtex.key = accession_number
+        @bibtex.title = title.gsub('<highlight>', '').gsub('</highlight>', '')
         if self.bib_authors_list.length > 0
           @bibtex.author = self.bib_authors_list.join(' and ').chomp
         end
@@ -447,15 +450,15 @@ module EBSCO
         case _type
           when 'Academic Journal'
             @bibtex.type = :article
-            @bibtex.journal = self.source_title
-            if self.issue
-              @bibtex.issue = self.issue
+            @bibtex.journal = source_title
+            unless issue.nil?
+              @bibtex.issue = issue
             end
-            if self.volume
-              @bibtex.number = self.volume
+            unless volume.nil?
+              @bibtex.number = volume
             end
-            if self.page_start && self.page_count
-              @bibtex.pages = self.page_start + '-' + (self.page_start.to_i + self.page_count.to_i-1).to_s
+            if page_start && page_count
+              @bibtex.pages = page_start + '-' + (page_start.to_i + page_count.to_i-1).to_s
             end
             if self.bib_publication_month
               @bibtex.month = self.bib_publication_month.to_i
@@ -492,13 +495,19 @@ module EBSCO
             if self.bib_publication_month
               @bibtex.month = self.bib_publication_month.to_i
             end
-            if self.isbns
+            if isbns
               @bibtex.isbn = self.isbns.first
             end
           else
             @bibtex.type = :other
         end
         @bibtex
+      end
+
+      def bibtex_bibliography
+        bib = BibTeX::Bibliography.new
+        bib << retrieve_bibtex
+        bib
       end
 
       # ====================================================================================
@@ -568,7 +577,12 @@ module EBSCO
       end
 
       def item_related_isbns
-        get_item_data_by_label('Related ISBNs').split(' ').map!{|item| item.gsub(/\.$/, '')}
+        isbns = get_item_data_by_label('Related ISBNs')
+        if isbns
+          isbns.split(' ').map!{|item| item.gsub(/\.$/, '')}
+        else
+          nil
+        end
       end
 
       # ====================================================================================
@@ -649,7 +663,12 @@ module EBSCO
 
       def bib_source_title
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).find{|item| item['Type'] == 'main'}['TitleFull']
+          item_title_full = @bib_part.fetch('BibEntity',{}).fetch('Titles',{}).find{|item| item['Type'] == 'main'}
+          if item_title_full
+            item_title_full['TitleFull']
+          else
+            nil
+          end
         else
           nil
         end
@@ -657,7 +676,12 @@ module EBSCO
 
       def bib_issn_print
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-print'}['Value']
+          item_issn_p = @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-print'}
+          if item_issn_p
+            item_issn_p['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -665,7 +689,12 @@ module EBSCO
 
       def bib_issn_electronic
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-electronic'}['Value']
+          item_issn_e = @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'issn-electronic'}
+          if item_issn_e
+            item_issn_e['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -685,7 +714,12 @@ module EBSCO
 
       def bib_isbn_print
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-print'}['Value']
+          item_isbn_p = @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-print'}
+          if item_isbn_p
+            item_isbn_p['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -693,7 +727,12 @@ module EBSCO
 
       def bib_isbn_electronic
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-electronic'}['Value']
+          item_isbn_e = @bib_part.fetch('BibEntity',{}).fetch('Identifiers',{}).find{|item| item['Type'] == 'isbn-electronic'}
+          if item_isbn_e
+            item_isbn_e['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -757,7 +796,12 @@ module EBSCO
 
       def bib_volume
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'volume'}['Value']
+          item_volume = @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'volume'}
+          if item_volume
+            item_volume['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -765,7 +809,12 @@ module EBSCO
 
       def bib_issue
         if @bib_part && @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).any?
-          @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}['Value']
+          item_issue = @bib_part.fetch('BibEntity',{}).fetch('Numbering',{}).find{|item| item['Type'] == 'issue'}
+          if item_issue
+            item_issue['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -812,6 +861,11 @@ module EBSCO
         if all_links
           hash['links'] = all_links
         end
+        unless @bibtex.has_type?(:other)
+          hash['citation_apa'] = citation('apa').first.to_s
+          hash['citation_mla'] = citation('modern-language-association').first.to_s
+          hash['citation_chicago'] = citation('chicago-author-date').first.to_s
+        end
         hash
       end
 
@@ -827,6 +881,16 @@ module EBSCO
                 'docs' => [to_hash]
             }
         }
+      end
+
+      def citation(style = 'apa')
+        # TODO: catch CSL::ParseError when style can't be found
+        CSL::Style.root = File.join(__dir__, 'csl/styles')
+        cp = CiteProc::Processor.new style: style, format: 'text'
+        bib_entry = retrieve_bibtex
+        bib_entry_id = bib_entry.to_citeproc['id']
+        cp.import bibtex_bibliography.to_citeproc
+        cp.render :bibliography, id: bib_entry_id
       end
 
     end # Class Record
