@@ -39,4 +39,128 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
+  def test_solr_options_part_1
+    session = EBSCO::EDS::Session.new
+    query = {
+        'f' => {
+            'format'=>['Books'],
+            'language_facet'=>['english'],
+            'pub_date_facet'=>['Last 10 years'],
+            'category_facet'=>['psychology / general'],
+            'subject_topic_facet'=>['psychoanalysis'],
+            'publisher_facet'=>['karnac books']
+        },
+        'q'=>'white nose syndrome',
+        'page'=>'2',
+        'search_field'=>'all_fields',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'on' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    session.end
+  end
+
+  def test_solr_options_part_2
+    session = EBSCO::EDS::Session.new
+    query = {
+        'f' => {
+            'journal_facet'=>['new york times'],
+            'geographic_facet'=>['united states'],
+            'content_provider_facet'=>['Academic Search Ultimate'],
+            'pub_date_facet'=>['Last 3 years']
+        },
+        'per_page'=>'10',
+        'sort'=>'pub_date_sort desc',
+        'q'=>'lincoln',
+        'search_field'=>'all_fields',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'off' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    session.end
+  end
+
+  def test_solr_options_part_3
+    session = EBSCO::EDS::Session.new
+    query = {
+        'f' => {
+            'library_location_facet'=>['Main Library'],
+            'pub_date_facet'=>['Last 50 years']
+        },
+        'per_page'=>'10',
+        'sort'=>'score desc',
+        'q'=>'lincoln',
+        'search_field'=>'subject',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'off' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    query = {
+        'f' => {
+            'pub_date_facet'=>['More than 50 years ago']
+        },
+        'per_page'=>'10',
+        'q'=>'lincoln',
+        'search_field'=>'author',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'off' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    session.end
+  end
+
+  def test_search_limiters
+    session = EBSCO::EDS::Session.new
+    query = {
+        'f' => {
+            'search_limiters'=>['Available in Library Collection', 'Full Text', 'Peer Reviewed']
+        },
+        'q'=>'lincoln',
+        'search_field'=>'all_fields',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'off' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    session.end
+  end
+
+  def test_this_year
+    session = EBSCO::EDS::Session.new
+    query = {
+        'f' => {
+            'pub_date_facet'=>['This year']
+        },
+        'per_page'=>'10',
+        'sort'=>'pub_date_sort desc',
+        'q'=>'lincoln',
+        'search_field'=>'all_fields',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'off' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    session.end
+  end
+
+  def test_spellcheck
+    session = EBSCO::EDS::Session.new
+    query = {
+        'per_page'=>'10',
+        'sort'=>'pub_date_sort desc',
+        'q'=>'blesing',
+        'search_field'=>'all_fields',
+        'controller'=>'catalog',
+        'action'=>'index',
+        'hl'=>'off' }
+    results = session.search(query)
+    refute_nil results.to_solr
+    assert results.to_solr.to_s.include?('"suggestion"=>[{"word"=>"bleeding", "freq"=>1}]}]')
+    session.end
+  end
+
 end
