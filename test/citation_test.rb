@@ -9,9 +9,12 @@ class EdsApiTests < Minitest::Test
       apa_cite = record.citation('apa').first
       mla_cite = record.citation('modern-language-association').first
       chicago_cite = record.citation('chicago-author-date').first
-      assert apa_cite == 'Weissman, K. J. (2015). The structural biology of biosynthetic megaenzymes. Nature Chemical Biology, (9), 660–670.'
-      assert chicago_cite == 'Weissman, Kira J. 2015. “The Structural Biology of Biosynthetic Megaenzymes.” Nature Chemical Biology, no. 9 (September): 660–70.'
-      assert mla_cite == 'Weissman, Kira J. “The Structural Biology of Biosynthetic Megaenzymes.” Nature Chemical Biology 9 (2015): 660–670. Print.'
+      expect_apa_cite = 'Weissman, K. J. (2015). The structural biology of biosynthetic megaenzymes. Nature Chemical Biology, (9), 660–670. https://doi.org/10.1038/nchembio.1883'
+      expect_chicago_cite = 'Weissman, Kira J. 2015. “The Structural Biology of Biosynthetic Megaenzymes.” Nature Chemical Biology, no. 9 (September): 660–70. doi:10.1038/nchembio.1883.'
+      expect_mla_cite = 'Weissman, Kira J. “The Structural Biology of Biosynthetic Megaenzymes.” Nature Chemical Biology 9 (2015): 660–670. Web.'
+      assert apa_cite == expect_apa_cite
+      assert chicago_cite == expect_chicago_cite
+      assert mla_cite == expect_mla_cite
     end
     session.end
   end
@@ -23,9 +26,6 @@ class EdsApiTests < Minitest::Test
       apa_cite = record.citation('apa').first
       mla_cite = record.citation('modern-language-association').first
       chicago_cite = record.citation('chicago-author-date').first
-      # puts 'APA: ' + apa_cite.inspect
-      # puts 'CHICAGO: ' + chicago_cite.inspect
-      # puts 'MLA: ' + mla_cite.inspect
       assert apa_cite == 'Rowling, J. K., & GrandPré, M. (1999). Harry Potter and the sorcerer\'s stone. New York : Scholastic, [1999].'
       assert chicago_cite == 'Rowling, J. K., and Mary GrandPré. 1999. Harry Potter and the Sorcerer\'s Stone. New York : Scholastic, [1999].'
       assert mla_cite == 'Rowling, J. K., and Mary GrandPré. Harry Potter and the Sorcerer\'s Stone. New York : Scholastic, [1999], 1999. Print.'
