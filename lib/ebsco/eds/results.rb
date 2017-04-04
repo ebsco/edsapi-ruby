@@ -221,18 +221,12 @@ module EBSCO
         search_limiters = []
         if stat_total_hits.to_i > 0
           if @limiters.any?
-            _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
-            if _ft_limiter['DefaultOn'] == 'y'
-              search_limiters.push('Full Text').push('')
-            end
-            _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
-            if _rv_limiter['DefaultOn'] == 'y'
-              search_limiters.push('Peer Reviewed').push('')
-            end
-            _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
-            if _ft1_limiter['DefaultOn'] == 'y'
-              search_limiters.push('Available in Library Collection').push('')
-            end
+            # _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
+            # _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
+            # _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
+            search_limiters.push('Full Text').push('')
+            search_limiters.push('Peer Reviewed').push('')
+            search_limiters.push('Available in Library Collection').push('')
           end
         end
         search_limiters

@@ -40,6 +40,7 @@ module EBSCO
                         .fetch('IsPartOfRelationships', {})[0]
 
         @bibtex = BibTeX::Entry.new
+        @bibtex = retrieve_bibtex
       end
 
       # \Options hash containing accession number and database ID. This can be passed to the retrieve method.
@@ -463,6 +464,10 @@ module EBSCO
             if self.bib_publication_month
               @bibtex.month = self.bib_publication_month.to_i
             end
+            if doi
+              @bibtex.doi = doi
+              @bibtex.url = 'https://doi.org/' + doi
+            end
           when 'Conference'
             @bibtex.type = :conference
             @bibtex.booktitle = self.source_title
@@ -506,7 +511,7 @@ module EBSCO
 
       def bibtex_bibliography
         bib = BibTeX::Bibliography.new
-        bib << retrieve_bibtex
+        bib << @bibtex
         bib
       end
 
@@ -830,6 +835,9 @@ module EBSCO
         if !title.nil?
           hash['title_display'] = title.gsub('<highlight>', '').gsub('</highlight>', '')
         end
+        if source_title
+          hash['academic_journal'] = source_title
+        end
         if publication_year
           hash['pub_date'] = publication_year
         end
@@ -866,6 +874,9 @@ module EBSCO
           hash['citation_mla'] = citation('modern-language-association').first.to_s
           hash['citation_chicago'] = citation('chicago-author-date').first.to_s
         end
+        if doi
+          hash['doi'] = doi
+        end
         hash
       end
 
@@ -887,7 +898,7 @@ module EBSCO
         # TODO: catch CSL::ParseError when style can't be found
         CSL::Style.root = File.join(__dir__, 'csl/styles')
         cp = CiteProc::Processor.new style: style, format: 'text'
-        bib_entry = retrieve_bibtex
+        bib_entry = @bibtex
         bib_entry_id = bib_entry.to_citeproc['id']
         cp.import bibtex_bibliography.to_citeproc
         cp.render :bibliography, id: bib_entry_id
