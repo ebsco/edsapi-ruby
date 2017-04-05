@@ -40,14 +40,13 @@ module EBSCO
                         .fetch('IsPartOfRelationships', {})[0]
 
         @bibtex = BibTeX::Entry.new
-        @bibtex = retrieve_bibtex
       end
 
       # \Options hash containing accession number and database ID. This can be passed to the retrieve method.
       def retrieve_options
         options = {}
-        options['an'] = self.accession_number
-        options['dbid'] = self.database_id
+        options['an'] = accession_number
+        options['dbid'] = database_id
         options
       end
 
@@ -316,12 +315,12 @@ module EBSCO
 
       # A list of all available links.
       def all_links
-        self.fulltext_links + self.non_fulltext_links
+        fulltext_links + non_fulltext_links
       end
 
       # The first fulltext link.
       def fulltext_link
-        self.fulltext_links.first || {}
+        fulltext_links.first || {}
       end
 
       # All available fulltext links.
@@ -435,85 +434,6 @@ module EBSCO
 
       #:nodoc: all
       # No need to document methods below
-
-      # Experimental bibtex support.
-      def retrieve_bibtex
-
-        @bibtex.key = accession_number
-        @bibtex.title = title.gsub('<highlight>', '').gsub('</highlight>', '')
-        if self.bib_authors_list.length > 0
-          @bibtex.author = self.bib_authors_list.join(' and ').chomp
-        end
-        @bibtex.year = self.publication_year.to_i
-
-        # bibtex type
-        _type = self.publication_type
-        case _type
-          when 'Academic Journal'
-            @bibtex.type = :article
-            @bibtex.journal = source_title
-            unless issue.nil?
-              @bibtex.issue = issue
-            end
-            unless volume.nil?
-              @bibtex.number = volume
-            end
-            if page_start && page_count
-              @bibtex.pages = page_start + '-' + (page_start.to_i + page_count.to_i-1).to_s
-            end
-            if self.bib_publication_month
-              @bibtex.month = self.bib_publication_month.to_i
-            end
-            if doi
-              @bibtex.doi = doi
-              @bibtex.url = 'https://doi.org/' + doi
-            end
-          when 'Conference'
-            @bibtex.type = :conference
-            @bibtex.booktitle = self.source_title
-            if self.issue
-              @bibtex.issue = self.issue
-            end
-            if self.volume
-              @bibtex.number = self.volume
-            end
-            if self.page_start && self.page_count
-              @bibtex.pages = self.page_start + '-' + (self.page_start.to_i + self.page_count.to_i-1).to_s
-            end
-            if self.bib_publication_month
-              @bibtex.month = self.bib_publication_month.to_i
-            end
-            if self.publisher_info
-              @bibtex.publisher = self.publisher_info
-            end
-            if self.series
-              @bibtex.series = self.series
-            end
-          when 'Book', 'eBook'
-            @bibtex.type = :book
-            if self.publisher_info
-              @bibtex.publisher = self.publisher_info
-            end
-            if self.series
-              @bibtex.series = self.series
-            end
-            if self.bib_publication_month
-              @bibtex.month = self.bib_publication_month.to_i
-            end
-            if isbns
-              @bibtex.isbn = self.isbns.first
-            end
-          else
-            @bibtex.type = :other
-        end
-        @bibtex
-      end
-
-      def bibtex_bibliography
-        bib = BibTeX::Bibliography.new
-        bib << @bibtex
-        bib
-      end
 
       # ====================================================================================
       # HEADER: DbId, DbLabel, An, PubType, PubTypeId, AccessLevel
@@ -825,14 +745,98 @@ module EBSCO
         end
       end
 
+
+      # Experimental bibtex support.
+      def retrieve_bibtex
+
+        @bibtex.key = accession_number
+        @bibtex.title = title.gsub('<highlight>', '').gsub('</highlight>', '')
+        if bib_authors_list.length > 0
+          @bibtex.author = bib_authors_list.join(' and ').chomp
+        end
+        @bibtex.year = publication_year.to_i
+
+        # bibtex type
+        _type = publication_type
+        case _type
+          when 'Academic Journal'
+            @bibtex.type = :article
+            @bibtex.journal = source_title
+            unless issue.nil?
+              @bibtex.issue = issue
+            end
+            unless volume.nil?
+              @bibtex.number = volume
+            end
+            if page_start && page_count
+              @bibtex.pages = page_start + '-' + (page_start.to_i + page_count.to_i-1).to_s
+            end
+            if bib_publication_month
+              @bibtex.month = bib_publication_month.to_i
+            end
+            if doi
+              @bibtex.doi = doi
+              @bibtex.url = 'https://doi.org/' + doi
+            end
+          when 'Conference'
+            @bibtex.type = :conference
+            @bibtex.booktitle = source_title
+            if issue
+              @bibtex.issue = issue
+            end
+            if volume
+              @bibtex.number = volume
+            end
+            if page_start && page_count
+              @bibtex.pages = page_start + '-' + (page_start.to_i + page_count.to_i-1).to_s
+            end
+            if bib_publication_month
+              @bibtex.month = bib_publication_month.to_i
+            end
+            if publisher_info
+              @bibtex.publisher = publisher_info
+            end
+            if series
+              @bibtex.series = series
+            end
+          when 'Book', 'eBook'
+            @bibtex.type = :book
+            if publisher_info
+              @bibtex.publisher = publisher_info
+            end
+            if series
+              @bibtex.series = series
+            end
+            if bib_publication_month
+              @bibtex.month = bib_publication_month.to_i
+            end
+            if isbns
+              @bibtex.isbn = isbns.first
+            end
+          else
+            @bibtex.type = :other
+        end
+        @bibtex
+      end
+
+      ##
+      # wrap bibtex entry in a bibliography so that it can be transformed into citations using citeproc
+      def bibtex_bibliography
+        bib = BibTeX::Bibliography.new
+        bib << @bibtex
+        bib
+      end
+
       # this is used to generate solr fields
-      def to_hash
+      def to_hash(type = 'compact')
         hash = {}
+
+        # information typically required by all views
         if database_id && accession_number
           safe_an = accession_number.gsub(/\./,'_')
           hash['id'] = database_id + '__' + safe_an
         end
-        if !title.nil?
+        unless title.nil?
           hash['title_display'] = title.gsub('<highlight>', '').gsub('</highlight>', '')
         end
         if source_title
@@ -866,22 +870,32 @@ module EBSCO
         if cover_medium_url
           hash['cover_medium_url'] = cover_medium_url
         end
-        if all_links
-          hash['links'] = all_links
+
+        # extra information typically required by detailed item views
+        if type == 'verbose'
+          if all_links
+            hash['links'] = all_links
+          end
+          # generate bibtex entry if it hasn't been done already
+          if @bibtex.key == 'unknown-a'
+            @bibtex = retrieve_bibtex
+          end
+          unless @bibtex.has_type?(:other)
+            hash['citation_apa'] = citation('apa').first.to_s
+            hash['citation_mla'] = citation('modern-language-association').first.to_s
+            hash['citation_chicago'] = citation('chicago-author-date').first.to_s
+          end
+          if doi
+            hash['doi'] = doi
+          end
         end
-        unless @bibtex.has_type?(:other)
-          hash['citation_apa'] = citation('apa').first.to_s
-          hash['citation_mla'] = citation('modern-language-association').first.to_s
-          hash['citation_chicago'] = citation('chicago-author-date').first.to_s
-        end
-        if doi
-          hash['doi'] = doi
-        end
+
         hash
       end
 
       def to_solr
         # solr response
+        item_hash = to_hash 'verbose'
         {
             'responseHeader' => {
                 'status' => 0
@@ -889,12 +903,16 @@ module EBSCO
             'response' => {
                 'numFound' => 1,
                 'start' => 0,
-                'docs' => [to_hash]
+                'docs' => [item_hash]
             }
         }
       end
 
       def citation(style = 'apa')
+        # generate bibtex entry if it hasn't been done already
+        if @bibtex.key == 'unknown-a'
+          @bibtex = retrieve_bibtex
+        end
         # TODO: catch CSL::ParseError when style can't be found
         CSL::Style.root = File.join(__dir__, 'csl/styles')
         cp = CiteProc::Processor.new style: style, format: 'text'
