@@ -82,6 +82,7 @@ module EBSCO
               if value.has_key?('content_provider_facet')
                 subj_list = value['content_provider_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(ContentProvider:#{item})"
                 end
               end
@@ -89,6 +90,7 @@ module EBSCO
               if value.has_key?('library_location_facet')
                 subj_list = value['library_location_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(LocationLibrary:#{item})"
                 end
               end
@@ -157,7 +159,13 @@ module EBSCO
           #end
         end
       end
-  
+
+      def eds_sanitize(str)
+        pattern = /(\'|\"|\.|\*|\/|\-|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`)/
+        str = str.gsub(pattern){ |match| '\\' + match }
+        str
+      end
+
       # def is_valid_action(action, info)
       #   # actions in info that require an enumerated value (e.g., addlimiter(LA99:Bulgarian))
       #   _available_actions = info.available_actions
