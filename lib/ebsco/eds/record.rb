@@ -89,6 +89,7 @@ module EBSCO
       # The source title (e.g., Journal)
       def source_title
         _retval = bib_source_title || get_item_data_by_name('TitleSource')
+        _reval = nil? if _retval == title # suppress if it's identical to title
         _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
@@ -340,13 +341,14 @@ module EBSCO
           end
         end
 
-        htmlfulltextcheck = @record.fetch('FullText',{}).fetch('Text',{}).fetch('Availability',{})
-        if htmlfulltextcheck == '1'
-          link_url = 'detail'
-          link_label = 'Full Text in Browser'
-          link_icon = 'Full Text in Browser Icon'
-          links.push({url: link_url, label: link_label, icon: link_icon, type: 'html'})
-        end
+        # commenting out for now, not sure how 'detail' urls are useful in a blacklight context?
+        # htmlfulltextcheck = @record.fetch('FullText',{}).fetch('Text',{}).fetch('Availability',{})
+        # if htmlfulltextcheck == '1'
+        #   link_url = 'detail'
+        #   link_label = 'Full Text in Browser'
+        #   link_icon = 'Full Text in Browser Icon'
+        #   links.push({url: link_url, label: link_label, icon: link_icon, type: 'html'})
+        # end
 
         if ebscolinks.count > 0
           ebscolinks.each do |ebscolink|
@@ -373,15 +375,19 @@ module EBSCO
         items = @record.fetch('Items',{})
         if items.count > 0
           items.each do |item|
-            if item['Group'] == 'Url'
+            if item['Group'] == 'URL'
               if item['Data'].include? 'linkTerm=&quot;'
                 link_start = item['Data'].index('linkTerm=&quot;')+15
                 link_url = item['Data'][link_start..-1]
                 link_end = link_url.index('&quot;')-1
                 link_url = link_url[0..link_end]
-                link_label_start = item['Data'].index('link&gt;')+8
-                link_label = item['Data'][link_label_start..-1]
-                link_label = link_label.strip
+                if item['Label']
+                  link_label = item['Label']
+                else
+                  link_label_start = item['Data'].index('link&gt;')+8
+                  link_label = item['Data'][link_label_start..-1]
+                  link_label = link_label.strip
+                end
               else
                 link_url = item['Data']
                 link_label = item['Label']
@@ -759,7 +765,7 @@ module EBSCO
         # bibtex type
         _type = publication_type
         case _type
-          when 'Academic Journal'
+          when 'Academic Journal', 'Reference'
             @bibtex.type = :article
             @bibtex.journal = source_title
             unless issue.nil?
@@ -870,23 +876,26 @@ module EBSCO
         if cover_medium_url
           hash['cover_medium_url'] = cover_medium_url
         end
+        # generate bibtex entry if it hasn't been done already
+        if @bibtex.key == 'unknown-a'
+          @bibtex = retrieve_bibtex
+        end
+        unless @bibtex.has_type?(:other)
+          hash['citation_apa'] = citation('apa').first.to_s
+          hash['citation_mla'] = citation('modern-language-association').first.to_s
+          hash['citation_chicago'] = citation('chicago-author-date').first.to_s
+        end
 
         # extra information typically required by detailed item views
         if type == 'verbose'
           if all_links
             hash['links'] = all_links
           end
-          # generate bibtex entry if it hasn't been done already
-          if @bibtex.key == 'unknown-a'
-            @bibtex = retrieve_bibtex
-          end
-          unless @bibtex.has_type?(:other)
-            hash['citation_apa'] = citation('apa').first.to_s
-            hash['citation_mla'] = citation('modern-language-association').first.to_s
-            hash['citation_chicago'] = citation('chicago-author-date').first.to_s
-          end
           if doi
             hash['doi'] = doi
+          end
+          if html_fulltext
+            hash['html_fulltext'] = html_fulltext
           end
         end
 
@@ -896,6 +905,7 @@ module EBSCO
       def to_solr
         # solr response
         item_hash = to_hash 'verbose'
+        solr_response =
         {
             'responseHeader' => {
                 'status' => 0
@@ -906,6 +916,8 @@ module EBSCO
                 'docs' => [item_hash]
             }
         }
+        # puts 'SOLR RESPONSE: ' + solr_response.inspect
+        solr_response
       end
 
       def citation(style = 'apa')
