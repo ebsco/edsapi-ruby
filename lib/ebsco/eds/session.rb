@@ -7,6 +7,7 @@ require 'logger'
 require 'json'
 require 'active_support'
 require 'faraday_eds_middleware'
+require 'ebsco/eds/configuration'
 
 module EBSCO
 
@@ -23,6 +24,8 @@ module EBSCO
       attr_accessor :auth_token # :nodoc:
       # The session token. This is passed along in the x-sessionToken HTTP header.
       attr_accessor :session_token # :nodoc:
+      # The session configuration.
+      attr_reader :config
 
       # Creates a new session.
       #
@@ -59,14 +62,20 @@ module EBSCO
       #   }
       def initialize(options = {})
 
-
-        cache_dir = File.join(ENV['TMPDIR'] || '/tmp', 'faraday_eds_cache')
-        @cache_store = ActiveSupport::Cache::FileStore.new cache_dir
-
         @session_token = ''
         @auth_token = ''
-        @guest = 'y'
+        @config = {}
 
+        eds_config = EBSCO::EDS::Configuration.new
+        if options[:config]
+          @config = eds_config.configure_with(options[:config])
+          # return default if there is some problem with the yaml file (bad syntax, not found, etc.)
+          @config = eds_config.configure if @config.nil?
+        else
+          @config = eds_config.configure(options)
+        end
+
+        # these properties aren't in the config
         if options.has_key? :user
           @user = options[:user]
         elsif ENV.has_key? 'EDS_USER'
@@ -86,27 +95,18 @@ module EBSCO
         end
         raise EBSCO::EDS::InvalidParameter, 'Session must specify a valid api profile.' if blank?(@profile)
 
-        if options.has_key? :guest
-          @guest = options[:guest] ? 'y' : 'n'
-        elsif ENV.has_key? 'EDS_GUEST'
-          @guest = ENV['EDS_GUEST']
+        # these config options can be overridden by environment vars
+        @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
+        @guest =      (ENV.has_key? 'EDS_GUEST') ? ENV['EDS_GUEST'] : @config[:guest]
+        @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
+
+        # use cache for auth token and info calls?
+        if @config[:use_cache]
+          cache_dir = File.join(@config[:eds_cache_dir], 'faraday_eds_cache')
+          @cache_store = ActiveSupport::Cache::FileStore.new cache_dir
         end
 
-        if options.has_key? :org
-          @org = options[:org]
-        elsif ENV.has_key? 'EDS_ORG'
-          @org = ENV['EDS_ORG']
-        end
-
-        if options.has_key? :auth
-          @auth_type = options[:auth]
-        elsif ENV.has_key? 'EDS_AUTH'
-          @auth_type = ENV['EDS_AUTH']
-        else
-          @auth_type = 'user'
-        end
-
-        @max_retries = MAX_ATTEMPTS
+        @max_retries = @config[:max_attempts]
 
         if options.has_key? :auth_token
           @auth_token = options[:auth_token]
@@ -119,18 +119,18 @@ module EBSCO
         else
           @session_token = create_session_token
         end
-
-        @info = EBSCO::EDS::Info.new(do_request(:get, path: INFO_URL))
+        @info = EBSCO::EDS::Info.new(do_request(:get, path: @config[:info_url]), @config)
         @current_page = 0
         @search_options = nil
 
-        # DEBUG
-        # if options.key? :caller
-        #   puts 'CREATE SESSION CALLER: ' + options[:caller].inspect
-        #   puts 'CALLER OPTIONS: ' + options.inspect
-        # end
-        # puts 'AUTH TOKEN: ' + @auth_token.inspect
-        # puts 'SESSION TOKEN: ' + @session_token.inspect
+        if @config[:debug]
+          if options.key? :caller
+            puts 'CREATE SESSION CALLER: ' + options[:caller].inspect
+            puts 'CALLER OPTIONS: ' + options.inspect
+          end
+          puts 'AUTH TOKEN: ' + @auth_token.inspect
+          puts 'SESSION TOKEN: ' + @session_token.inspect
+        end
 
       end
 
@@ -168,7 +168,7 @@ module EBSCO
           if @search_options.nil?
             @search_results = EBSCO::EDS::Results.new(empty_results)
           else
-            _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
+            _response = do_request(:post, path: @config[:search_url], payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
             @current_page = @search_results.page_number
             @search_results
@@ -181,7 +181,7 @@ module EBSCO
             if @search_options.nil? || !add_actions
               @search_options = EBSCO::EDS::Options.new(options, @info)
             end
-            _response = do_request(:post, path: SEARCH_URL, payload: @search_options)
+            _response = do_request(:post, path: @config[:search_url], payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
             @current_page = @search_results.page_number
             @search_results
@@ -223,20 +223,20 @@ module EBSCO
       #
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
         payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
-        retrieve_response = do_request(:post, path: RETRIEVE_URL, payload: payload)
+        retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
         record = EBSCO::EDS::Record.new(retrieve_response)
         # puts 'RECORD: ' + record.pretty_inspect
         record
       end
 
-      def solr_retrieve_list(list: [], highlight: nil, ebook: 'ebook-pdf')
+      def solr_retrieve_list(list: [], highlight: nil)
         records = []
         if list.any?
           list.each { |id|
             dbid = id.split('__').first
             accession = id.split('__').last
             accession.gsub!(/_/, '.')
-            records.push retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: ebook)
+            records.push retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
           }
         end
         r = empty_results(records.length)
@@ -249,7 +249,7 @@ module EBSCO
       # Invalidates the session token. End Session should be called when you know a user has logged out.
       def end
         # todo: catch when there is no valid session?
-        do_request(:post, path: END_SESSION_URL, payload: {:SessionToken => @session_token})
+        do_request(:post, path: @config[:end_session_url], payload: {:SessionToken => @session_token})
         connection.headers['x-sessionToken'] = ''
         @session_token = ''
       end
@@ -555,10 +555,9 @@ module EBSCO
 
       def do_request(method, path:, payload: nil, attempt: 0) # :nodoc:
 
-        if attempt > MAX_ATTEMPTS
+        if attempt > @config[:max_attempts]
           raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
         end
-
         begin
           resp = connection.send(method) do |req|
             case method
@@ -574,7 +573,7 @@ module EBSCO
             end
           end
           resp.body
-        rescue StandardError => e
+        rescue Error => e
           if e.respond_to? 'fault'
             error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
             unless error_code.nil?
@@ -640,16 +639,17 @@ module EBSCO
       private
 
       def connection
-        logger = Logger.new(LOG)
+        logger = Logger.new(@config[:log])
         logger.level = Logger::DEBUG
-        Faraday.new(url: EDS_API_BASE) do |conn|
+        Faraday.new(url: @config[:eds_api_base]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
           conn.headers['x-sessionToken'] = @session_token ? @session_token : ''
           conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
-          conn.headers['User-Agent'] = USER_AGENT
+          conn.headers['User-Agent'] = @config[:user_agent]
           conn.request :url_encoded
-          conn.use :eds_middleware, store: @cache_store
+          conn.use :eds_caching_middleware, store: @cache_store if @config[:use_cache]
+          conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
           conn.response :logger, logger
           conn.adapter Faraday.default_adapter
@@ -660,10 +660,10 @@ module EBSCO
         if blank?(@auth_token)
           # ip auth
           if (blank?(@user) && blank?(@pass)) || @auth_type.casecmp('ip').zero?
-            resp = do_request(:post, path: IP_AUTH_URL)
+            resp = do_request(:post, path: @config[:ip_auth_url])
           # user auth
           else
-            resp = do_request(:post, path: UID_AUTH_URL, payload:
+            resp = do_request(:post, path: @config[:uid_auth_url], payload:
                 { UserId: @user, Password: @pass })
           end
         end
@@ -672,7 +672,7 @@ module EBSCO
       end
 
       def create_session_token
-        resp = do_request(:get, path: CREATE_SESSION_URL +
+        resp = do_request(:get, path: @config[:create_session_url] +
             '?profile=' + @profile + '&guest=' + @guest +
             '&displaydatabasename=y')
         @session_token = resp['SessionToken']
