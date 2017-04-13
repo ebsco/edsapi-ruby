@@ -672,8 +672,9 @@ module EBSCO
       end
 
       def create_session_token
+        guest_string = @guest ? 'y' : 'n'
         resp = do_request(:get, path: @config[:create_session_url] +
-            '?profile=' + @profile + '&guest=' + @guest +
+            '?profile=' + @profile + '&guest=' + guest_string +
             '&displaydatabasename=y')
         @session_token = resp['SessionToken']
       end
