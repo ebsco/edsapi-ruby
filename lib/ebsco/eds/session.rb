@@ -65,6 +65,7 @@ module EBSCO
         @session_token = ''
         @auth_token = ''
         @config = {}
+        @guest = true
 
         eds_config = EBSCO::EDS::Configuration.new
         if options[:config]
@@ -97,8 +98,16 @@ module EBSCO
 
         # these config options can be overridden by environment vars
         @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
-        @guest =      (ENV.has_key? 'EDS_GUEST') ? ENV['EDS_GUEST'] : @config[:guest]
         @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
+        if ENV.has_key? 'EDS_GUEST'
+          if ['n', 'N', 'no', 'No'].include?(ENV['EDS_GUEST'])
+            @guest = false
+          else
+            @guest = true
+          end
+        else
+          @guest = @config[:guest]
+        end
 
         # use cache for auth token and info calls?
         if @config[:use_cache]
