@@ -79,7 +79,7 @@ class EdsApiTests < Minitest::Test
     session = EBSCO::EDS::Session.new
     session.session_token = ''
     clear_cache
-    info = EBSCO::EDS::Info.new(session.do_request(:get, path: EBSCO::EDS::INFO_URL))
+    info = EBSCO::EDS::Info.new(session.do_request(:get, path: session.config[:info_url]))
     refute_nil info
     session.end
   end

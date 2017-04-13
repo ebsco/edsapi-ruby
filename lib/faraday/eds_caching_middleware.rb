@@ -2,7 +2,7 @@ require 'faraday'
 
 module Faraday
 
-  class EdsMiddleware < Faraday::Middleware
+  class EdsCachingMiddleware < Faraday::Middleware
 
     INFO_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Info')
     AUTH_URI = URI.parse('https://eds-api.ebscohost.com/authservice/rest/uidauth')
@@ -35,27 +35,8 @@ module Faraday
         to_response(response_env)
       else
         @app.call(env).on_complete do |response_env|
-          case response_env.status
-            when 200
-              response_env.response_headers['x-faraday-eds-cache'] = 'MISS'
-              cache_response(response_env)
-            when 400
-              raise EBSCO::EDS::BadRequest.new(error_message(response_env))
-            # when 401
-            #   raise EBSCO::EDS::Unauthorized.new
-            # when 403
-            #   raise EBSCO::EDS::Forbidden.new
-            # when 404
-            #   raise EBSCO::EDS::NotFound.new
-            # when 429
-            #   raise EBSCO::EDS::TooManyRequests.new
-            # when 500
-            #   raise EBSCO::EDS::InternalServerError.new
-            # when 503
-            #   raise EBSCO::EDS::ServiceUnavailable.new
-            else
-              raise EBSCO::EDS::BadRequest.new(error_message(response_env))
-          end
+          response_env.response_headers['x-faraday-eds-cache'] = 'MISS'
+          cache_response(response_env)
         end
       end
     end
@@ -130,14 +111,5 @@ module Faraday
       env.response = response
     end
 
-    def error_message(response)
-      # puts response.inspect
-      {
-        method: response.method,
-        url: response.url,
-        status: response.status,
-        error_body: response.body
-      }
-    end
   end
 end

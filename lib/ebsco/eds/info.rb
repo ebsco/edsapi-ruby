@@ -7,7 +7,8 @@ module EBSCO
 
       attr_accessor :available_search_criteria, :view_result_settings, :application_settings, :api_settings
 
-      def initialize(info)
+      def initialize(info, config = {})
+        @results_per_page = config[:max_results_per_page] ? config[:max_results_per_page] : 100
         @available_search_criteria = info['AvailableSearchCriteria']
         @view_result_settings = info['ViewResultSettings']
         @application_settings = info['ApplicationSettings']
@@ -135,7 +136,7 @@ module EBSCO
       end
 
       def max_results_per_page
-        MAX_RESULTS_PER_PAGE
+        @results_per_page
       end
 
       def available_result_list_views

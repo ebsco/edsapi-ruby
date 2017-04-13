@@ -128,7 +128,7 @@ class EdsApiTests < Minitest::Test
   def test_retrieve_epub_book
     session = EBSCO::EDS::Session.new({:guest => false})
     if session.dbid_in_profile 'e000xna'
-      record = session.retrieve({dbid: 'e000xna', an: '719559'})
+      record = session.retrieve({dbid: 'e000xna', an: '719559', ebook: 'ebook-epub'})
       # puts record.to_yaml
       assert record.fulltext_links.first()[:type] == 'ebook-epub'
       assert record.fulltext_links.first()[:url] == 'http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=e000xna&AN=719559&ebv=EK&ppid='

@@ -163,4 +163,11 @@ class EdsApiTests < Minitest::Test
     session.end
   end
 
+  def test_solr_retrieve_list
+    session = EBSCO::EDS::Session.new
+    response = session.solr_retrieve_list(list: ['e000xna__719559', 'ers__100039113'])
+    assert response['response']['numFound'] == 2
+    session.end
+  end
+
 end
