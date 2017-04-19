@@ -242,12 +242,13 @@ module EBSCO
       def solr_retrieve_previous_next(options = {})
         records = []
         hits = search(options).stat_total_hits
+        # don't try to return a previous result if it's the first record
+        if options['previous-next-index'].to_i > 1
+          options.update(:results_per_page => 1,
+                         'page' => (options['previous-next-index'].to_i) - 1)
+          records.push  search(options).records.first
+        end
         options.update(:results_per_page => 1,
-                       :page_number => (options['previous-next-index'].to_i) - 1,
-                       'page' => (options['previous-next-index'].to_i) - 1)
-        records.push  search(options).records.first
-        options.update(:results_per_page => 1,
-                       :page_number => (options['previous-next-index'].to_i) + 1,
                        'page' => (options['previous-next-index'].to_i) + 1)
         records.push  search(options).records.first
         r = empty_results(hits)

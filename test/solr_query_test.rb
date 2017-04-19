@@ -210,4 +210,22 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_solr_next_previous_links_first_result
+    VCR.use_cassette('test_solr_next_previous_links_first_result') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      opts = {'f' =>
+                  {'language_facet' => ['spanish']},
+              'q' => 'white nose syndrome',
+              'search_field' => 'all_fields',
+              'controller' => 'catalog',
+              'action' => 'index',
+              'hl' => 'on',
+              'previous-next-index' => 1}
+      results = session.solr_retrieve_previous_next(opts)
+      refute_nil results
+      assert results['response']['numFound'] > 2
+      assert results['response']['docs'].length == 1
+    end
+  end
+
 end
