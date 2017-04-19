@@ -1,0 +1,434 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/authservice/rest/uidauth
+    body:
+      encoding: UTF-8
+      string: '{"UserId":"<EDS_USER>","Password":"<EDS_PASS>"}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ''
+      x-authenticationToken:
+      - ''
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Apr 2017 14:09:01 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      content-length:
+      - '131'
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"AuthToken":"ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
+    http_version: 
+  recorded_at: Fri, 14 Apr 2017 14:09:02 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ''
+      x-authenticationToken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Apr 2017 14:09:02 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - b831f34c-d0b9-42c9-856f-1fe2c422e846
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '746907826'
+      x-sessiontoken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      content-length:
+      - '101'
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP\/yMgXqhzhVFLwn1rgNa4sj1s="}'
+    http_version: 
+  recorded_at: Fri, 14 Apr 2017 14:09:02 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Info
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      x-authenticationToken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Apr 2017 14:09:01 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - 3438a13b-4a39-48f6-a8fc-7c5b5420e2fa
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '746907826'
+      x-sessiontoken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      content-length:
+      - '2264'
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"AvailableSearchCriteria":{"AvailableSorts":[{"Id":"relevance","Label":"Relevance","AddAction":"setsort(relevance)"},{"Id":"date","Label":"Date
+        Newest","AddAction":"setsort(date)"},{"Id":"date2","Label":"Date Oldest","AddAction":"setsort(date2)"}],"AvailableSearchFields":[{"FieldCode":"TX","Label":"All
+        Text"},{"FieldCode":"AU","Label":"Author"},{"FieldCode":"TI","Label":"Title"},{"FieldCode":"SU","Label":"Subject
+        Terms"},{"FieldCode":"SO","Label":"Source"},{"FieldCode":"AB","Label":"Abstract"},{"FieldCode":"IS","Label":"ISSN"},{"FieldCode":"IB","Label":"ISBN"}],"AvailableExpanders":[{"Id":"relatedsubjects","Label":"Apply
+        equivalent subjects","AddAction":"addexpander(relatedsubjects)","DefaultOn":"y"},{"Id":"thesaurus","Label":"Apply
+        related words","AddAction":"addexpander(thesaurus)","DefaultOn":"y"},{"Id":"fulltext","Label":"Also
+        search within the full text of the articles","AddAction":"addexpander(fulltext)","DefaultOn":"y"}],"AvailableLimiters":[{"Id":"FT","Label":"Linked
+        Full Text","Type":"select","AddAction":"addlimiter(FT:value)","DefaultOn":"n","Order":"1"},{"Id":"FR","Label":"References
+        Available","Type":"select","AddAction":"addlimiter(FR:value)","DefaultOn":"n","Order":"2"},{"Id":"AU","Label":"Author","Type":"text","AddAction":"addlimiter(AU:value)","DefaultOn":"n","Order":"3"},{"Id":"TI","Label":"Title","Type":"text","AddAction":"addlimiter(TI:value)","DefaultOn":"n","Order":"4"},{"Id":"LB","Label":"Location","Type":"multiselectvalue","LimiterValues":[{"Value":"Carl
+        Vinson Institute of Government","AddAction":"addlimiter(LB:Carl Vinson Institute
+        of Government)"},{"Value":"Consult Reference Staff","AddAction":"addlimiter(LB:Consult
+        Reference Staff)"},{"Value":"Cortona (Italy) - Studies Abroad Program","AddAction":"addlimiter(LB:Cortona
+        \\(Italy\\) - Studies Abroad Program)"},{"Value":"Curriculum Materials Library","AddAction":"addlimiter(LB:Curriculum
+        Materials Library)"},{"Value":"Data Services","AddAction":"addlimiter(LB:Data
+        Services)"},{"Value":"Data Services, Main Library","AddAction":"addlimiter(LB:Data
+        Services\\, Main Library)"},{"Value":"Electronic Reserves","AddAction":"addlimiter(LB:Electronic
+        Reserves)"},{"Value":"Georgia Center for Continuing Education","AddAction":"addlimiter(LB:Georgia
+        Center for Continuing Education)"},{"Value":"Georgia Museum of Art Library,
+        currently unavailable","AddAction":"addlimiter(LB:Georgia Museum of Art Library\\,
+        currently unavailable)"},{"Value":"Government Documents, Main Library","AddAction":"addlimiter(LB:Government
+        Documents\\, Main Library)"},{"Value":"Government Documents, Science Library","AddAction":"addlimiter(LB:Government
+        Documents\\, Science Library)"},{"Value":"Griffin - Georgia Experiment Station","AddAction":"addlimiter(LB:Griffin
+        - Georgia Experiment Station)"},{"Value":"Gwinnett Campus","AddAction":"addlimiter(LB:Gwinnett
+        Campus)"},{"Value":"Hargrett Library","AddAction":"addlimiter(LB:Hargrett
+        Library)"},{"Value":"Internet Resource","AddAction":"addlimiter(LB:Internet
+        Resource)"},{"Value":"Jones Ecological Research Center","AddAction":"addlimiter(LB:Jones
+        Ecological Research Center)"},{"Value":"Journalism Reading Room","AddAction":"addlimiter(LB:Journalism
+        Reading Room)"},{"Value":"LIBRA Database Server","AddAction":"addlimiter(LB:LIBRA
+        Database Server)"},{"Value":"Main Library","AddAction":"addlimiter(LB:Main
+        Library)"},{"Value":"Map Library","AddAction":"addlimiter(LB:Map Library)"},{"Value":"Media,
+        Main Library","AddAction":"addlimiter(LB:Media\\, Main Library)"},{"Value":"Miller
+        Learning Center","AddAction":"addlimiter(LB:Miller Learning Center)"},{"Value":"Music
+        Library","AddAction":"addlimiter(LB:Music Library)"},{"Value":"On Order","AddAction":"addlimiter(LB:On
+        Order)"},{"Value":"Owens Library","AddAction":"addlimiter(LB:Owens Library)"},{"Value":"Pharmacy
+        Reading Room","AddAction":"addlimiter(LB:Pharmacy Reading Room)"},{"Value":"Reference,
+        Main Library","AddAction":"addlimiter(LB:Reference\\, Main Library)"},{"Value":"Reference,
+        Science Library","AddAction":"addlimiter(LB:Reference\\, Science Library)"},{"Value":"Repository","AddAction":"addlimiter(LB:Repository)"},{"Value":"Russell
+        Archival Collection","AddAction":"addlimiter(LB:Russell Archival Collection)"},{"Value":"Russell
+        Library","AddAction":"addlimiter(LB:Russell Library)"},{"Value":"Sapelo Marine
+        Institute","AddAction":"addlimiter(LB:Sapelo Marine Institute)"},{"Value":"Science
+        Library","AddAction":"addlimiter(LB:Science Library)"},{"Value":"Skidaway
+        Institute of Oceanography","AddAction":"addlimiter(LB:Skidaway Institute of
+        Oceanography)"},{"Value":"Tifton - Coastal Plain Experiment Station","AddAction":"addlimiter(LB:Tifton
+        - Coastal Plain Experiment Station)"},{"Value":"Tifton - Veterinary Diagnostic
+        Lab","AddAction":"addlimiter(LB:Tifton - Veterinary Diagnostic Lab)"},{"Value":"Vet
+        Med Reading Room","AddAction":"addlimiter(LB:Vet Med Reading Room)"}],"DefaultOn":"n","Order":"5"},{"Id":"FT1","Label":"Available
+        in Library Collection","Type":"select","AddAction":"addlimiter(FT1:value)","DefaultOn":"n","Order":"6"},{"Id":"LA99","Label":"Language","Type":"multiselectvalue","LimiterValues":[{"Value":"Arabic","AddAction":"addlimiter(LA99:Arabic)"},{"Value":"Chinese","AddAction":"addlimiter(LA99:Chinese)"},{"Value":"Czech","AddAction":"addlimiter(LA99:Czech)"},{"Value":"Dutch","AddAction":"addlimiter(LA99:Dutch)"},{"Value":"English","AddAction":"addlimiter(LA99:English)"},{"Value":"French","AddAction":"addlimiter(LA99:French)"},{"Value":"German","AddAction":"addlimiter(LA99:German)"},{"Value":"Italian","AddAction":"addlimiter(LA99:Italian)"},{"Value":"Japanese","AddAction":"addlimiter(LA99:Japanese)"},{"Value":"Latin","AddAction":"addlimiter(LA99:Latin)"},{"Value":"Portuguese","AddAction":"addlimiter(LA99:Portuguese)"},{"Value":"Spanish","AddAction":"addlimiter(LA99:Spanish)"},{"Value":"Welsh","AddAction":"addlimiter(LA99:Welsh)"},{"Value":"Greek,
+        Modern","AddAction":"addlimiter(LA99:Greek\\, Modern)"},{"Value":"Hebrew","AddAction":"addlimiter(LA99:Hebrew)"},{"Value":"Indonesian","AddAction":"addlimiter(LA99:Indonesian)"},{"Value":"Russian","AddAction":"addlimiter(LA99:Russian)"},{"Value":"Swedish","AddAction":"addlimiter(LA99:Swedish)"},{"Value":"Afrikaans","AddAction":"addlimiter(LA99:Afrikaans)"},{"Value":"Azerbaijani","AddAction":"addlimiter(LA99:Azerbaijani)"},{"Value":"Basque","AddAction":"addlimiter(LA99:Basque)"},{"Value":"Bosnian","AddAction":"addlimiter(LA99:Bosnian)"},{"Value":"Bulgarian","AddAction":"addlimiter(LA99:Bulgarian)"},{"Value":"Catalan","AddAction":"addlimiter(LA99:Catalan)"},{"Value":"Croatian","AddAction":"addlimiter(LA99:Croatian)"},{"Value":"Danish","AddAction":"addlimiter(LA99:Danish)"},{"Value":"Dutch\/Flemish","AddAction":"addlimiter(LA99:Dutch\/Flemish)"},{"Value":"Greek","AddAction":"addlimiter(LA99:Greek)"},{"Value":"Hindi","AddAction":"addlimiter(LA99:Hindi)"},{"Value":"Hungarian","AddAction":"addlimiter(LA99:Hungarian)"},{"Value":"Icelandic","AddAction":"addlimiter(LA99:Icelandic)"},{"Value":"Korean","AddAction":"addlimiter(LA99:Korean)"},{"Value":"Latvian","AddAction":"addlimiter(LA99:Latvian)"},{"Value":"Lithuanian","AddAction":"addlimiter(LA99:Lithuanian)"},{"Value":"Malay","AddAction":"addlimiter(LA99:Malay)"},{"Value":"Norwegian","AddAction":"addlimiter(LA99:Norwegian)"},{"Value":"Persian","AddAction":"addlimiter(LA99:Persian)"},{"Value":"Polish","AddAction":"addlimiter(LA99:Polish)"},{"Value":"Romanian","AddAction":"addlimiter(LA99:Romanian)"},{"Value":"Serbian","AddAction":"addlimiter(LA99:Serbian)"},{"Value":"Serbo-Croatian","AddAction":"addlimiter(LA99:Serbo-Croatian)"},{"Value":"Slovak","AddAction":"addlimiter(LA99:Slovak)"},{"Value":"Slovenian","AddAction":"addlimiter(LA99:Slovenian)"},{"Value":"Tagalog","AddAction":"addlimiter(LA99:Tagalog)"},{"Value":"Thai","AddAction":"addlimiter(LA99:Thai)"},{"Value":"Spanish;
+        Castilian","AddAction":"addlimiter(LA99:Spanish; Castilian)"}],"DefaultOn":"n","Order":"7"},{"Id":"FC","Label":"Catalog
+        Only","Type":"select","AddAction":"addlimiter(FC:value)","DefaultOn":"y","Order":"8"},{"Id":"SO","Label":"Source","Type":"text","AddAction":"addlimiter(SO:value)","DefaultOn":"n","Order":"9"},{"Id":"DT1","Label":"Published
+        Date","Type":"ymrange","AddAction":"addlimiter(DT1:value)","DefaultOn":"n","Order":"10"},{"Id":"RV","Label":"Peer
+        Reviewed","Type":"select","AddAction":"addlimiter(RV:value)","DefaultOn":"n","Order":"11"}],"AvailableSearchModes":[{"Mode":"bool","Label":"Boolean\/Phrase","DefaultOn":"n","AddAction":"setsearchmode(bool)"},{"Mode":"all","Label":"Find
+        all my search terms","DefaultOn":"y","AddAction":"setsearchmode(all)"},{"Mode":"any","Label":"Find
+        any of my search terms","DefaultOn":"n","AddAction":"setsearchmode(any)"},{"Mode":"smart","Label":"SmartText
+        Searching","DefaultOn":"n","AddAction":"setsearchmode(smart)"}],"AvailableRelatedContent":[{"Type":"rs","Label":"Research
+        Starters","DefaultOn":"y","AddAction":"includerelatedcontent(rs)"}],"AvailableDidYouMeanOptions":[{"Id":"AutoSuggest","Label":"Did
+        You Mean","DefaultOn":"y"}]},"ViewResultSettings":{"ResultsPerPage":"20","ResultListView":"brief"},"ApplicationSettings":{"SessionTimeout":"28800"},"ApiSettings":{"MaxRecordJumpAhead":"250"}}'
+    http_version: 
+  recorded_at: Fri, 14 Apr 2017 14:09:02 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Search
+    body:
+      encoding: UTF-8
+      string: '{"SearchCriteria":{"Queries":[{"Term":"supercalifragilisticexpialidocious-supercalifragilisticexpialidocious"}],"SearchMode":"all","IncludeFacets":"n","FacetFilters":null,"Limiters":null,"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"]},"RetrievalCriteria":{"View":"brief","ResultsPerPage":1,"PageNumber":1,"Highlight":null},"Actions":[]}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      x-authenticationToken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Apr 2017 14:09:02 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - e5827c96-8be3-43d3-9ea9-1230e8ccf7a0
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '746907826'
+      x-sessiontoken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      content-length:
+      - '789'
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJTZWFyY2hSZXF1ZXN0Ijp7IlNlYXJjaENyaXRlcmlhIjp7IlF1ZXJpZXMi
+        Olt7IkJvb2xlYW5PcGVyYXRvciI6IkFORCIsIlRlcm0iOiJzdXBlcmNhbGlm
+        cmFnaWxpc3RpY2V4cGlhbGlkb2Npb3VzLXN1cGVyY2FsaWZyYWdpbGlzdGlj
+        ZXhwaWFsaWRvY2lvdXMifV0sIlNlYXJjaE1vZGUiOiJhbGwiLCJJbmNsdWRl
+        RmFjZXRzIjoibiIsIkV4cGFuZGVycyI6WyJmdWxsdGV4dCIsInRoZXNhdXJ1
+        cyIsInJlbGF0ZWRzdWJqZWN0cyJdLCJTb3J0IjoicmVsZXZhbmNlIiwiUmVs
+        YXRlZENvbnRlbnQiOlsicnMiXSwiQXV0b1N1Z2dlc3QiOiJuIn0sIlJldHJp
+        ZXZhbENyaXRlcmlhIjp7IlZpZXciOiJicmllZiIsIlJlc3VsdHNQZXJQYWdl
+        IjoxLCJIaWdobGlnaHQiOiJ5In0sIlNlYXJjaENyaXRlcmlhV2l0aEFjdGlv
+        bnMiOnsiUXVlcmllc1dpdGhBY3Rpb24iOlt7IlF1ZXJ5Ijp7IkJvb2xlYW5P
+        cGVyYXRvciI6IkFORCIsIlRlcm0iOiJzdXBlcmNhbGlmcmFnaWxpc3RpY2V4
+        cGlhbGlkb2Npb3VzLXN1cGVyY2FsaWZyYWdpbGlzdGljZXhwaWFsaWRvY2lv
+        dXMifSwiUmVtb3ZlQWN0aW9uIjoicmVtb3ZlcXVlcnkoMSkifV0sIkV4cGFu
+        ZGVyc1dpdGhBY3Rpb24iOlt7IklkIjoiZnVsbHRleHQiLCJSZW1vdmVBY3Rp
+        b24iOiJyZW1vdmVleHBhbmRlcihmdWxsdGV4dCkifSx7IklkIjoidGhlc2F1
+        cnVzIiwiUmVtb3ZlQWN0aW9uIjoicmVtb3ZlZXhwYW5kZXIodGhlc2F1cnVz
+        KSJ9LHsiSWQiOiJyZWxhdGVkc3ViamVjdHMiLCJSZW1vdmVBY3Rpb24iOiJy
+        ZW1vdmVleHBhbmRlcihyZWxhdGVkc3ViamVjdHMpIn1dfX0sIlNlYXJjaFJl
+        c3VsdCI6eyJTdGF0aXN0aWNzIjp7IlRvdGFsSGl0cyI6MCwiVG90YWxTZWFy
+        Y2hUaW1lIjo0MCwiRGF0YWJhc2VzIjpbeyJJZCI6Im5sZWJrIiwiTGFiZWwi
+        OiJlQm9vayBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoiMCIs
+        IkhpdHMiOjB9LHsiSWQiOiJlMDAweG5hIiwiTGFiZWwiOiJlQm9vayBBY2Fk
+        ZW1pYyBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoiMCIsIkhp
+        dHMiOjB9LHsiSWQiOiJlZHNhcnQiLCJMYWJlbCI6IkFSVHN0b3IgRGlnaXRh
+        bCBMaWJyYXJ5IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlNzAw
+        eG5hIiwiTGFiZWwiOiJlQm9vayBQdWJsaWMgTGlicmFyeSBDb2xsZWN0aW9u
+        IChFQlNDT2hvc3QpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJj
+        YXQwMjA2MGEiLCJMYWJlbCI6IkVEUyBEZW1vIENhdGFsb2cg4oCTIFVTIC0g
+        VSBvZiBHZW9yZ2lhIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJl
+        cnMiLCJMYWJlbCI6IlJlc2VhcmNoIFN0YXJ0ZXJzIiwiU3RhdHVzIjoiMCIs
+        IkhpdHMiOjB9LHsiSWQiOiJhc24iLCJMYWJlbCI6IkFjYWRlbWljIFNlYXJj
+        aCBVbHRpbWF0ZSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRz
+        cGRoIiwiTGFiZWwiOiJQc3ljQVJUSUNMRVMiLCJTdGF0dXMiOiIwIiwiSGl0
+        cyI6MH0seyJJZCI6InBzeWgiLCJMYWJlbCI6IlBzeWNJTkZPIiwiU3RhdHVz
+        IjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwZGgiLCJMYWJlbCI6IlBzeWNBUlRJ
+        Q0xFUyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzbm1qIiwi
+        TGFiZWwiOiJOYXhvcyBNdXNpYyBMaWJyYXJ5IEphenoiLCJTdGF0dXMiOiIw
+        IiwiSGl0cyI6MH0seyJJZCI6ImVkc2NyYyIsIkxhYmVsIjoiQ3JlZG8gUmVm
+        ZXJlbmNlIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNobGQi
+        LCJMYWJlbCI6IkRpZ2l0YWwgQWNjZXNzIHRvIFNjaG9sYXJzaGlwIGF0IEhh
+        cnZhcmQgKERBU0gpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9XX0sIkRhdGEi
+        OnsiUmVjb3JkRm9ybWF0IjoiRVAgRGlzcGxheSJ9fX0=
+    http_version: 
+  recorded_at: Fri, 14 Apr 2017 14:09:02 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Retrieve
+    body:
+      encoding: UTF-8
+      string: '{"DbId":"e000xna","An":"553416","HighlightTerms":null,"EbookPreferredFormat":"ebook-pdf"}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      x-authenticationToken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Apr 2017 14:09:02 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - 72cdc97c-622e-4af9-899d-ba5c85c05a81
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '746907826'
+      x-sessiontoken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      content-length:
+      - '2040'
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"Record":{"ResultId":1,"Header":{"DbId":"e000xna","DbLabel":"eBook
+        Academic Collection (EBSCOhost)","An":"553416","RelevancyScore":"990","PubType":"eBook","PubTypeId":"ebook"},"PLink":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=e000xna&AN=553416","ImageInfo":[{"Size":"thumb","Target":"http:\/\/rps2images.ebscohost.com\/rpsweb\/othumb?id=NL$553416$PDF&s=r"},{"Size":"medium","Target":"http:\/\/rps2images.ebscohost.com\/rpsweb\/othumb?id=NL$553416$PDF&s=d"}],"FullText":{"Links":[{"Type":"ebook-pdf","Url":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=e000xna&AN=553416&ebv=EB&ppid="}],"Text":{"Availability":"0"}},"Items":[{"Name":"Title","Label":"Title","Group":"Ti","Data":"Harry
+        Potter&#39;s World Wide Influence"},{"Name":"Author","Label":"Authors","Group":"Au","Data":"&lt;searchLink
+        fieldCode=&quot;AR&quot; term=&quot;%22Patterson%2C+Diana%22&quot;&gt;Patterson,
+        Diana&lt;\/searchLink&gt;"},{"Name":"PublisherInfo","Label":"Publication Information","Group":"PubInfo","Data":"Newcastle
+        upon Tyne : Cambridge Scholars Publishing. 2009"},{"Name":"TypePub","Label":"Resource
+        Type","Group":"TypPub","Data":"eBook."},{"Name":"Abstract","Label":"Description","Group":"Ab","Data":"The
+        Harry Potter series forms a single epic story that has been published in nearly
+        70 languages, and has been examined in a large number of disciplines. This
+        collection of essays contributes to the scholarly discourse that forms Potter
+        Studies. These essays take on the consideration of Rowling&#39;s work as being
+        worthy of study as a phenomenon and influence, as well as a work of literary
+        value. They add genuine statistical information about the reasons for the
+        books&#39;popularity, consider their effects on child readers, and examine
+        some deep-rooted reasons for their having been manipulated in American publishing,
+        in film adaptations, in musical complements, and in their thingification in
+        popular culture around the world. Some of these essays take on the critics
+        of the books&#39;religion and considerations of psychological, as well as
+        philosophical good and evil, and well as some stylistic anomalies.The fact
+        that scholars from China, Germany, Poland, Romania, and Israel, in addition
+        to English-speaking nations, have felt compelled to examine these books in
+        detail testifies in part to Harry Potter&#39;s world-wide influence."},{"Name":"Subject","Label":"Subjects","Group":"Su","Data":"&lt;searchLink
+        fieldCode=&quot;DE&quot; term=&quot;%22Potter%2C+Harry+%28Fictitious+character%29%22&quot;&gt;Potter,
+        Harry (Fictitious character)&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink
+        fieldCode=&quot;DE&quot; term=&quot;%22Children&#39;s+stories%2C+English--History+and+criticism%22&quot;&gt;Children&#39;s
+        stories, English--History and criticism&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink
+        fieldCode=&quot;DE&quot; term=&quot;%22Fantasy+fiction%2C+English--History+and+criticism%22&quot;&gt;Fantasy
+        fiction, English--History and criticism&lt;\/searchLink&gt;"},{"Name":"SubjectBISAC","Label":"Categories","Group":"Su","Data":"&lt;searchLink
+        fieldCode=&quot;ZK&quot; term=&quot;%22LITERARY+CRITICISM+%2F+European+%2F+English%2C+Irish%2C+Scottish%2C+Welsh%22&quot;&gt;LITERARY
+        CRITICISM \/ European \/ English, Irish, Scottish, Welsh&lt;\/searchLink&gt;"},{"Name":"ISBN","Label":"Related
+        ISBNs","Group":"ISBN","Data":"9781443813945. 9781443816281."},{"Name":"NumberOther","Label":"OCLC","Group":"ID","Data":"830167932"},{"Name":"AN","Label":"Accession
+        Number","Group":"ID","Data":"553416"},{"Name":"PublisherInfo","Label":"Publisher
+        Permissions","Group":"PubInfo","Data":"Print\/Save 60 pages&lt;br \/&gt;Copy\/Paste
+        Allowed"}],"RecordInfo":{"BibRecord":{"BibEntity":{"Classifications":[{"Code":"823.914","Scheme":"ddc","Type":"prePub"}],"Languages":[{"Code":"eng","Text":"English"}],"Subjects":[{"SubjectFull":"Potter,
+        Harry (Fictitious character)","Type":"general"},{"SubjectFull":"Children''s
+        stories, English--History and criticism","Type":"general"},{"SubjectFull":"Fantasy
+        fiction, English--History and criticism","Type":"general"}],"Titles":[{"TitleFull":"Harry
+        Potter''s World Wide Influence","Type":"main"}]},"BibRelationships":{"HasContributorRelationships":[{"PersonEntity":{"Name":{"NameFull":"Patterson,
+        Diana"}}}],"IsPartOfRelationships":[{"BibEntity":{"Dates":[{"D":"01","M":"01","Type":"published","Y":"2009"},{"D":"21","M":"03","Type":"profile","Y":"2014"}],"Identifiers":[{"Type":"isbn-print","Value":"9781443813945"},{"Type":"isbn-electronic","Value":"9781443816281"}],"Titles":[{"TitleFull":"Harry
+        Potter''s World Wide Influence","Type":"main"}]}}]}}}}}'
+    http_version: 
+  recorded_at: Fri, 14 Apr 2017 14:09:03 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s="}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 030a6d6e-e171-4c50-8c12-2d0fbc0a58b3.1uJioVv72pSUP+erpfP/yMgXqhzhVFLwn1rgNa4sj1s=
+      x-authenticationToken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Apr 2017 14:09:03 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ACEfdskROjdyXUL8XZ0OOIdb_6E66ljw3wZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - c18e679b-560b-4814-a66b-5e2048fefd35
+      x-powered-by:
+      - ASP.NET
+      content-length:
+      - '20'
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"IsSuccessful":"y"}'
+    http_version: 
+  recorded_at: Fri, 14 Apr 2017 14:09:04 GMT
+recorded_with: VCR 3.0.3
