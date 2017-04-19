@@ -255,10 +255,24 @@ module EBSCO
             # facets
             # ====================================================================================
             when :include_facets
-                @IncludeFacets = value ? 'y' : 'n'
+              @IncludeFacets = value ? 'y' : 'n'
 
             when :facet_filters
               @FacetFilters = value
+
+            # # handle solr facets without causing the page to reset to 1 again?
+            # when 'f'
+            #
+            #   if value.has_key?('content_provider_facet')
+            #     f_filter = {'FilterId' => 1, 'FacetValues' => []}
+            #     flist = value['content_provider_facet']
+            #     flist.each do |item|
+            #       item = eds_sanitize item
+            #       f_filter['FacetValues'].push({'Id' => 'ContentProvider', 'Value' => item})
+            #     end
+            #     @FacetFilters.push f_filter
+            #     puts 'FACET FILTERS: ' + @FacetFilters.inspect
+            #   end
 
             # ====================================================================================
             # sort
@@ -390,7 +404,7 @@ module EBSCO
             # ====================================================================================
             # results per page
             # ====================================================================================
-            when :results_per_page, 'rows', 'per_page'
+            when :results_per_page, 'results_per_page', 'rows', 'per_page'
               if value.to_i > info.max_results_per_page
                 @ResultsPerPage = info.max_results_per_page
               else
@@ -400,7 +414,7 @@ module EBSCO
             # ====================================================================================
             # page number
             # ====================================================================================
-            when :page_number, 'page'
+            when :page_number, 'page_number', 'page'
               @PageNumber = value.to_i
             # solr starts at page 0
             when 'start'
