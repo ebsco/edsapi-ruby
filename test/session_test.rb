@@ -3,100 +3,106 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_create_session_with_user_credentials
-    session = EBSCO::EDS::Session.new({:user => ENV['EDS_USER'], :pass => ENV['EDS_PASS'], :auth => 'user'})
-    refute_nil session.session_token, 'Expected session token not to be nil.'
-    refute_nil session.auth_token, 'Expected auth token not to be nil.'
-    session.end
+    VCR.use_cassette('test_create_session_with_user_credentials') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', user: 'billmckinn', auth: 'user'})
+      refute_nil session.session_token, 'Expected session token not to be nil.'
+      refute_nil session.auth_token, 'Expected auth token not to be nil.'
+      session.end
+    end
   end
 
   def test_create_session_with_using_all_env_vars
-    session = EBSCO::EDS::Session.new
-    refute_nil session
+    VCR.use_cassette('test_create_session_with_using_all_env_vars') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      refute_nil session
+      session.end
+    end
   end
 
   def test_create_session_with_ip
-    ClimateControl.modify EDS_USER: '', EDS_PASS: '' do
-      if ENV.has_key? 'EDS_AUTH'
-        if ENV['EDS_AUTH'].casecmp('ip') == 0
-          session = EBSCO::EDS::Session.new
-          assert session.session_token != nil, 'Expected session token not to be nil.'
-        else
-          assert_raises EBSCO::EDS::BadRequest do
-            EBSCO::EDS::Session.new
-          end
-          #assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
-        end
-      else
-        assert_raises EBSCO::EDS::BadRequest do
-          EBSCO::EDS::Session.new
-        end
-        #assert_match "EBSCO API returned error:\nCode: 1102\nReason: Invalid Credentials.\nDetails:\n", e.message
-      end
+    VCR.use_cassette('test_create_session_with_ip') do
+            session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', user: nil, pass: nil, auth: 'ip'})
+            assert session.session_token != nil, 'Expected session token not to be nil.'
+            session.end
     end
   end
 
   def test_create_session_missing_profile
-    ClimateControl.modify EDS_PROFILE: '' do
+    VCR.use_cassette('test_create_session_missing_profile') do
       e = assert_raises EBSCO::EDS::InvalidParameter do
-        EBSCO::EDS::Session.new
+        EBSCO::EDS::Session.new({use_cache: false, profile: ''})
       end
       assert_match 'Session must specify a valid api profile.', e.message
     end
   end
 
   def test_create_session_with_unknown_profile
-    assert_raises EBSCO::EDS::BadRequest do
-      EBSCO::EDS::Session.new({:profile => 'eds-none'})
+    VCR.use_cassette('test_create_session_with_unknown_profile') do
+      assert_raises EBSCO::EDS::BadRequest do
+        EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-none'})
+      end
     end
   end
 
   def test_create_session_failed_user_credentials
-    clear_cache
-    assert_raises EBSCO::EDS::BadRequest do
-      EBSCO::EDS::Session.new({:profile => 'eds-api', :auth => 'user', :user => 'fake', :pass => 'none', :guest => false, :org => 'test'})
+    VCR.use_cassette('test_create_session_failed_user_credentials') do
+      assert_raises EBSCO::EDS::BadRequest do
+        EBSCO::EDS::Session.new({
+            use_cache: false,
+            profile: 'eds-api',
+            auth: 'user',
+            user: 'fake',
+            pass: 'none',
+            guest: false,
+            org: 'test'
+                                })
+      end
     end
   end
 
   def test_api_request_with_unsupported_method
-    session = EBSCO::EDS::Session.new
-    assert_raises EBSCO::EDS::ApiError do
-      session.do_request(:put, path: 'testing')
+    VCR.use_cassette('test_api_request_with_unsupported_method') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      assert_raises EBSCO::EDS::ApiError do
+        session.do_request(:put, path: 'testing')
+      end
+      session.end
     end
-    session.end
   end
 
   def test_api_request_beyond_max_attempt
-    session = EBSCO::EDS::Session.new
-    assert_raises EBSCO::EDS::ApiError do
-      session.do_request(:get, path: 'testing', attempt: 5)
+    VCR.use_cassette('test_api_request_beyond_max_attempt') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      assert_raises EBSCO::EDS::ApiError do
+        session.do_request(:get, path: 'testing', attempt: 5)
+      end
+      session.end
     end
-    session.end
   end
 
   def test_api_request_no_session_token_force_refresh
-    clear_cache
-    # should trigger 108
-    session = EBSCO::EDS::Session.new
-    session.session_token = ''
-    clear_cache
-    info = EBSCO::EDS::Info.new(session.do_request(:get, path: session.config[:info_url]))
-    refute_nil info
-    session.end
+    VCR.use_cassette('test_api_request_no_session_token_force_refresh') do
+      # should trigger 108
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      session.session_token = ''
+      info = EBSCO::EDS::Info.new(session.do_request(:get, path: session.config[:info_url]))
+      refute_nil info
+      session.end
+    end
   end
 
-  # def test_api_request_invalid_auth_token_force_refresh
-  #   # should trigger 104 and too many attempts failure
-  #   session = EBSCO::EDS::Session.new
-  #   session.auth_token = 'AB_-wWmVp56RKhVhP6olUUdZVLND3liTv2F7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ'
-  #   assert_raises EBSCO::EDS::ApiError do
-  #     EBSCO::EDS::Info.new(session.do_request(:get, path: EBSCO::EDS::INFO_URL))
-  #   end
-  # end
-
-  def clear_cache
-    cache_dir = File.join(ENV['TMPDIR'] || '/tmp', 'faraday_eds_cache')
-    cache_store = ActiveSupport::Cache::FileStore.new cache_dir
-    cache_store.clear
+  def test_api_request_invalid_auth_token_force_refresh
+    # should trigger 104 and too many attempts failure
+    VCR.use_cassette('test_api_request_invalid_auth_token_force_refresh') do
+      session = EBSCO::EDS::Session.new({
+          use_cache: false,
+          profile: 'eds-api',
+          auth_token: 'bogus'
+                                        })
+      info = EBSCO::EDS::Info.new(session.do_request(:get, path: session.config[:info_url]))
+      refute_nil info
+      session.end
+    end
   end
 
 end

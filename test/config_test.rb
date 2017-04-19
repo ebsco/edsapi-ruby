@@ -3,9 +3,11 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_options_config
-    session = EBSCO::EDS::Session.new({:interface_id => 'just a test'})
-    assert session.config[:interface_id] == 'just a test'
-    session.end
+    VCR.use_cassette('test_options_config') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', interface_id: 'just a test'})
+      assert session.config[:interface_id] == 'just a test'
+      session.end
+    end
   end
 
   def test_yaml_file_config
@@ -38,11 +40,12 @@ class EdsApiTests < Minitest::Test
     File.open('eds-test.yaml','w') do |file|
       file.write test_config.to_yaml
     end
-
-    session = EBSCO::EDS::Session.new({:config => 'eds-test.yaml'})
+    VCR.use_cassette('test_yaml_file_config') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test.yaml'})
+      assert session.config[:interface_id] == 'ok ok ok'
+      session.end
+    end
     File.delete 'eds-test.yaml'
-    assert session.config[:interface_id] == 'ok ok ok'
-    session.end
 
   end
 
@@ -80,17 +83,21 @@ class EdsApiTests < Minitest::Test
       file.write yaml_string
     end
 
-    s2 = EBSCO::EDS::Session.new({:config => 'eds-test-2.yaml'})
+    VCR.use_cassette('test_yaml_file_bad_syntax') do
+      s2 = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test-2.yaml'})
+      assert s2.config[:interface_id] == 'EBSCO EDS GEM v0.0.1'
+      s2.end
+    end
     File.delete 'eds-test-2.yaml'
-    assert s2.config[:interface_id] == 'EBSCO EDS GEM v0.0.1'
-    s2.end
 
   end
 
   def test_yaml_no_file
-    s = EBSCO::EDS::Session.new({:config => 'eds-test88.yaml'})
-    assert s.config[:interface_id] == 'EBSCO EDS GEM v0.0.1'
-    s.end
+    VCR.use_cassette('test_yaml_no_file', :record => :new_episodes) do
+      s = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test88.yaml'})
+      assert s.config[:interface_id] == 'EBSCO EDS GEM v0.0.1'
+      s.end
+    end
   end
 
 end

@@ -65,6 +65,7 @@ module EBSCO
         @session_token = ''
         @auth_token = ''
         @config = {}
+        @guest = true
 
         eds_config = EBSCO::EDS::Configuration.new
         if options[:config]
@@ -97,8 +98,16 @@ module EBSCO
 
         # these config options can be overridden by environment vars
         @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
-        @guest =      (ENV.has_key? 'EDS_GUEST') ? ENV['EDS_GUEST'] : @config[:guest]
         @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
+        if ENV.has_key? 'EDS_GUEST'
+          if ['n', 'N', 'no', 'No'].include?(ENV['EDS_GUEST'])
+            @guest = false
+          else
+            @guest = true
+          end
+        else
+          @guest = @config[:guest]
+        end
 
         # use cache for auth token and info calls?
         if @config[:use_cache]
@@ -227,6 +236,24 @@ module EBSCO
         record = EBSCO::EDS::Record.new(retrieve_response)
         # puts 'RECORD: ' + record.pretty_inspect
         record
+      end
+
+      # Create a result set with just the record before and after then index item
+      def solr_retrieve_previous_next(options = {})
+        records = []
+        hits = search(options).stat_total_hits
+        options.update(:results_per_page => 1,
+                       :page_number => (options['previous-next-index'].to_i) - 1,
+                       'page' => (options['previous-next-index'].to_i) - 1)
+        records.push  search(options).records.first
+        options.update(:results_per_page => 1,
+                       :page_number => (options['previous-next-index'].to_i) + 1,
+                       'page' => (options['previous-next-index'].to_i) + 1)
+        records.push  search(options).records.first
+        r = empty_results(hits)
+        results = EBSCO::EDS::Results.new(r)
+        results.records = records
+        results.to_solr
       end
 
       def solr_retrieve_list(list: [], highlight: nil)
