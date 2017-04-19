@@ -238,6 +238,24 @@ module EBSCO
         record
       end
 
+      # Create a result set with just the record before and after then index item
+      def solr_retrieve_previous_next(options = {})
+        records = []
+        hits = search(options).stat_total_hits
+        options.update(:results_per_page => 1,
+                       :page_number => (options['previous-next-index'].to_i) - 1,
+                       'page' => (options['previous-next-index'].to_i) - 1)
+        records.push  search(options).records.first
+        options.update(:results_per_page => 1,
+                       :page_number => (options['previous-next-index'].to_i) + 1,
+                       'page' => (options['previous-next-index'].to_i) + 1)
+        records.push  search(options).records.first
+        r = empty_results(hits)
+        results = EBSCO::EDS::Results.new(r)
+        results.records = records
+        results.to_solr
+      end
+
       def solr_retrieve_list(list: [], highlight: nil)
         records = []
         if list.any?
