@@ -26,7 +26,7 @@ module EBSCO
             :search_url => '/edsapi/rest/Search',
             :retrieve_url => '/edsapi/rest/Retrieve',
             :user_agent => 'EBSCO EDS GEM v0.0.1',
-            :interface_id => 'EBSCO EDS GEM v0.0.1',
+            :interface_id => 'edsapi_ruby_gem',
             :log => 'faraday.log',
             :max_attempts => 2,
             :max_results_per_page => 100,

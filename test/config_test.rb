@@ -85,7 +85,7 @@ class EdsApiTests < Minitest::Test
 
     VCR.use_cassette('test_yaml_file_bad_syntax') do
       s2 = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test-2.yaml'})
-      assert s2.config[:interface_id] == 'EBSCO EDS GEM v0.0.1'
+      assert s2.config[:interface_id] == 'edsapi_ruby_gem'
       s2.end
     end
     File.delete 'eds-test-2.yaml'
@@ -95,7 +95,7 @@ class EdsApiTests < Minitest::Test
   def test_yaml_no_file
     VCR.use_cassette('test_yaml_no_file', :record => :new_episodes) do
       s = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test88.yaml'})
-      assert s.config[:interface_id] == 'EBSCO EDS GEM v0.0.1'
+      assert s.config[:interface_id] == 'edsapi_ruby_gem'
       s.end
     end
   end

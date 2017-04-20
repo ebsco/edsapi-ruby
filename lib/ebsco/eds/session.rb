@@ -692,7 +692,7 @@ module EBSCO
           # user auth
           else
             resp = do_request(:post, path: @config[:uid_auth_url], payload:
-                { UserId: @user, Password: @pass })
+                { UserId: @user, Password: @pass, InterfaceId: @config[:interface_id] })
           end
         end
         @auth_token = resp['AuthToken']
