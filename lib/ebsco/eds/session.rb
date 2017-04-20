@@ -679,7 +679,7 @@ module EBSCO
           conn.use :eds_caching_middleware, store: @cache_store if @config[:use_cache]
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
-          conn.response :logger, logger
+          conn.response :logger, logger if @config[:debug]
           conn.adapter Faraday.default_adapter
         end
       end

@@ -46,7 +46,7 @@ module EBSCO
 
       def configure_with(file)
         begin
-          config = YAML.load_file(file ||= 'eds.yaml')
+          config = YAML.load_file(file ||= 'eds.yaml').symbolize_keys
         rescue Errno::ENOENT
           #puts 'YAML configuration file couldn\'t be found. Using defaults.'
           return
