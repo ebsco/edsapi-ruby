@@ -320,7 +320,12 @@ module EBSCO
       end
 
       # The first fulltext link.
-      def fulltext_link
+      def fulltext_link(type = 'first')
+        fulltext_links.each do |link|
+          if link[:type] == type
+            return link
+          end
+        end
         fulltext_links.first || {}
       end
 
@@ -404,7 +409,7 @@ module EBSCO
               link_label = 'Linked Full Text'
               link_icon = 'Linked Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
-              links.push({url: link_url, label: link_label, icon: link_icon, type: 'smartlinks+'})
+              links.push({url: link_url, label: link_label, icon: link_icon, type: 'smartlinks'})
             end
           end
         end
@@ -875,6 +880,9 @@ module EBSCO
         end
         if cover_medium_url
           hash['cover_medium_url'] = cover_medium_url
+        end
+        if all_links
+          hash['fulltext_link'] = { 'id' => database_id + '__' + safe_an, 'links' => all_links}
         end
         # generate bibtex entry if it hasn't been done already
         if @bibtex.key == 'unknown-a'

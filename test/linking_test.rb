@@ -7,7 +7,7 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edslinkapi'})
       if session.dbid_in_profile 'cmedm'
         record = session.retrieve({dbid: 'cmedm', an: '27788591'})
-        assert record.fulltext_link[:type] == 'smartlinks+'
+        assert record.fulltext_link[:type] == 'smartlinks'
         assert record.bib_issn_electronic == '1556-9519'
       else
         puts "WARNING: skipping test_smartlinks, cmedm db isn't in the profile."
