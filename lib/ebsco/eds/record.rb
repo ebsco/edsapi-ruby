@@ -1,8 +1,5 @@
 require 'yaml'
 require 'json'
-require 'citeproc'
-require 'csl/styles'
-require 'bibtex'
 require 'cgi'
 
 module EBSCO
@@ -12,8 +9,64 @@ module EBSCO
     # A single search result
     class Record
 
+      ATTRIBUTES = [
+          :id,
+          :eds_accession_number,
+          :eds_database_id,
+          :eds_database_name,
+          :eds_access_level,
+          :eds_relevancy_score,
+          :eds_title,
+          :eds_source_title,
+          :eds_other_titles,
+          :eds_abstract,
+          :eds_authors,
+          :eds_author_affiliations,
+          :eds_subjects,
+          :eds_subjects_geographic,
+          :eds_subjects_person,
+          :eds_author_supplied_keywords,
+          :eds_notes,
+          :eds_languages,
+          :eds_page_count,
+          :eds_page_start,
+          :eds_physical_description,
+          :eds_publication_type,
+          :eds_publication_type_id,
+          :eds_publication_date,
+          :eds_publication_year,
+          :eds_publication_info,
+          :eds_document_type,
+          :eds_document_doi,
+          :eds_document_oclc,
+          :eds_issn_print,
+          :eds_issns,
+          :eds_isbn_print,
+          :eds_isbn_electronic,
+          :eds_isbns_related,
+          :eds_isbns,
+          :eds_series,
+          :eds_volume,
+          :eds_issue,
+          :eds_covers,
+          :eds_cover_thumb_url,
+          :eds_cover_medium_url,
+          :eds_fulltext_word_count,
+          :eds_result_id,
+          :eds_plink,
+          :eds_html_fulltext,
+          :eds_images,
+          :eds_all_links,
+          :eds_fulltext_links,
+          :eds_non_fulltext_links
+      ]
+
       # Raw record as returned by the \EDS API via search or retrieve
-      attr_reader :record
+      attr_accessor(*ATTRIBUTES)
+
+      def attributes
+        ATTRIBUTES.map{|attribute| self.send(attribute) }
+      end
 
       # Creates a search or retrieval result record
       def initialize(results_record)
@@ -26,53 +79,80 @@ module EBSCO
 
         @items = @record.fetch('Items', {})
 
-        @bib_entity = @record.fetch('RecordInfo', {})
-                          .fetch('BibRecord', {})
-                          .fetch('BibEntity', {})
+        @bib_entity = @record.fetch('RecordInfo', {}).fetch('BibRecord', {}).fetch('BibEntity', {})
 
-        @bib_relationships = @record.fetch('RecordInfo', {})
-                                 .fetch('BibRecord', {})
-                                 .fetch('BibRelationships', {})
+        @bib_relationships = @record.fetch('RecordInfo', {}).fetch('BibRecord', {}).fetch('BibRelationships', {})
 
         @bib_part = @record.fetch('RecordInfo', {})
                         .fetch('BibRecord', {})
                         .fetch('BibRelationships', {})
                         .fetch('IsPartOfRelationships', {})[0]
 
-        @bibtex = BibTeX::Entry.new
+        # accessors:
+        @eds_accession_number = @record['Header']['An'].to_s
+        @eds_database_id = @record['Header']['DbId'].to_s
+        @eds_database_name = @record['Header']['DbLabel']
+        @eds_access_level = @record['Header']['AccessLevel']
+        @eds_relevancy_score =  @record['Header']['RelevancyScore']
+        @eds_title = title
+        @eds_source_title = source_title
+        @eds_other_titles = other_titles
+        @eds_abstract = abstract
+        @eds_authors = bib_authors || get_item_data_by_name('Author')
+        @eds_author_affiliations = get_item_data_by_name('AffiliationAuthor')
+        @eds_subjects = bib_subjects || get_item_data_by_name('Subject')
+        @eds_subjects_geographic = get_item_data_by_name('SubjectGeographic')
+        @eds_subjects_person = get_item_data_by_name('SubjectPerson')
+        @eds_author_supplied_keywords = get_item_data_by_label('Author-Supplied Keywords')
+        @eds_notes = notes
+        @eds_languages = get_item_data_by_name('Language') || bib_languages
+        @eds_page_count = bib_page_count
+        @eds_page_start = bib_page_start
+        @eds_physical_description = get_item_data_by_name('PhysDesc')
+        @eds_publication_type = @record['Header']['PubType'] || get_item_data_by_name('TypePub')
+        @eds_publication_type_id = @record['Header']['PubTypeId']
+        @eds_publication_date = bib_publication_date || get_item_data_by_name('DatePub')
+        @eds_publication_year = bib_publication_year || get_item_data_by_name('DatePub')
+        @eds_publication_info = get_item_data_by_label('Publication Information')
+        @eds_document_type = get_item_data_by_name('TypeDocument')
+        @eds_document_doi = get_item_data_by_name('DOI') || bib_doi
+        @eds_document_oclc = get_item_data_by_label('OCLC')
+        @eds_issn_print = get_item_data_by_name('ISSN') || bib_issn_print
+        @eds_issns = bib_issns
+        @eds_isbn_print = bib_isbn_print
+        @eds_isbns_related = item_related_isbns
+        @eds_isbn_electronic = bib_isbn_electronic
+        @eds_isbns = bib_isbns || item_related_isbns
+        @eds_series =  get_item_data_by_name('SeriesInfo')
+        @eds_volume = bib_volume
+        @eds_issue = bib_issue
+        @eds_covers = images
+        @eds_cover_thumb_url = cover_thumb_url
+        @eds_cover_medium_url = cover_medium_url
+        @eds_fulltext_word_count = get_item_data_by_name('FullTextWordCount').to_i
+        @eds_result_id = @record['ResultId']
+        @eds_plink = @record['PLink']
+        @eds_html_fulltext = html_fulltext
+        @eds_images = images
+        @eds_all_links = all_links
+        @eds_fulltext_links = fulltext_links
+        @eds_non_fulltext_links = non_fulltext_links
+        @id = @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_')
+
       end
+
+      # --
+      # ====================================================================================
+      # MISC HELPERS
+      # ====================================================================================
+      # ++
 
       # \Options hash containing accession number and database ID. This can be passed to the retrieve method.
       def retrieve_options
         options = {}
-        options['an'] = accession_number
-        options['dbid'] = database_id
+        options['an'] = @eds_accession_number
+        options['dbid'] = @eds_database_id
         options
-      end
-
-      # The accession number.
-      def accession_number
-        header_an
-      end
-
-      # The database ID.
-      def database_id
-        header_db_id
-      end
-
-      # The database name or label.
-      def database_name
-        header_db_label
-      end
-
-      # The access level.
-      def access_level
-        header_access_level
-      end
-
-      # The search relevancy score.
-      def relevancy_score
-        header_score
       end
 
       # The title.
@@ -105,145 +185,10 @@ module EBSCO
         _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
-      # The list of authors
-      def authors
-        bib_authors || get_item_data_by_name('Author')
-      end
-
-      # The author affiliations
-      def author_affiliations
-        get_item_data_by_name('AffiliationAuthor')
-      end
-
-      # The list of subject terms.
-      def subjects
-        bib_subjects || get_item_data_by_name('Subject')
-      end
-
-      # The list of geographic subjects
-      def subjects_geographic
-        get_item_data_by_name('SubjectGeographic')
-      end
-
-      # The list of person subjects
-      def subjects_person
-        get_item_data_by_name('SubjectPerson')
-      end
-
-      # Author supplied keywords
-      def author_supplied_keywords
-        get_item_data_by_label('Author-Supplied Keywords')
-      end
-
       # Notes
       def notes
         _retval = get_item_data_by_name('Note')
         _retval.nil?? nil : CGI.unescapeHTML(_retval)
-      end
-
-      # Languages
-      def languages
-        get_item_data_by_name('Language') || bib_languages
-      end
-
-      # Total number of pages.
-      def page_count
-        bib_page_count
-      end
-
-      # Starting page number.
-      def page_start
-        bib_page_start
-      end
-
-      # Physical description.
-      def physical_description
-        get_item_data_by_name('PhysDesc')
-      end
-
-      # Publication type.
-      def publication_type
-        header_publication_type || get_item_data_by_name('TypePub')
-      end
-
-      # Publication type ID.
-      def publication_type_id
-        header_publication_type_id
-      end
-
-      # Publication date.
-      def publication_date
-        bib_publication_date || get_item_data_by_name('DatePub')
-      end
-
-      # Publication year.
-      def publication_year
-        bib_publication_year || get_item_data_by_name('DatePub')
-      end
-
-      # Publisher information.
-      def publisher_info
-        get_item_data_by_label('Publication Information')
-      end
-
-      # Document type.
-      def document_type
-        get_item_data_by_name('TypeDocument')
-      end
-
-      # DOI identifier.
-      def doi
-        get_item_data_by_name('DOI') || bib_doi
-      end
-
-      # OCLC identifier.
-      def oclc
-        get_item_data_by_label('OCLC')
-      end
-
-      #  Prind ISSN
-      def issn_print
-        get_item_data_by_name('ISSN') || bib_issn_print
-      end
-
-      # List of ISSNs
-      def issns
-        bib_issns
-      end
-
-      # List of ISBNs
-      def isbns
-        bib_isbns || item_related_isbns
-      end
-
-      # Print ISBN
-      def isbn_print
-        bib_isbn_print
-      end
-
-      # Electronic ISBN
-      def isbn_electronic
-        bib_isbn_electronic
-      end
-
-      # Series information.
-      def series
-        get_item_data_by_name('SeriesInfo')
-      end
-
-      # Volume
-      def volume
-        bib_volume
-      end
-
-      # Issue
-      def issue
-        bib_issue
-      end
-
-      # Cover images
-      def covers
-        images
       end
 
       # Cover image - thumbnail size link
@@ -262,27 +207,6 @@ module EBSCO
         else
           nil
         end
-      end
-
-      # Word count for fulltext.
-      def fulltext_word_count
-        get_item_data_by_name('FullTextWordCount').to_i
-      end
-
-      # --
-      # ====================================================================================
-      # GENERAL: ResultId, PLink, ImageInfo, CustomLinks, FullText
-      # ====================================================================================
-      # ++
-
-      # Result ID.
-      def result_id
-        @record['ResultId']
-      end
-
-      # EBSCO's persistent link.
-      def plink
-        @record['PLink']
       end
 
       # Fulltext.
@@ -306,6 +230,16 @@ module EBSCO
           end
         end
         returned_images
+      end
+
+      # related ISBNs
+      def item_related_isbns
+        isbns = get_item_data_by_label('Related ISBNs')
+        if isbns
+          isbns.split(' ').map!{|item| item.gsub(/\.$/, '')}
+        else
+          nil
+        end
       end
 
       # --
@@ -443,45 +377,8 @@ module EBSCO
         links
       end
 
-      #:nodoc: all
-      # No need to document methods below
-
       # ====================================================================================
-      # HEADER: DbId, DbLabel, An, PubType, PubTypeId, AccessLevel
-      # ====================================================================================
-
-      def header_an
-        @record['Header']['An'].to_s
-      end
-
-      def header_db_id
-        @record['Header']['DbId'].to_s
-      end
-
-      # only available from search not retrieve
-      def header_score
-        @record['Header']['RelevancyScore']
-      end
-
-      def header_publication_type
-        @record['Header']['PubType']
-      end
-
-      def header_publication_type_id
-        @record['Header']['PubTypeId']
-      end
-
-      def header_db_label
-        @record['Header']['DbLabel']
-      end
-
-      # not sure the rules for when this appears or not - RecordInfo.AccessInfo?
-      def header_access_level
-        @record['Header']['AccessLevel']
-      end
-
-      # ====================================================================================
-      # ITEMS
+      # ITEM DATA HELPERS
       # ====================================================================================
 
       # look up by 'Name' and return 'Data'
@@ -512,22 +409,18 @@ module EBSCO
         end
       end
 
-      def item_related_isbns
-        isbns = get_item_data_by_label('Related ISBNs')
-        if isbns
-          isbns.split(' ').map!{|item| item.gsub(/\.$/, '')}
-        else
-          nil
-        end
-      end
-
       # ====================================================================================
       # BIB ENTITY
       # ====================================================================================
 
       def bib_title
         if @bib_entity && @bib_entity.fetch('Titles', {}).any?
-          @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}['TitleFull']
+          item_bib_title = @bib_entity.fetch('Titles', {}).find{|item| item['Type'] == 'main'}
+          if item_bib_title
+            item_bib_title['TitleFull']
+          else
+            nil
+          end
         else
           nil
         end
@@ -587,7 +480,12 @@ module EBSCO
 
       def bib_doi
         if @bib_entity && @bib_entity.fetch('Identifiers',{}).any?
-          @bib_entity.fetch('Identifiers',{}).find{|item| item['Type'] == 'doi'}['Value']
+          item_doi = @bib_entity.fetch('Identifiers',{}).find{|item| item['Type'] == 'doi'}
+          if item_doi
+            item_doi['Value']
+          else
+            nil
+          end
         else
           nil
         end
@@ -756,163 +654,92 @@ module EBSCO
         end
       end
 
-
-      # Experimental bibtex support.
-      def retrieve_bibtex
-
-        @bibtex.key = accession_number
-        @bibtex.title = title.gsub('<highlight>', '').gsub('</highlight>', '')
-        if bib_authors_list.length > 0
-          @bibtex.author = bib_authors_list.join(' and ').chomp
-        end
-        @bibtex.year = publication_year.to_i
-
-        # bibtex type
-        _type = publication_type
-        case _type
-          when 'Academic Journal', 'Reference'
-            @bibtex.type = :article
-            @bibtex.journal = source_title
-            unless issue.nil?
-              @bibtex.issue = issue
-            end
-            unless volume.nil?
-              @bibtex.number = volume
-            end
-            if page_start && page_count
-              @bibtex.pages = page_start + '-' + (page_start.to_i + page_count.to_i-1).to_s
-            end
-            if bib_publication_month
-              @bibtex.month = bib_publication_month.to_i
-            end
-            if doi
-              @bibtex.doi = doi
-              @bibtex.url = 'https://doi.org/' + doi
-            end
-          when 'Conference'
-            @bibtex.type = :conference
-            @bibtex.booktitle = source_title
-            if issue
-              @bibtex.issue = issue
-            end
-            if volume
-              @bibtex.number = volume
-            end
-            if page_start && page_count
-              @bibtex.pages = page_start + '-' + (page_start.to_i + page_count.to_i-1).to_s
-            end
-            if bib_publication_month
-              @bibtex.month = bib_publication_month.to_i
-            end
-            if publisher_info
-              @bibtex.publisher = publisher_info
-            end
-            if series
-              @bibtex.series = series
-            end
-          when 'Book', 'eBook'
-            @bibtex.type = :book
-            if publisher_info
-              @bibtex.publisher = publisher_info
-            end
-            if series
-              @bibtex.series = series
-            end
-            if bib_publication_month
-              @bibtex.month = bib_publication_month.to_i
-            end
-            if isbns
-              @bibtex.isbn = isbns.first
-            end
-          else
-            @bibtex.type = :other
-        end
-        @bibtex
-      end
-
-      ##
-      # wrap bibtex entry in a bibliography so that it can be transformed into citations using citeproc
-      def bibtex_bibliography
-        bib = BibTeX::Bibliography.new
-        bib << @bibtex
-        bib
-      end
-
-      # this is used to generate solr fields
-      def to_hash(type = 'compact')
-        hash = {}
-
-        # information typically required by all views
-        if database_id && accession_number
-          safe_an = accession_number.gsub(/\./,'_')
-          hash['id'] = database_id + '__' + safe_an
-        end
-        unless title.nil?
-          hash['title_display'] = title.gsub('<highlight>', '').gsub('</highlight>', '')
-        end
-        if source_title
-          hash['academic_journal'] = source_title
-        end
-        if publication_year
-          hash['pub_date'] = publication_year
-        end
-        if authors
-          hash['author_display'] = authors.to_s
-        end
-        if publication_type
-          hash['format'] = publication_type.to_s
-        end
-        if languages
-          if languages.kind_of?(Array)
-            hash['language_facet'] = languages.join(', ')
-          else
-            hash['language_facet'] = languages.to_s
+      def to_attr_hash
+        hash = Hash.new
+        instance_variables.each do |var|
+          if var != :@record &&
+              var != :@items &&
+              var != :@bib_entity &&
+              var != :@bib_part &&
+              var != :@bib_relationships
+            hash[var.to_s.sub(/^@/, '')] = instance_variable_get(var)
           end
-        end
-        if publisher_info
-          hash['pub_info'] = publisher_info
-        end
-        if abstract
-          hash['abstract'] = abstract
-        end
-        if cover_thumb_url
-          hash['cover_thumb_url'] = cover_thumb_url
-        end
-        if cover_medium_url
-          hash['cover_medium_url'] = cover_medium_url
         end
         if all_links
-          hash['fulltext_link'] = { 'id' => database_id + '__' + safe_an, 'links' => all_links}
-        end
-        # generate bibtex entry if it hasn't been done already
-        if @bibtex.key == 'unknown-a'
-          @bibtex = retrieve_bibtex
-        end
-        unless @bibtex.has_type?(:other)
-          hash['citation_apa'] = citation('apa').first.to_s
-          hash['citation_mla'] = citation('modern-language-association').first.to_s
-          hash['citation_chicago'] = citation('chicago-author-date').first.to_s
-        end
-
-        # extra information typically required by detailed item views
-        if type == 'verbose'
-          if all_links
-            hash['links'] = all_links
-          end
-          if doi
-            hash['doi'] = doi
-          end
-          if html_fulltext
-            hash['html_fulltext'] = html_fulltext
-          end
+          hash['eds_fulltext_link'] = { 'id' => @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_'),
+                                        'links' => all_links }
         end
 
         hash
       end
 
+      # this is used to generate solr fields
+      # def to_hash(type = 'compact')
+      #   hash = {}
+      #
+      #   # information typically required by all views
+      #   if database_id && accession_number
+      #     safe_an = accession_number.gsub(/\./,'_')
+      #     hash['eds_id'] = database_id + '__' + safe_an
+      #   end
+      #   unless title.nil?
+      #     hash['eds_title'] = title.gsub('<highlight>', '').gsub('</highlight>', '')
+      #   end
+      #   if source_title
+      #     hash['eds_source_title'] = source_title
+      #   end
+      #   if publication_year
+      #     hash['eds_publication_year'] = publication_year
+      #   end
+      #   if authors
+      #     hash['eds_authors'] = authors.to_s
+      #   end
+      #   if publication_type
+      #     hash['eds_publication_type'] = publication_type.to_s
+      #   end
+      #   if languages
+      #     if languages.kind_of?(Array)
+      #       hash['eds_language'] = languages.join(', ')
+      #     else
+      #       hash['eds_language'] = languages.to_s
+      #     end
+      #   end
+      #   if publisher_info
+      #     hash['eds_publisher_info'] = publisher_info
+      #   end
+      #   if abstract
+      #     hash['eds_abstract'] = abstract
+      #   end
+      #   if cover_thumb_url
+      #     hash['eds_cover_thumb_url'] = cover_thumb_url
+      #   end
+      #   if cover_medium_url
+      #     hash['eds_cover_medium_url'] = cover_medium_url
+      #   end
+      #   if all_links
+      #     hash['eds_fulltext_link'] = { 'id' => database_id + '__' + safe_an, 'links' => all_links}
+      #   end
+      #
+      #   # extra information typically required by detailed item views
+      #   if type == 'verbose'
+      #     if all_links
+      #       hash['eds_links'] = all_links
+      #     end
+      #     if doi
+      #       hash['eds_doi'] = doi
+      #     end
+      #     if html_fulltext
+      #       hash['eds_html_fulltext'] = html_fulltext
+      #     end
+      #   end
+      #
+      #   hash
+      # end
+
       def to_solr
         # solr response
-        item_hash = to_hash 'verbose'
+        # item_hash = to_hash 'verbose'
+        item_hash = to_attr_hash
         solr_response =
         {
             'responseHeader' => {
@@ -928,19 +755,6 @@ module EBSCO
         solr_response
       end
 
-      def citation(style = 'apa')
-        # generate bibtex entry if it hasn't been done already
-        if @bibtex.key == 'unknown-a'
-          @bibtex = retrieve_bibtex
-        end
-        # TODO: catch CSL::ParseError when style can't be found
-        CSL::Style.root = File.join(__dir__, 'csl/styles')
-        cp = CiteProc::Processor.new style: style, format: 'text'
-        bib_entry = @bibtex
-        bib_entry_id = bib_entry.to_citeproc['id']
-        cp.import bibtex_bibliography.to_citeproc
-        cp.render :bibliography, id: bib_entry_id
-      end
 
     end # Class Record
   end # Module EDS

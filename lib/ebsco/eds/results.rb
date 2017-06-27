@@ -94,11 +94,11 @@ module EBSCO
 
             # todo: add solr hl.tag.pre and hl.tag.post to retrieval criteria
             if retrieval_criteria && retrieval_criteria.fetch('Highlight',{}) == 'y'
-              hl_title = record.title.gsub('<highlight>', '<em>').gsub('</highlight>', '</em>')
-              hl_hash.update({ record.database_id + '__' + record.accession_number => { 'title_display' => [hl_title]} })
+              hl_title = record.eds_title.gsub('<highlight>', '<em>').gsub('</highlight>', '</em>')
+              hl_hash.update({ record.eds_database_id + '__' + record.eds_accession_number => { 'title_display' => [hl_title]} })
               #hl_hash.merge title_hl
             end
-            solr_docs.push(record.to_hash)
+            solr_docs.push(record.to_attr_hash)
           }
         end
 
@@ -108,17 +108,19 @@ module EBSCO
         qterms = search_terms.join(' ')
         rows = results_per_page
         num_found = stat_total_hits.to_i
-        search_limiters = solr_search_limiters
-        format = solr_facets('SourceType')
-        language_facet = solr_facets('Language')
-        subject_topic_facet = solr_facets('SubjectEDS')
-        publisher_facet = solr_facets('Publisher')
-        journal_facet = solr_facets('Journal')
-        geographic_facet = solr_facets('SubjectGeographic')
-        category_facet = solr_facets('Category')
-        content_provider_facet = solr_facets('ContentProvider')
-        library_location_facet = solr_facets('LocationLibrary')
-        pub_date_facet = solr_pub_date_facets
+        eds_search_limiters_facet = solr_search_limiters
+        eds_publication_type_facet = solr_facets('SourceType')
+        eds_language_facet = solr_facets('Language')
+        eds_subject_topic_facet = solr_facets('SubjectEDS')
+        eds_publisher_facet = solr_facets('Publisher')
+        eds_journal_facet = solr_facets('Journal')
+        eds_subjects_geographic_facet = solr_facets('SubjectGeographic')
+        eds_category_facet = solr_facets('Category')
+        eds_content_provider_facet = solr_facets('ContentProvider')
+        eds_library_location_facet = solr_facets('LocationLibrary')
+        eds_library_collection_facet = solr_facets('CollectionLibrary')
+        eds_author_university_facet = solr_facets('AuthorUniversity')
+        eds_publication_year_facet = solr_pub_date_facets
         facet = true
 
         # solr response
@@ -144,17 +146,19 @@ module EBSCO
             'facet_counts' =>
                 {
                     'facet_fields' => {
-                        'search_limiters' => search_limiters,
-                        'format' => format,
-                        'language_facet' => language_facet,
-                        'subject_topic_facet' => subject_topic_facet,
-                        'pub_date_facet' => pub_date_facet,
-                        'publisher_facet' => publisher_facet,
-                        'journal_facet' => journal_facet,
-                        'geographic_facet' => geographic_facet,
-                        'category_facet' => category_facet,
-                        'content_provider_facet' => content_provider_facet,
-                        'library_location_facet' => library_location_facet
+                        'eds_search_limiters_facet' => eds_search_limiters_facet,
+                        'eds_publication_type_facet' => eds_publication_type_facet,
+                        'eds_language_facet' => eds_language_facet,
+                        'eds_subject_topic_facet' => eds_subject_topic_facet,
+                        'eds_publication_year_facet' => eds_publication_year_facet,
+                        'eds_publisher_facet' => eds_publisher_facet,
+                        'eds_journal_facet' => eds_journal_facet,
+                        'eds_subjects_geographic_facet' => eds_subjects_geographic_facet,
+                        'eds_category_facet' => eds_category_facet,
+                        'eds_content_provider_facet' => eds_content_provider_facet,
+                        'eds_library_location_facet' => eds_library_location_facet,
+                        'eds_library_collection_facet' => eds_library_collection_facet,
+                        'eds_author_university_facet' => eds_author_university_facet
                     }
                 }
         }
