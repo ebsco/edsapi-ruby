@@ -88,6 +88,8 @@ module EBSCO
         solr_start = (page_number-1) * results_per_page
         hl_hash = {}
         solr_docs = []
+        research_starters = []
+        publication_matches = []
 
         if @records.any?
           @records.each { |record|
@@ -100,6 +102,14 @@ module EBSCO
             end
             solr_docs.push(record.to_attr_hash)
           }
+        end
+
+        if @research_starters.any?
+          @research_starters.each { |record| research_starters.push(record.to_attr_hash) }
+        end
+
+        if publication_match.any?
+          publication_match.each { |record| publication_matches.push(record.to_attr_hash) }
         end
 
         status = 0
