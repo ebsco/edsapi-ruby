@@ -30,73 +30,73 @@ module EBSCO
             # solr facet translation
             # "f"=>{"format"=>["eBooks"]}
             when 'f'
-              if value.has_key?('format')
-                format_list = value['format']
+              if value.has_key?('eds_publication_type_facet')
+                format_list = value['eds_publication_type_facet']
                 format_list.each do |item|
                   @Actions.push "addfacetfilter(SourceType:#{item})"
                 end
               end
 
-              if value.has_key?('language_facet')
-                lang_list = value['language_facet']
+              if value.has_key?('eds_language_facet')
+                lang_list = value['eds_language_facet']
                 lang_list.each do |item|
                   @Actions.push "addfacetfilter(Language:#{item})"
                 end
               end
 
-              if value.has_key?('subject_topic_facet')
-                subj_list = value['subject_topic_facet']
+              if value.has_key?('eds_subject_topic_facet')
+                subj_list = value['eds_subject_topic_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(SubjectEDS:#{item})"
                 end
               end
 
-              if value.has_key?('geographic_facet')
-                subj_list = value['geographic_facet']
+              if value.has_key?('eds_subjects_geographic_facet')
+                subj_list = value['eds_subjects_geographic_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(SubjectGeographic:#{item})"
                 end
               end
 
-              if value.has_key?('publisher_facet')
-                subj_list = value['publisher_facet']
+              if value.has_key?('eds_publisher_facet')
+                subj_list = value['eds_publisher_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(Publisher:#{item})"
                 end
               end
 
-              if value.has_key?('journal_facet')
-                subj_list = value['journal_facet']
+              if value.has_key?('eds_journal_facet')
+                subj_list = value['eds_journal_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(Journal:#{item})"
                 end
               end
 
-              if value.has_key?('category_facet')
-                subj_list = value['category_facet']
+              if value.has_key?('eds_category_facet')
+                subj_list = value['eds_category_facet']
                 subj_list.each do |item|
                   @Actions.push "addfacetfilter(Category:#{item})"
                 end
               end
 
-              if value.has_key?('content_provider_facet')
-                subj_list = value['content_provider_facet']
+              if value.has_key?('eds_content_provider_facet')
+                subj_list = value['eds_content_provider_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
                   @Actions.push "addfacetfilter(ContentProvider:#{item})"
                 end
               end
 
-              if value.has_key?('library_location_facet')
-                subj_list = value['library_location_facet']
+              if value.has_key?('eds_library_location_facet')
+                subj_list = value['eds_library_location_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
                   @Actions.push "addfacetfilter(LocationLibrary:#{item})"
                 end
               end
 
-              if value.has_key?('search_limiters')
-                _list = value['search_limiters']
+              if value.has_key?('eds_search_limiters_facets')
+                _list = value['eds_search_limiters_facets']
                 _list.each do |item|
                   if item == 'Full Text'
                     @Actions.push "addlimiter(FT:y)"
@@ -110,8 +110,8 @@ module EBSCO
                 end
               end
 
-              if value.has_key?('pub_date_facet')
-                _list = value['pub_date_facet']
+              if value.has_key?('eds_publication_year_facet')
+                _list = value['eds_publication_year_facet']
                 _this_year = Date.today.year
                 _this_month = Date.today.month
                 _list.each do |item|
