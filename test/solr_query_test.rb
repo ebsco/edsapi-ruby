@@ -52,12 +52,12 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
-              'format'=>['Books'],
-              'language_facet'=>['english'],
-              'pub_date_facet'=>['Last 10 years'],
-              'category_facet'=>['psychology / general'],
-              'subject_topic_facet'=>['psychoanalysis'],
-              'publisher_facet'=>['karnac books']
+              'eds_publication_type_facet'=>['Books'],
+              'eds_language_facet'=>['english'],
+              'eds_publication_year_facet'=>['Last 10 years'],
+              'eds_category_facet'=>['psychology / general'],
+              'eds_subject_topic_facet'=>['psychoanalysis'],
+              'eds_publisher_facet'=>['karnac books']
           },
           'q'=>'white nose syndrome',
           'page'=>'2',
@@ -76,10 +76,10 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
-              'journal_facet'=>['new york times'],
-              'geographic_facet'=>['united states'],
-              'content_provider_facet'=>['Academic Search Ultimate'],
-              'pub_date_facet'=>['Last 3 years']
+              'eds_journal_facet'=>['new york times'],
+              'eds_subjects_geographic_facet'=>['united states'],
+              'eds_content_provider_facet'=>['Academic Search Ultimate'],
+              'eds_publication_year_facet'=>['Last 3 years']
           },
           'per_page'=>'10',
           'sort'=>'pub_date_sort desc',
@@ -99,8 +99,8 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
-              'library_location_facet'=>['Main Library'],
-              'pub_date_facet'=>['Last 50 years']
+              'eds_library_location_facet'=>['Main Library'],
+              'eds_publication_year_facet'=>['Last 50 years']
           },
           'per_page'=>'10',
           'sort'=>'score desc',
@@ -113,7 +113,7 @@ class EdsApiTests < Minitest::Test
       refute_nil results.to_solr
       query = {
           'f' => {
-              'pub_date_facet'=>['More than 50 years ago']
+              'eds_publication_year_facet'=>['More than 50 years ago']
           },
           'per_page'=>'10',
           'q'=>'lincoln',
@@ -132,7 +132,7 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
-              'search_limiters'=>['Available in Library Collection', 'Full Text', 'Peer Reviewed']
+              'eds_search_limiters_facet'=>['Available in Library Collection', 'Full Text', 'Peer Reviewed']
           },
           'q'=>'lincoln',
           'search_field'=>'all_fields',
@@ -150,7 +150,7 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
-              'pub_date_facet'=>['This year']
+              'eds_publication_year_facet'=>['This year']
           },
           'per_page'=>'10',
           'sort'=>'pub_date_sort desc',
@@ -196,7 +196,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('test_solr_next_previous_links') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       opts = {'f' =>
-                  {'language_facet' => ['spanish']},
+                  {'eds_language_facet' => ['spanish']},
               'q' => 'white nose syndrome',
               'search_field' => 'all_fields',
               'controller' => 'catalog',
@@ -214,7 +214,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('test_solr_next_previous_links_first_result') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       opts = {'f' =>
-                  {'language_facet' => ['spanish']},
+                  {'eds_language_facet' => ['spanish']},
               'q' => 'white nose syndrome',
               'search_field' => 'all_fields',
               'controller' => 'catalog',
@@ -228,4 +228,16 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+
+  def test_solr_related_content
+    VCR.use_cassette('test_solr_related_content') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({'q' => 'nature', 'per_page'=>'1'})
+      refute_nil results
+      solr_results = results.to_solr
+      assert solr_results['research_starters'].length > 0
+      assert solr_results['publication_matches'].length > 0
+      # puts solr_results['research_starters'].inspect
+    end
+  end
 end

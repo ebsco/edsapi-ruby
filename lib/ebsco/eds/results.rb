@@ -152,6 +152,8 @@ module EBSCO
                 'start' => solr_start,
                 'docs' => solr_docs
             },
+            'research_starters' => research_starters,
+            'publication_matches' => publication_matches,
             'highlighting' => hl_hash,
             'facet_counts' =>
                 {
