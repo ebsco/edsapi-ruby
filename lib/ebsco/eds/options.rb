@@ -247,6 +247,16 @@ module EBSCO
                     _field_code = 'SU'
                   when 'title'
                     _field_code = 'TI'
+                  when 'text'
+                    _field_code = 'TX'
+                  when 'abstract'
+                    _field_code = 'AB'
+                  when 'source'
+                    _field_code = 'SO'
+                  when 'issn'
+                    _field_code = 'IS'
+                  when 'isbn'
+                    _field_code = 'IB'
                 end
               end
 

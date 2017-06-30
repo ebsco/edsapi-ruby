@@ -18,6 +18,7 @@ module EBSCO
           :eds_relevancy_score,
           :eds_title,
           :eds_source_title,
+          :eds_source_title_composed,
           :eds_other_titles,
           :eds_abstract,
           :eds_authors,
@@ -58,7 +59,12 @@ module EBSCO
           :eds_images,
           :eds_all_links,
           :eds_fulltext_links,
-          :eds_non_fulltext_links
+          :eds_non_fulltext_links,
+          # publication record attributes
+          :eds_publication_id,
+          :eds_publication_is_searchable,
+          :eds_publication_scope_note
+
       ]
 
       # Raw record as returned by the \EDS API via search or retrieve
@@ -96,6 +102,7 @@ module EBSCO
         @eds_relevancy_score =  @record['Header']['RelevancyScore']
         @eds_title = title
         @eds_source_title = source_title
+        @eds_composed_title = source_title_composed
         @eds_other_titles = other_titles
         @eds_abstract = abstract
         @eds_authors = bib_authors || get_item_data_by_name('Author')
@@ -139,6 +146,10 @@ module EBSCO
         @eds_non_fulltext_links = non_fulltext_links
         @id = @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_')
 
+        @eds_publication_id = @record['Header']['PublicationId']
+        @eds_publication_is_searchable = @record['Header']['IsSearchable']
+        @eds_publication_scope_note = get_item_data_by_name('NoteScope')
+
       end
 
       # --
@@ -166,10 +177,16 @@ module EBSCO
         CGI.unescapeHTML(_retval)
       end
 
-      # The source title (e.g., Journal)
+      # The source title (example: 'Salem Press Encyclopedia')
       def source_title
         _retval = bib_source_title || get_item_data_by_name('TitleSource')
         _reval = nil? if _retval == title # suppress if it's identical to title
+        _retval.nil?? nil : CGI.unescapeHTML(_retval)
+      end
+
+      # composed title (example: 'Salem Press Encyclopedia, January, 2017. 2p.')
+      def source_title_composed
+        _retval = get_item_data_by_name('TitleSource')
         _retval.nil?? nil : CGI.unescapeHTML(_retval)
       end
 
