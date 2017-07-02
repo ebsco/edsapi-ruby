@@ -2,6 +2,7 @@ require 'ebsco/eds/version'
 require 'ebsco/eds/info'
 require 'ebsco/eds/results'
 require 'faraday'
+require 'faraday/detailed_logger'
 require 'faraday_middleware'
 require 'logger'
 require 'json'
@@ -99,6 +100,10 @@ module EBSCO
         # these config options can be overridden by environment vars
         @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
         @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
+        @debug =      (ENV.has_key? 'EDS_DEBUG') ? ENV['EDS_DEBUG'] : @config[:debug]
+        @use_cache =  (ENV.has_key? 'EDS_USE_CACHE') ? ENV['EDS_USE_CACHE'] : @config[:use_cache]
+        @cache_dir =  (ENV.has_key? 'EDS_CACHE_DIR') ? ENV['EDS_CACHE_DIR'] : @config[:eds_cache_dir]
+
         if ENV.has_key? 'EDS_GUEST'
           if ['n', 'N', 'no', 'No'].include?(ENV['EDS_GUEST'])
             @guest = false
@@ -110,8 +115,8 @@ module EBSCO
         end
 
         # use cache for auth token and info calls?
-        if @config[:use_cache]
-          cache_dir = File.join(@config[:eds_cache_dir], 'faraday_eds_cache')
+        if @use_cache
+          cache_dir = File.join(@cache_dir, 'faraday_eds_cache')
           @cache_store = ActiveSupport::Cache::FileStore.new cache_dir
         end
 
@@ -132,7 +137,7 @@ module EBSCO
         @current_page = 0
         @search_options = nil
 
-        if @config[:debug]
+        if @debug
           if options.key? :caller
             puts 'CREATE SESSION CALLER: ' + options[:caller].inspect
             puts 'CALLER OPTIONS: ' + options.inspect
@@ -676,10 +681,10 @@ module EBSCO
           conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
           conn.headers['User-Agent'] = @config[:user_agent]
           conn.request :url_encoded
-          conn.use :eds_caching_middleware, store: @cache_store if @config[:use_cache]
+          conn.use :eds_caching_middleware, store: @cache_store if @use_cache
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
-          conn.response :logger, logger if @config[:debug]
+          conn.response :detailed_logger, logger if @debug
           conn.adapter Faraday.default_adapter
         end
       end
