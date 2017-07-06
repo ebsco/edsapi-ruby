@@ -23,11 +23,15 @@ module EBSCO
           :eds_abstract,
           :eds_authors,
           :eds_author_affiliations,
+          :eds_authors_composed,
           :eds_subjects,
           :eds_subjects_geographic,
           :eds_subjects_person,
+          :eds_subjects_genre,
           :eds_author_supplied_keywords,
+          :eds_descriptors,
           :eds_notes,
+          :eds_subset,
           :eds_languages,
           :eds_page_count,
           :eds_page_start,
@@ -60,6 +64,8 @@ module EBSCO
           :eds_all_links,
           :eds_fulltext_links,
           :eds_non_fulltext_links,
+          :eds_code_naics,
+          :eds_abstract_supplied_copyright,
           # publication record attributes
           :eds_publication_id,
           :eds_publication_is_searchable,
@@ -95,23 +101,29 @@ module EBSCO
                         .fetch('IsPartOfRelationships', {})[0]
 
         # accessors:
+        @eds_result_id = @record['ResultId']
+        @eds_plink = @record['PLink']
         @eds_accession_number = @record['Header']['An'].to_s
         @eds_database_id = @record['Header']['DbId'].to_s
         @eds_database_name = @record['Header']['DbLabel']
         @eds_access_level = @record['Header']['AccessLevel']
         @eds_relevancy_score =  @record['Header']['RelevancyScore']
+        @id = @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_')
         @eds_title = title
         @eds_source_title = source_title
         @eds_composed_title = source_title_composed
         @eds_other_titles = other_titles
         @eds_abstract = abstract
-        @eds_authors = bib_authors || get_item_data_by_name('Author')
+        @eds_authors = bib_authors_list
+        @eds_authors_composed = get_item_data_by_name('Author')
         @eds_author_affiliations = get_item_data_by_name('AffiliationAuthor')
         @eds_subjects = bib_subjects || get_item_data_by_name('Subject')
         @eds_subjects_geographic = get_item_data_by_name('SubjectGeographic')
         @eds_subjects_person = get_item_data_by_name('SubjectPerson')
-        @eds_author_supplied_keywords = get_item_data_by_label('Author-Supplied Keywords')
+        @eds_subjects_genre = get_item_data_by_name('SubjectGenre')
+        @eds_author_supplied_keywords = get_item_data_by_name('Keyword')
         @eds_notes = notes
+        @eds_subset = get_item_data_by_name('Subset')
         @eds_languages = get_item_data_by_name('Language') || bib_languages
         @eds_page_count = bib_page_count
         @eds_page_start = bib_page_start
@@ -137,14 +149,14 @@ module EBSCO
         @eds_cover_thumb_url = cover_thumb_url
         @eds_cover_medium_url = cover_medium_url
         @eds_fulltext_word_count = get_item_data_by_name('FullTextWordCount').to_i
-        @eds_result_id = @record['ResultId']
-        @eds_plink = @record['PLink']
         @eds_html_fulltext = html_fulltext
         @eds_images = images
         @eds_all_links = all_links
         @eds_fulltext_links = fulltext_links
         @eds_non_fulltext_links = non_fulltext_links
-        @id = @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_')
+        @eds_code_naics = get_item_data_by_name('CodeNAICS')
+        @eds_abstract_supplied_copyright = get_item_data_by_name('AbstractSuppliedCopyright')
+        @eds_descriptors = get_item_data_by_label('Descriptors')
 
         @eds_publication_id = @record['Header']['PublicationId']
         @eds_publication_is_searchable = @record['Header']['IsSearchable']
