@@ -15,7 +15,7 @@ class EdsApiTests < Minitest::Test
         assert record.eds_publication_type_id == 'academicJournal'
         assert record.eds_document_type == 'Article'
         assert record.eds_abstract.include? 'polyketide'
-        assert record.eds_authors == 'Weissman, Kira J'
+        assert record.eds_authors.include? 'Weissman, Kira J'
         assert record.eds_languages.include? 'English'
         assert record.eds_title == 'The structural biology of biosynthetic megaenzymes.'
         assert record.bib_title == 'The structural biology of biosynthetic megaenzymes.'
@@ -54,7 +54,7 @@ class EdsApiTests < Minitest::Test
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '119572050'})
         refute_nil record.eds_subjects_geographic
-        assert record.eds_authors.include? 'Becerril'
+        assert record.eds_authors.include? 'Becerril, L.'
         assert record.eds_author_affiliations.include? 'University of Granada'
       else
         puts "WARNING: skipping test_retrieve_journal_multiple_authors test, asn db isn't in the profile."
@@ -142,8 +142,8 @@ class EdsApiTests < Minitest::Test
         #puts record.to_yaml
         refute_nil record.eds_physical_description
         refute_nil record.eds_subjects_person
-        refute_nil record.notes
-        refute_nil record.other_titles
+        refute_nil record.eds_notes
+        refute_nil record.eds_other_titles
       else
         puts "WARNING: skipping test_retrieve_book test, cat02060a db isn't in the profile."
       end
