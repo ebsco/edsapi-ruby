@@ -142,8 +142,8 @@ class EdsApiTests < Minitest::Test
         #puts record.to_yaml
         refute_nil record.eds_physical_description
         refute_nil record.eds_subjects_person
-        refute_nil record.notes
-        refute_nil record.other_titles
+        refute_nil record.eds_notes
+        refute_nil record.eds_other_titles
       else
         puts "WARNING: skipping test_retrieve_book test, cat02060a db isn't in the profile."
       end

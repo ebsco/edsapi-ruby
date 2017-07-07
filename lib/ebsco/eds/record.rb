@@ -27,6 +27,9 @@ module EBSCO
           :eds_subjects,
           :eds_subjects_geographic,
           :eds_subjects_person,
+          :eds_subjects_company,
+          :eds_subjects_mesh,
+          :eds_subjects_bisac,
           :eds_subjects_genre,
           :eds_author_supplied_keywords,
           :eds_descriptors,
@@ -41,6 +44,7 @@ module EBSCO
           :eds_publication_date,
           :eds_publication_year,
           :eds_publication_info,
+          :eds_publisher,
           :eds_document_type,
           :eds_document_doi,
           :eds_document_oclc,
@@ -70,8 +74,47 @@ module EBSCO
           :eds_publication_id,
           :eds_publication_is_searchable,
           :eds_publication_scope_note
-
       ]
+
+      KNOWN_ITEM_NAMES = %w(
+          URL
+          Title
+          TitleSource
+          TitleAlt
+          Abstract
+          Note
+          Author
+          AffiliationAuthor
+          Subject
+          SubjectGeographic
+          SubjectPerson
+          SubjectCompany
+          SubjectMESH
+          SubjectBISAC
+          SubjectGenre
+          Subset
+          Language
+          PhysDesc
+          TypePub
+          DatePub
+          TypeDocument
+          DOI
+          ISSN
+          SeriesInfo
+          FullTextWordCount
+          AbstractSuppliedCopyright
+          CodeNAICS
+          NoteScope
+          Publisher
+        )
+
+      KNOWN_ITEM_LABELS = [
+          'OCLC',
+          'Descriptors',
+          'Publication Information',
+          'Related ISBNs'
+      ]
+
 
       # Raw record as returned by the \EDS API via search or retrieve
       attr_accessor(*ATTRIBUTES)
@@ -111,18 +154,21 @@ module EBSCO
         @id = @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_')
         @eds_title = title
         @eds_source_title = source_title
-        @eds_composed_title = source_title_composed
-        @eds_other_titles = other_titles
-        @eds_abstract = abstract
+        @eds_composed_title = get_item_data_by_name('TitleSource')
+        @eds_other_titles = get_item_data_by_name('TitleAlt')
+        @eds_abstract = get_item_data_by_name('Abstract')
         @eds_authors = bib_authors_list
         @eds_authors_composed = get_item_data_by_name('Author')
         @eds_author_affiliations = get_item_data_by_name('AffiliationAuthor')
         @eds_subjects = bib_subjects || get_item_data_by_name('Subject')
         @eds_subjects_geographic = get_item_data_by_name('SubjectGeographic')
         @eds_subjects_person = get_item_data_by_name('SubjectPerson')
+        @eds_subjects_company = get_item_data_by_name('SubjectCompany')
+        @eds_subjects_bisac = get_item_data_by_name('SubjectBISAC')
+        @eds_subjects_mesh = get_item_data_by_name('SubjectMESH')
         @eds_subjects_genre = get_item_data_by_name('SubjectGenre')
         @eds_author_supplied_keywords = get_item_data_by_name('Keyword')
-        @eds_notes = notes
+        @eds_notes = get_item_data_by_name('Note')
         @eds_subset = get_item_data_by_name('Subset')
         @eds_languages = get_item_data_by_name('Language') || bib_languages
         @eds_page_count = bib_page_count
@@ -133,6 +179,7 @@ module EBSCO
         @eds_publication_date = bib_publication_date || get_item_data_by_name('DatePub')
         @eds_publication_year = bib_publication_year || get_item_data_by_name('DatePub')
         @eds_publication_info = get_item_data_by_label('Publication Information')
+        @eds_publisher = get_item_data_by_name('Publisher')
         @eds_document_type = get_item_data_by_name('TypeDocument')
         @eds_document_doi = get_item_data_by_name('DOI') || bib_doi
         @eds_document_oclc = get_item_data_by_label('OCLC')
@@ -157,10 +204,16 @@ module EBSCO
         @eds_code_naics = get_item_data_by_name('CodeNAICS')
         @eds_abstract_supplied_copyright = get_item_data_by_name('AbstractSuppliedCopyright')
         @eds_descriptors = get_item_data_by_label('Descriptors')
-
         @eds_publication_id = @record['Header']['PublicationId']
         @eds_publication_is_searchable = @record['Header']['IsSearchable']
         @eds_publication_scope_note = get_item_data_by_name('NoteScope')
+
+        # add item metadata
+        @items.each do |item|
+          unless KNOWN_ITEM_NAMES.include?(item['Name']) || KNOWN_ITEM_LABELS.include?(item['Label'])
+            add_extra_item_accessors(item)
+          end
+        end
 
       end
 
@@ -186,38 +239,14 @@ module EBSCO
         if _retval.nil?
           _retval = 'This title is unavailable for guests, please login to see more information.'
         end
-        CGI.unescapeHTML(_retval)
+        _retval
       end
 
       # The source title (example: 'Salem Press Encyclopedia')
       def source_title
         _retval = bib_source_title || get_item_data_by_name('TitleSource')
         _reval = nil? if _retval == title # suppress if it's identical to title
-        _retval.nil?? nil : CGI.unescapeHTML(_retval)
-      end
-
-      # composed title (example: 'Salem Press Encyclopedia, January, 2017. 2p.')
-      def source_title_composed
-        _retval = get_item_data_by_name('TitleSource')
-        _retval.nil?? nil : CGI.unescapeHTML(_retval)
-      end
-
-      # Other alternative titles.
-      def other_titles
-        _retval = get_item_data_by_name('TitleAlt')
-        _retval.nil?? nil : CGI.unescapeHTML(_retval)
-      end
-
-      # The abstract
-      def abstract
-        _retval = get_item_data_by_name('Abstract')
-        _retval.nil?? nil : CGI.unescapeHTML(_retval)
-      end
-
-      # Notes
-      def notes
-        _retval = get_item_data_by_name('Note')
-        _retval.nil?? nil : CGI.unescapeHTML(_retval)
+        _retval.nil?? nil : _retval
       end
 
       # Cover image - thumbnail size link
@@ -404,38 +433,6 @@ module EBSCO
         end
 
         links
-      end
-
-      # ====================================================================================
-      # ITEM DATA HELPERS
-      # ====================================================================================
-
-      # look up by 'Name' and return 'Data'
-      def get_item_data_by_name(name)
-        if @items.empty?
-          nil
-        else
-          _item_property = @items.find{|item| item['Name'] == name}
-          if _item_property.nil?
-            nil
-          else
-            _item_property['Data']
-          end
-        end
-      end
-
-      # look up by 'Label' and return 'Data'
-      def get_item_data_by_label(label)
-        if @items.empty?
-          nil
-        else
-          _item_property = @items.find{|item| item['Label'] == label}
-          if _item_property.nil?
-            nil
-          else
-            _item_property['Data']
-          end
-        end
       end
 
       # ====================================================================================
@@ -702,74 +699,7 @@ module EBSCO
         hash
       end
 
-      # this is used to generate solr fields
-      # def to_hash(type = 'compact')
-      #   hash = {}
-      #
-      #   # information typically required by all views
-      #   if database_id && accession_number
-      #     safe_an = accession_number.gsub(/\./,'_')
-      #     hash['eds_id'] = database_id + '__' + safe_an
-      #   end
-      #   unless title.nil?
-      #     hash['eds_title'] = title.gsub('<highlight>', '').gsub('</highlight>', '')
-      #   end
-      #   if source_title
-      #     hash['eds_source_title'] = source_title
-      #   end
-      #   if publication_year
-      #     hash['eds_publication_year'] = publication_year
-      #   end
-      #   if authors
-      #     hash['eds_authors'] = authors.to_s
-      #   end
-      #   if publication_type
-      #     hash['eds_publication_type'] = publication_type.to_s
-      #   end
-      #   if languages
-      #     if languages.kind_of?(Array)
-      #       hash['eds_language'] = languages.join(', ')
-      #     else
-      #       hash['eds_language'] = languages.to_s
-      #     end
-      #   end
-      #   if publisher_info
-      #     hash['eds_publisher_info'] = publisher_info
-      #   end
-      #   if abstract
-      #     hash['eds_abstract'] = abstract
-      #   end
-      #   if cover_thumb_url
-      #     hash['eds_cover_thumb_url'] = cover_thumb_url
-      #   end
-      #   if cover_medium_url
-      #     hash['eds_cover_medium_url'] = cover_medium_url
-      #   end
-      #   if all_links
-      #     hash['eds_fulltext_link'] = { 'id' => database_id + '__' + safe_an, 'links' => all_links}
-      #   end
-      #
-      #   # extra information typically required by detailed item views
-      #   if type == 'verbose'
-      #     if all_links
-      #       hash['eds_links'] = all_links
-      #     end
-      #     if doi
-      #       hash['eds_doi'] = doi
-      #     end
-      #     if html_fulltext
-      #       hash['eds_html_fulltext'] = html_fulltext
-      #     end
-      #   end
-      #
-      #   hash
-      # end
-
       def to_solr
-        # solr response
-        # item_hash = to_hash 'verbose'
-        item_hash = to_attr_hash
-        solr_response =
         {
             'responseHeader' => {
                 'status' => 0
@@ -777,13 +707,55 @@ module EBSCO
             'response' => {
                 'numFound' => 1,
                 'start' => 0,
-                'docs' => [item_hash]
+                'docs' => to_attr_hash
             }
         }
-        # puts 'SOLR RESPONSE: ' + solr_response.inspect
-        solr_response
       end
 
+      # ====================================================================================
+      # ITEM DATA HELPERS
+      # ====================================================================================
+
+      # look up by 'Name' and return 'Data'
+      def get_item_data_by_name(name)
+        if @items.empty?
+          nil
+        else
+          _item_property = @items.find{|item| item['Name'] == name}
+          if _item_property.nil?
+            nil
+          else
+            CGI.unescapeHTML(_item_property['Data'])
+          end
+        end
+      end
+
+      # look up by 'Label' and return 'Data'
+      def get_item_data_by_label(label)
+        if @items.empty?
+          nil
+        else
+          _item_property = @items.find{|item| item['Label'] == label}
+          if _item_property.nil?
+            nil
+          else
+            CGI.unescapeHTML(_item_property['Data'])
+          end
+        end
+      end
+
+      # dynamically add item metadata as 'eds_extra_ItemNameOrLabel'
+      def add_extra_item_accessors(item)
+        key = item['Name'] ? item['Name'] : item['Label'].gsub(/\s+/, '_')
+        value = item['Data']
+        unless key.nil?
+          key = "eds_extras_#{key}"
+          unless value.nil?
+            class_eval { attr_accessor key }
+            instance_variable_set "@#{key}", CGI.unescapeHTML(value)
+          end
+        end
+      end
 
     end # Class Record
   end # Module EDS

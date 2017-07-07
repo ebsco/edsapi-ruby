@@ -32,7 +32,9 @@ module EBSCO
             :max_results_per_page => 100,
             :ebook_preferred_format => 'ebook-pdf',
             :use_cache => true,
-            :eds_cache_dir => ENV['TMPDIR'] || '/tmp'
+            :eds_cache_dir => ENV['TMPDIR'] || '/tmp',
+            :timeout => 60,
+            :open_timeout => 2
         }
         @valid_config_keys = @config.keys
       end

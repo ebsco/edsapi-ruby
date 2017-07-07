@@ -104,15 +104,13 @@ module EBSCO
         @use_cache =  (ENV.has_key? 'EDS_USE_CACHE') ? ENV['EDS_USE_CACHE'] : @config[:use_cache]
         @cache_dir =  (ENV.has_key? 'EDS_CACHE_DIR') ? ENV['EDS_CACHE_DIR'] : @config[:eds_cache_dir]
 
-        if ENV.has_key? 'EDS_GUEST'
-          if ['n', 'N', 'no', 'No'].include?(ENV['EDS_GUEST'])
-            @guest = false
-          else
-            @guest = true
-          end
-        else
-          @guest = @config[:guest]
-        end
+        (ENV.has_key? 'EDS_GUEST') ?
+            if %w(n N no No).include?(ENV['EDS_GUEST'])
+              @guest = false
+            else
+              @guest = true
+            end :
+            @guest = @config[:guest]
 
         # use cache for auth token and info calls?
         if @use_cache
@@ -685,6 +683,8 @@ module EBSCO
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
           conn.response :detailed_logger, logger if @debug
+          conn.options[:open_timeout] = @config[:open_timeout]
+          conn.options[:timeout] = @config[:timeout]
           conn.adapter Faraday.default_adapter
         end
       end
