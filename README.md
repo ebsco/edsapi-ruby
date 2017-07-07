@@ -6,7 +6,6 @@ A Ruby interface to the EBSCO Discovery Services API.
 [![codecov](https://codecov.io/gh/ebsco/edsapi-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/ebsco/edsapi-ruby/branch/master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/ebsco/edsapi-ruby.svg)](https://gemnasium.com/github.com/ebsco/edsapi-ruby)
 [![Gem Version](https://img.shields.io/gem/v/ebsco-eds.svg?style=flat)](http://rubygems.org/gems/ebsco-eds)
-[![Gitter](https://badges.gitter.im/ebsco/edsapi-ruby.svg)](https://gitter.im/ebsco/edsapi-ruby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Dependencies
 
