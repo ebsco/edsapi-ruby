@@ -21,6 +21,10 @@ class EdsApiTests < Minitest::Test
       refute_nil session.info.available_related_content('rs')
       refute_nil session.info.did_you_mean
       refute_nil session.info.did_you_mean('AutoSuggest')
+
+      assert session.research_starters_match_in_profile
+      assert !session.publication_match_in_profile
+
       session.end
     end
   end

@@ -100,17 +100,32 @@ module EBSCO
         # these config options can be overridden by environment vars
         @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
         @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
-        @debug =      (ENV.has_key? 'EDS_DEBUG') ? ENV['EDS_DEBUG'] : @config[:debug]
-        @use_cache =  (ENV.has_key? 'EDS_USE_CACHE') ? ENV['EDS_USE_CACHE'] : @config[:use_cache]
         @cache_dir =  (ENV.has_key? 'EDS_CACHE_DIR') ? ENV['EDS_CACHE_DIR'] : @config[:eds_cache_dir]
 
         (ENV.has_key? 'EDS_GUEST') ?
-            if %w(n N no No).include?(ENV['EDS_GUEST'])
+            if %w(n N no No false False).include?(ENV['EDS_GUEST'])
               @guest = false
             else
               @guest = true
             end :
             @guest = @config[:guest]
+
+        (ENV.has_key? 'EDS_USE_CACHE') ?
+            if %w(n N no No false False).include?(ENV['EDS_USE_CACHE'])
+              @use_cache = false
+            else
+              @use_cache = true
+            end :
+            @use_cache = @config[:use_cache]
+
+        (ENV.has_key? 'EDS_DEBUG') ?
+            if %w(y Y yes Yes true True).include?(ENV['EDS_DEBUG'])
+              @debug = true
+            else
+              @debug = false
+            end :
+            @debug = @config[:debug]
+
 
         # use cache for auth token and info calls?
         if @use_cache
