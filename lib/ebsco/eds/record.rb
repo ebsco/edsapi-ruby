@@ -700,6 +700,7 @@ module EBSCO
       end
 
       def to_solr
+        item_hash = to_attr_hash
         {
             'responseHeader' => {
                 'status' => 0
@@ -707,7 +708,7 @@ module EBSCO
             'response' => {
                 'numFound' => 1,
                 'start' => 0,
-                'docs' => to_attr_hash
+                'docs' => [item_hash]
             }
         }
       end
