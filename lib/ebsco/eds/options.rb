@@ -15,6 +15,13 @@ module EBSCO
   
         @Actions = []
 
+        # add DefaultOn=y Type=select limiters
+        # info.available_limiters.each do |limiter|
+        #   if limiter['DefaultOn'] == 'n' and limiter['Type'] == 'select'
+        #     @Actions.push "addLimiter(#{limiter['Id']}:y)"
+        #   end
+        # end
+
         options.each do |key, value|
 
           case key
@@ -111,18 +118,16 @@ module EBSCO
                 end
               end
 
+              # translate solr search limiters into EDS API addLimiter calls
+              # matches are determined by the limiter labels passed in by solr
+              _search_limiter_list = []
               if value.has_key?('eds_search_limiters_facet')
-                _list = value['eds_search_limiters_facet']
-                _list.each do |item|
-                  if item == 'Full Text'
-                    @Actions.push "addlimiter(FT:y)"
-                  end
-                  if item == 'Peer Reviewed'
-                    @Actions.push "addlimiter(RV:y)"
-                  end
-                  if item == 'Available in Library Collection'
-                    @Actions.push "addlimiter(FT1:y)"
-                  end
+                _search_limiter_list = value['eds_search_limiters_facet']
+              end
+              info.available_limiters.each do |limiter|
+                # only handle 'select' limiters (ones with values of 'y' or 'n')
+                if _search_limiter_list.include? limiter['Label'] and limiter['Type'] == 'select'
+                  @Actions.push "addLimiter(#{limiter['Id']}:y)"
                 end
               end
 

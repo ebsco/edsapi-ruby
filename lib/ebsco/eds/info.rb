@@ -79,6 +79,10 @@ module EBSCO
         @available_search_criteria.fetch('AvailableLimiters',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Id']}
       end
 
+      def default_limiter_labels
+        @available_search_criteria.fetch('AvailableLimiters',{}).select{|item| item['DefaultOn'] == 'y'}.map{|hash| hash['Label']}
+      end
+
       def available_limiters (id = 'all')
         if id == 'all'
           @available_search_criteria.fetch('AvailableLimiters',{})
@@ -87,12 +91,20 @@ module EBSCO
         end
       end
 
+      def available_limiter_labels
+        @available_search_criteria.fetch('AvailableLimiters',{}).map{|hash| hash['Label']}
+      end
+
       # get an array of limiter values for a Type=multiselectvalue limiter
       def available_limiter_values (id)
         _limiter = @available_search_criteria.fetch('AvailableLimiters',{}).find{|item| item['Id'] == id}
         if _limiter['Type'] == 'multiselectvalue'
           _limiter['LimiterValues'].map{|hash| hash['Value']}
         end
+      end
+
+      def get_limiter_by_label (label)
+        @available_search_criteria.fetch('AvailableLimiters',{}).find{|item| item['Label'] == label}
       end
 
       # ====================================================================================
