@@ -256,7 +256,7 @@ module EBSCO
         record
       end
 
-      # Create a result set with just the record before and after then index item
+      # Create a result set with just the record before and after the current detailed record
       def solr_retrieve_previous_next(options = {})
         records = []
         hits = search(options).stat_total_hits

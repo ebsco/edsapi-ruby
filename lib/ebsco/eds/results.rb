@@ -237,12 +237,22 @@ module EBSCO
         search_limiters = []
         if stat_total_hits.to_i > 0
           if @limiters.any?
-            # _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
-            # _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
-            # _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
-            search_limiters.push('Full Text').push('')
-            search_limiters.push('Peer Reviewed').push('')
-            search_limiters.push('Available in Library Collection').push('')
+            _ft_limiter = @limiters.find{|item| item['Id'] == 'FT'}
+            unless _ft_limiter.nil?
+              search_limiters.push(_ft_limiter['Label']).push('')
+            end
+            _rv_limiter = @limiters.find{|item| item['Id'] == 'RV'}
+            unless _rv_limiter.nil?
+              search_limiters.push(_rv_limiter['Label']).push('')
+            end
+            _ft1_limiter = @limiters.find{|item| item['Id'] == 'FT1'}
+            unless _ft1_limiter.nil?
+              search_limiters.push(_ft1_limiter['Label']).push('')
+            end
+            _fr_limiter = @limiters.find{|item| item['Id'] == 'FR'}
+            unless _fr_limiter.nil?
+              search_limiters.push(_fr_limiter['Label']).push('')
+            end
           end
         end
         search_limiters
