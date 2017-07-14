@@ -28,13 +28,15 @@ module EBSCO
             :user_agent => 'EBSCO EDS GEM v0.0.1',
             :interface_id => 'edsapi_ruby_gem',
             :log => 'faraday.log',
-            :max_attempts => 2,
+            :max_attempts => 3,
             :max_results_per_page => 100,
             :ebook_preferred_format => 'ebook-pdf',
             :use_cache => true,
             :eds_cache_dir => ENV['TMPDIR'] || '/tmp',
             :timeout => 60,
-            :open_timeout => 2
+            :open_timeout => 2,
+            :max_page_jumps => 6,
+            :max_page_jump_attempts => 10
         }
         @valid_config_keys = @config.keys
       end

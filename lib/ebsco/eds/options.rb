@@ -6,7 +6,7 @@ module EBSCO
 
     class Options
       include JSONable
-      attr_accessor :SearchCriteria, :RetrievalCriteria, :Actions
+      attr_accessor :SearchCriteria, :RetrievalCriteria, :Actions, :Comment
       def initialize(options = {}, info)
   
         @SearchCriteria = EBSCO::EDS::SearchCriteria.new(options, info)
@@ -15,9 +15,11 @@ module EBSCO
   
         @Actions = []
 
+        @Comment = ''
+
         # add DefaultOn=y Type=select limiters
         # info.available_limiters.each do |limiter|
-        #   if limiter['DefaultOn'] == 'n' and limiter['Type'] == 'select'
+        #   if limiter['DefaultOn'] == 'y' and limiter['Type'] == 'select'
         #     @Actions.push "addLimiter(#{limiter['Id']}:y)"
         #   end
         # end
@@ -225,7 +227,7 @@ module EBSCO
         _my_expanders = []
         _available_expander_ids = info.available_expander_ids
 
-        @Limiter = nil
+        @Limiters = nil
         _my_limiters = []
 
         @RelatedContent = info.default_related_content_types

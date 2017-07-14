@@ -142,11 +142,14 @@ module EBSCO
         end
 
         if options.key? :session_token
+          puts 'REUSING SESSION TOKEN: ' + options.inspect
           @session_token = options[:session_token]
         else
           @session_token = create_session_token
+          puts 'CREATING NEW SESSION TOKEN: ' + options.inspect
         end
-        @info = EBSCO::EDS::Info.new(do_request(:get, path: @config[:info_url]), @config)
+
+        @info = EBSCO::EDS::Info.new(do_request(:post, path: @config[:info_url]), @config)
         @current_page = 0
         @search_options = nil
 
@@ -605,6 +608,14 @@ module EBSCO
           raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
         end
         begin
+          if @debug
+            puts 'METHOD: ' + method.inspect
+            puts 'PATH: ' + path.inspect
+            puts 'PAYLOAD: ' + payload.inspect
+            if payload.instance_variable_defined?(:@Actions)
+              puts 'ACTION: ' + payload.Actions.inspect
+            end
+          end
           resp = connection.send(method) do |req|
             case method
               when :get
@@ -619,20 +630,84 @@ module EBSCO
             end
           end
           resp.body
+
         rescue Error => e
           if e.respond_to? 'fault'
             error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
             unless error_code.nil?
               case error_code
+
                 # session token missing
                 when '108', '109'
-                  @session_token = create_session_token
+                 @session_token = create_session_token
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
+
                 # auth token invalid
                 when '104', '107'
                   @auth_token = nil
                   @auth_token = create_auth_token
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
+
+                # trying to paginate in results list beyond 250 results
+                when '138'
+
+                  is_jump_retry = false
+                  is_orig_retry = false
+
+                  # create a jump request payload
+                  jump_payload = payload.clone
+
+                  # retry failed jump requests (known API issue)
+                  if jump_payload.instance_variable_defined?(:@Comment)
+                    if jump_payload.Comment == 'jump_request'
+                      is_jump_retry = true
+                      puts '138 JUMP RETRY ================================================================' if @debug
+                      sleep Random.new.rand(1..3)
+                      do_jump_request(method, path: path, payload: jump_payload, attempt: attempt+1)
+                    elsif jump_payload.Comment == 'jump_request_orig'
+                      is_orig_retry = true
+                      puts '138 ORIG RETRY ================================================================' if @debug
+                      sleep Random.new.rand(1..3)
+                      jump_response = do_jump_request(method, path: path, payload: payload, attempt: attempt+1)
+                      if jump_response.success?
+                        return jump_response.body
+                      end
+                    else
+                      puts '138 ERROR =====================================================================' if @debug
+                    end
+                  end
+
+                  # only perform these steps if it's the original 138 error
+                  unless is_jump_retry or is_orig_retry
+                    # remove these variables since they prevent a jump request (they continue to cause more 138 errors)
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@AutoSuggest)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@AutoSuggest)
+                    end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@Expanders)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@Expanders)
+                    end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@RelatedContent)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@RelatedContent)
+                    end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@Limiters)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@Limiters)
+                    end
+
+                    # get list of jump pages and make requests for each one before requesting the original request
+                    jump_pages = get_jump_pages(payload)
+                    # todo: truncate to @confi[:max_page_jumps]
+                    jump_pages.each { |page|
+                      jump_payload.Actions = ["GoToPage(#{page})"]
+                      jump_payload.Comment = 'jump_request' # comment the request so we can retry if necessary
+                      do_jump_request(method, path: path, payload: jump_payload, attempt: attempt+1)
+                    }
+
+                    # now make the original request (which can also require retries)
+                    payload.Comment = 'jump_request_orig'
+                    do_request(method, path: path, payload: payload, attempt: attempt+1)
+
+                  end
+
                 else
                   raise e
               end
@@ -642,6 +717,53 @@ module EBSCO
           end
         end
       end
+
+      def do_jump_request(method, path:, payload: nil, attempt: 0) # :nodoc:
+
+        if attempt > @config[:max_page_jump_attempts]
+          raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
+        end
+        begin
+          if @debug
+            if payload.instance_variable_defined?(:@Actions)
+              puts 'JUMP ACTION: ' + payload.Actions.inspect
+            end
+            puts 'JUMP ATTEMPT: ' + attempt.to_s
+          end
+          resp = connection.send(method) do |req|
+            case method
+              when :get
+                req.url path
+              when :post
+                req.url path
+                unless payload.nil?
+                  req.body = JSON.generate(payload)
+                end
+              else
+                raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
+            end
+          end
+
+          resp
+
+        rescue Error => e
+          if e.respond_to? 'fault'
+            error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
+            unless error_code.nil?
+              case error_code
+                when '138'
+                  sleep Random.new.rand(1..3)
+                  do_jump_request(method, path: path, payload: payload, attempt: attempt+1)
+                else
+                  raise e
+              end
+            end
+          end
+
+        end
+      end
+
+
 
       # --
       # attempts to query profile capabilities
@@ -720,6 +842,7 @@ module EBSCO
       end
 
       def create_session_token
+        puts 'CREATING NEW SESSION TOKEN...'
         guest_string = @guest ? 'y' : 'n'
         resp = do_request(:get, path: @config[:create_session_url] +
             '?profile=' + @profile + '&guest=' + guest_string +
@@ -770,7 +893,18 @@ module EBSCO
         }
       end
 
-    end
+      def get_jump_pages(search_options)
+        dest_page = search_options.RetrievalCriteria.PageNumber.to_i
+        jump_incr = 250/search_options.RetrievalCriteria.ResultsPerPage.to_i
+        attempts = dest_page/jump_incr
+        jump_pages = []
+        (1..attempts).to_a.each do |n|
+          jump_pages.push(jump_incr*n)
+        end
+        puts 'JUMP PAGES: ' + jump_pages.inspect if @debug
+        jump_pages
+      end
 
-  end
-end
+    end # Session
+  end # EDS
+end # EBSCO
