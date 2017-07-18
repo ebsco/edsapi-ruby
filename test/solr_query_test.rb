@@ -205,6 +205,16 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_solr_dbid_accession_number_parsing
+    VCR.use_cassette('test_solr_dbid_accession_number_parsing') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      # double dot accession numbers split correctly?
+      response = session.solr_retrieve_list(list: ['edsbas__edsbas_ftunivalberta_oai_era_library_ualberta_ca_ark__54379_t7h128ng843'])
+      assert response['response']['numFound'] == 1
+      session.end
+    end
+  end
+
   def test_solr_next_previous_links
     VCR.use_cassette('test_solr_next_previous_links') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})

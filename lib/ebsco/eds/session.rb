@@ -279,8 +279,8 @@ module EBSCO
         records = []
         if list.any?
           list.each { |id|
-            dbid = id.split('__').first
-            accession = id.split('__').last
+            dbid = id.split('__',2).first
+            accession = id.split('__',2).last
             accession.gsub!(/_/, '.')
             records.push retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
           }

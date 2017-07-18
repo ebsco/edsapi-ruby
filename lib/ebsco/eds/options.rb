@@ -425,7 +425,7 @@ module EBSCO
             # ====================================================================================
             # view
             # ====================================================================================
-            when :view
+            when :view, 'view'
               if info.available_result_list_views.include? value.downcase
                 @View = value.downcase
               else
@@ -454,7 +454,7 @@ module EBSCO
             # ====================================================================================
             # highlight
             # ====================================================================================
-            when :highlight
+            when :highlight, 'highlight'
               @Highlight = value ? 'y' : 'n'
             # solr/blacklight version
             when 'hl'
