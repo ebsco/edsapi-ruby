@@ -131,8 +131,8 @@ module EBSCO
                 end
               end
 
-              if value.has_key?('eds_publication_year_facet')
-                _list = value['eds_publication_year_facet']
+              if value.has_key?('eds_publication_year_range_facet')
+                _list = value['eds_publication_year_range_facet']
                 _this_year = Date.today.year
                 _this_month = Date.today.month
                 _list.each do |item|
@@ -158,6 +158,16 @@ module EBSCO
                   end
                 end
               end
+
+              if value.has_key?('eds_publication_year_facet')
+                year_list = value['eds_publication_year_facet']
+                year_list.each do |item|
+                  item = eds_sanitize item
+                  @Actions.push "addfacetfilter(PublicationYear:#{item})"
+                end
+              end
+
+              # todo: &range[pub_year_tisim][begin]=2012&range[pub_year_tisim][end]=2014
 
             else
 
