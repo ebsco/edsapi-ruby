@@ -34,7 +34,7 @@ module EBSCO
             :use_cache => true,
             :eds_cache_dir => ENV['TMPDIR'] || '/tmp',
             :timeout => 60,
-            :open_timeout => 2
+            :open_timeout => 6
         }
         @valid_config_keys = @config.keys
       end
