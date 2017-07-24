@@ -18,7 +18,7 @@ module EBSCO
           :eds_relevancy_score,
           :eds_title,
           :eds_source_title,
-          :eds_source_title_composed,
+          :eds_composed_title,
           :eds_other_titles,
           :eds_abstract,
           :eds_authors,

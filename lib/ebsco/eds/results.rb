@@ -130,7 +130,9 @@ module EBSCO
         eds_library_location_facet = solr_facets('LocationLibrary')
         eds_library_collection_facet = solr_facets('CollectionLibrary')
         eds_author_university_facet = solr_facets('AuthorUniversity')
-        eds_publication_year_facet = solr_pub_date_facets
+        eds_publication_year_range_facet = solr_pub_date_facets
+        eds_publication_year_facet = solr_facets('PublicationYear')
+        eds_pub_year_tisim = solr_facets('PublicationYear')
         facet = true
 
         # solr response
@@ -163,6 +165,7 @@ module EBSCO
                         'eds_language_facet' => eds_language_facet,
                         'eds_subject_topic_facet' => eds_subject_topic_facet,
                         'eds_publication_year_facet' => eds_publication_year_facet,
+                        'eds_publication_year_range_facet' => eds_publication_year_range_facet,
                         'eds_publisher_facet' => eds_publisher_facet,
                         'eds_journal_facet' => eds_journal_facet,
                         'eds_subjects_geographic_facet' => eds_subjects_geographic_facet,
@@ -170,7 +173,8 @@ module EBSCO
                         'eds_content_provider_facet' => eds_content_provider_facet,
                         'eds_library_location_facet' => eds_library_location_facet,
                         'eds_library_collection_facet' => eds_library_collection_facet,
-                        'eds_author_university_facet' => eds_author_university_facet
+                        'eds_author_university_facet' => eds_author_university_facet,
+                        'pub_year_tisim' => eds_pub_year_tisim
                     }
                 }
         }
