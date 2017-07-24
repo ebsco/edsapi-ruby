@@ -209,4 +209,18 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+
+  def test_record_with_number_other_items
+    VCR.use_cassette('test_record_with_number_other_items') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      if session.dbid_in_profile 'edshtl'
+        record = session.retrieve({dbid: 'edshtl', an: 'pur1.32754078701863'})
+        assert record.eds_extras_number_other_SuDoc == 'Y 4.J 89/1:109-84'
+      else
+        puts "WARNING: skipping test_record_with_number_other_items test, edshtl db isn't in the profile."
+      end
+      session.end
+    end
+  end
+
 end

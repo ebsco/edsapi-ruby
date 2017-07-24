@@ -747,7 +747,11 @@ module EBSCO
 
       # dynamically add item metadata as 'eds_extra_ItemNameOrLabel'
       def add_extra_item_accessors(item)
-        key = item['Name'] ? item['Name'] : item['Label'].gsub(/\s+/, '_')
+        key = item['Name'] ? item['Name'].gsub(/\s+/, '_') : item['Label'].gsub(/\s+/, '_')
+        # NumberOther isn't always unique, concatenate the label
+        if key == 'NumberOther' or key == 'Number_Other'
+          key = 'number_other_' + item['Label'].gsub(/\s+/, '_')
+        end
         value = item['Data']
         unless key.nil?
           key = "eds_extras_#{key}"
