@@ -174,15 +174,15 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_publication_year_facet' => ['This year']}})
+                                 'f' => {'eds_publication_year_range_facet' => ['This year']}})
       results3 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_publication_year_facet' => ['Last 3 years']}})
+                                 'f' => {'eds_publication_year_range_facet' => ['Last 3 years']}})
       results4 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_publication_year_facet' => ['Last 10 years']}})
+                                 'f' => {'eds_publication_year_range_facet' => ['Last 10 years']}})
       results5 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_publication_year_facet' => ['Last 50 years']}})
+                                 'f' => {'eds_publication_year_range_facet' => ['Last 50 years']}})
       results6 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_publication_year_facet' => ['More than 50 years ago']}})
+                                 'f' => {'eds_publication_year_range_facet' => ['More than 50 years ago']}})
 
       assert results1.stat_total_hits > 0
       assert results2.stat_total_hits > 0
@@ -205,20 +205,27 @@ class EdsApiTests < Minitest::Test
   def test_eds_publication_year_facet
     VCR.use_cassette('test_eds_publication_year_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
-
       results1 = session.search({query: 'climate change', results_per_page: 10})
-
       results2 = session.search({query: 'climate change', results_per_page: 10,
                                  'f' => {'eds_publication_year_facet' => [2012]}})
-
       assert results1.stat_total_hits > 0
       assert results2.stat_total_hits > 0
       assert results1.stat_total_hits > results2.stat_total_hits
-
+      session.end
     end
-
-
   end
 
+  def test_eds_publication_year_range
+    VCR.use_cassette('test_eds_publication_year_range') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results1 = session.search({'q' => 'volcano', 'start' => 0, 'rows' => 3})
+      results2 = session.search({'q' => 'volcano', 'start' => 0, 'rows' => 3,
+                                 'range[pub_year_tisim][begin]' => 2001, 'range[pub_year_tisim][end]' => 2007})
+      assert results1.stat_total_hits > 0
+      assert results2.stat_total_hits > 0
+      assert results1.stat_total_hits > results2.stat_total_hits
+      session.end
+    end
+  end
 
 end

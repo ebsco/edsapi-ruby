@@ -132,6 +132,7 @@ module EBSCO
         eds_author_university_facet = solr_facets('AuthorUniversity')
         eds_publication_year_range_facet = solr_pub_date_facets
         eds_publication_year_facet = solr_facets('PublicationYear')
+        eds_pub_year_tisim = solr_facets('PublicationYear')
         facet = true
 
         # solr response
@@ -172,8 +173,8 @@ module EBSCO
                         'eds_content_provider_facet' => eds_content_provider_facet,
                         'eds_library_location_facet' => eds_library_location_facet,
                         'eds_library_collection_facet' => eds_library_collection_facet,
-                        'eds_author_university_facet' => eds_author_university_facet
-
+                        'eds_author_university_facet' => eds_author_university_facet,
+                        'pub_year_tisim' => eds_pub_year_tisim
                     }
                 }
         }

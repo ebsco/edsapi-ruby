@@ -22,6 +22,25 @@ module EBSCO
         #   end
         # end
 
+        # blacklight year range slider input
+        # "range"=>{"pub_year_tisim"=>{"begin"=>"1970", "end"=>"1980"}}
+        if options.has_key?('range')
+          if options['range'].has_key?('pub_year_tisim')
+            begin_year = nil
+            end_year = nil
+            if options['range']['pub_year_tisim'].has_key?('begin')
+              begin_year = options['range']['pub_year_tisim']['begin']
+            end
+            if options['range']['pub_year_tisim'].has_key?('end')
+              end_year = options['range']['pub_year_tisim']['end']
+            end
+            unless begin_year.nil? or end_year.nil?
+              pub_year_tisim_range = begin_year + '-01/' + end_year + '-01'
+              @Actions.push "addlimiter(DT1:#{pub_year_tisim_range})"
+            end
+          end
+        end
+
         options.each do |key, value|
 
           case key
@@ -162,14 +181,9 @@ module EBSCO
               if value.has_key?('eds_publication_year_facet')
                 year_list = value['eds_publication_year_facet']
                 year_list.each do |item|
-                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(PublicationYear:#{item})"
                 end
               end
-
-              # todo: &range[pub_year_tisim][begin]=2012&range[pub_year_tisim][end]=2014
-
-            else
 
           end
         end
