@@ -38,6 +38,7 @@ class EdsApiTests < Minitest::Test
       results7 = session.search({'q' => '01692046', 'start' => 0, 'rows' => 1, 'search_field' => 'issn'})
       results8 = session.search({'q' => '9781443816281', 'start' => 0, 'rows' => 1, 'search_field' => 'isbn'})
       results9 = session.search({'q' => 'sheiber', 'start' => 0, 'rows' => 1, 'search_field' => 'author'})
+      results10 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'search_field' => 'descriptor'})
       refute_nil results1
       refute_nil results2
       refute_nil results3
@@ -47,6 +48,7 @@ class EdsApiTests < Minitest::Test
       refute_nil results7
       refute_nil results8
       refute_nil results9
+      refute_nil results10
       session.end
     end
   end
