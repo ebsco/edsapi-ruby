@@ -316,7 +316,17 @@ module EBSCO
 
       # Current page number for the results. Returns an integer.
       def page_number
-        @results['SearchRequest']['RetrievalCriteria']['PageNumber'] || 1
+        # get method
+        if @results['SearchRequest'].nil?
+          puts 'RAW OPTIONS: ' + @raw_options.inspect
+          @raw_options.RetrievalCriteria.PageNumber
+        else
+          if @results['SearchRequest']['RetrievalCriteria']['PageNumber'].nil?
+            1
+          else
+            @results['SearchRequest']['RetrievalCriteria']['PageNumber']
+          end
+        end
       end
 
       # Results per page. Returns an integer.

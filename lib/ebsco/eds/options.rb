@@ -275,25 +275,24 @@ module EBSCO
         # related content
         unless @SearchCriteria.RelatedContent.nil?
           qs << '&relatedcontent=' + @SearchCriteria.RelatedContent.join(',')
-          # TODO: publication ID
-
-          # Retrieval Criteria
-
-          unless @RetrievalCriteria.View.nil?
-            qs << '&view=' + @RetrievalCriteria.View
-          end
-          unless @RetrievalCriteria.ResultsPerPage.nil?
-            qs << '&resultsperpage=' + @RetrievalCriteria.ResultsPerPage.to_s
-          end
-          unless @RetrievalCriteria.PageNumber.nil?
-            qs << '&pagenumber=' + @RetrievalCriteria.PageNumber.to_s
-          end
-          unless @RetrievalCriteria.Highlight.nil?
-            qs << '&highlight=' + @RetrievalCriteria.Highlight
-          end
-
-          qs
         end
+
+        # Retrieval Criteria
+        unless @RetrievalCriteria.View.nil?
+          qs << '&view=' + @RetrievalCriteria.View
+        end
+        unless @RetrievalCriteria.ResultsPerPage.nil?
+          qs << '&resultsperpage=' + @RetrievalCriteria.ResultsPerPage.to_s
+        end
+        unless @RetrievalCriteria.PageNumber.nil?
+          qs << '&pagenumber=' + @RetrievalCriteria.PageNumber.to_s
+        end
+        unless @RetrievalCriteria.Highlight.nil?
+          qs << '&highlight=' + @RetrievalCriteria.Highlight
+        end
+
+        qs
+
       end
 
 

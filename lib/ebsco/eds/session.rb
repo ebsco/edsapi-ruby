@@ -212,6 +212,7 @@ module EBSCO
             end
             #_response = do_request(:post, path: @config[:search_url], payload: @search_options)
             _response = do_request(:get, path: @config[:search_url], payload: @search_options)
+            #puts 'RESPONSE: ' + _response.inspect
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
             @current_page = @search_results.page_number
             @search_results
