@@ -286,6 +286,8 @@ module EBSCO
                     _field_code = 'IS'
                   when 'isbn'
                     _field_code = 'IB'
+                  when 'descriptor'
+                    _field_code = 'DE'
                 end
               end
 
