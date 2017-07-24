@@ -228,8 +228,77 @@ module EBSCO
       #     false
       #   end
       # end
-  
-    end
+
+
+      # query-1=AND,volcano&sort=relevance&includefacets=y&searchmode=all&autosuggest=n&view=brief&resultsperpage=20&pagenumber=1&highlight=y
+      def to_query_string
+        qs = ''
+
+        # SEARCH CRITERIA:
+
+        # query
+        #  if @SearchCriteria.Queries[0].has_key? :BooleanOperator
+        #   qs << 'query=' + @SearchCriteria.Queries[0][:BooleanOperator]
+        # else
+        #   qs << 'query=AND'
+        # end
+        # if @SearchCriteria.Queries[0].has_key? :FieldCode
+        #   qs << ',' + @SearchCriteria.Queries[0][:FieldCode]
+        # end
+        qs << 'query=' + @SearchCriteria.Queries[0][:Term]
+
+        # mode
+        qs << '&searchmode=' + @SearchCriteria.SearchMode
+
+        # facets
+        qs << '&includefacets=' + @SearchCriteria.IncludeFacets
+
+        # sort
+        qs << '&sort=' + @SearchCriteria.Sort
+
+        # auto-suggest
+        qs << '&autosuggest=' + @SearchCriteria.AutoSuggest
+
+        # limiters
+        unless @SearchCriteria.Limiters.nil?
+          qs << '&limiter=' + @SearchCriteria.Limiters
+        end
+
+        # expanders
+        qs << '&expander=' + @SearchCriteria.Expanders.join(',')
+
+        # facet filters
+        unless @SearchCriteria.FacetFilters.nil?
+          qs << '&facetfilter=1,' + @SearchCriteria.FacetFilters
+        end
+
+        # related content
+        unless @SearchCriteria.RelatedContent.nil?
+          qs << '&relatedcontent=' + @SearchCriteria.RelatedContent.join(',')
+          # TODO: publication ID
+
+          # Retrieval Criteria
+
+          unless @RetrievalCriteria.View.nil?
+            qs << '&view=' + @RetrievalCriteria.View
+          end
+          unless @RetrievalCriteria.ResultsPerPage.nil?
+            qs << '&resultsperpage=' + @RetrievalCriteria.ResultsPerPage.to_s
+          end
+          unless @RetrievalCriteria.PageNumber.nil?
+            qs << '&pagenumber=' + @RetrievalCriteria.PageNumber.to_s
+          end
+          unless @RetrievalCriteria.Highlight.nil?
+            qs << '&highlight=' + @RetrievalCriteria.Highlight
+          end
+
+          qs
+        end
+      end
+
+
+
+      end
   
     class SearchCriteria
       include JSONable

@@ -195,7 +195,8 @@ module EBSCO
           if @search_options.nil?
             @search_results = EBSCO::EDS::Results.new(empty_results)
           else
-            _response = do_request(:post, path: @config[:search_url], payload: @search_options)
+            #_response = do_request(:post, path: @config[:search_url], payload: @search_options)
+            _response = do_request(:get, path: @config[:search_url], payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
             @current_page = @search_results.page_number
             @search_results
@@ -207,8 +208,10 @@ module EBSCO
             # create/recreate the search options if nil or not passing actions
             if @search_options.nil? || !add_actions
               @search_options = EBSCO::EDS::Options.new(options, @info)
+              puts 'OPTIONS AS QUERY STRING: ' + @search_options.to_query_string
             end
-            _response = do_request(:post, path: @config[:search_url], payload: @search_options)
+            #_response = do_request(:post, path: @config[:search_url], payload: @search_options)
+            _response = do_request(:get, path: @config[:search_url], payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
             @current_page = @search_results.page_number
             @search_results
@@ -608,6 +611,12 @@ module EBSCO
           resp = connection.send(method) do |req|
             case method
               when :get
+                unless payload.nil?
+                  #qs = CGI.escape(payload.to_query_string)
+                  qs = payload.to_query_string
+                  puts 'QUERY STRING: ' + qs.inspect
+                  path << '?' + qs
+                end
                 req.url path
               when :post
                 req.url path
