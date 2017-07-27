@@ -9,6 +9,7 @@ require 'json'
 require 'active_support'
 require 'faraday_eds_middleware'
 require 'ebsco/eds/configuration'
+require 'digest/md5'
 
 module EBSCO
 
@@ -188,17 +189,17 @@ module EBSCO
       #
       #   results = session.search({query: 'abraham lincoln', results_per_page: 5, related_content: ['rs','emp']})
       #   results = session.search({query: 'volcano', results_per_page: 1, publication_id: 'eric', include_facets: false})
-      def search(options = {}, add_actions = false)
-
+      def search(options = {}, add_actions = false, increment_page = true)
         # use existing/updated SearchOptions
         if options.empty?
           if @search_options.nil?
             @search_results = EBSCO::EDS::Results.new(empty_results)
           else
-            #_response = do_request(:post, path: @config[:search_url], payload: @search_options)
-            _response = do_request(:get, path: @config[:search_url], payload: @search_options)
+            _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
-            @current_page = @search_results.page_number
+            if increment_page
+              @current_page = @search_results.page_number
+            end
             @search_results
           end
         else
@@ -208,19 +209,20 @@ module EBSCO
             # create/recreate the search options if nil or not passing actions
             if @search_options.nil? || !add_actions
               @search_options = EBSCO::EDS::Options.new(options, @info)
-              puts 'OPTIONS AS QUERY STRING: ' + @search_options.to_query_string
             end
-            #_response = do_request(:post, path: @config[:search_url], payload: @search_options)
-            _response = do_request(:get, path: @config[:search_url], payload: @search_options)
-            #puts 'RESPONSE: ' + _response.inspect
+            _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
-            @current_page = @search_results.page_number
+            if increment_page
+              @current_page = @search_results.page_number
+            end
             @search_results
           else
             @search_results = EBSCO::EDS::Results.new(empty_results)
           end
         end
       end
+
+      # todo: need a lookahead and lookbehind option for blacklight next/previous detail page - do search but don't change the current_page
 
       # :category: Search & Retrieve Methods
       # Performs a simple search. All other search options assume default values.
@@ -262,21 +264,74 @@ module EBSCO
 
       # Create a result set with just the record before and after the current detailed record
       def solr_retrieve_previous_next(options = {})
-        records = []
-        hits = search(options).stat_total_hits
-        # don't try to return a previous result if it's the first record
-        if options['previous-next-index'].to_i > 1
-          options.update(:results_per_page => 1,
-                         'page' => (options['previous-next-index'].to_i) - 1)
-          records.push  search(options).records.first
+
+        rid = options['previous-next-index']
+
+        # set defaults if missing
+        if options['page'].nil?
+          options['page'] = '1'
         end
-        options.update(:results_per_page => 1,
-                       'page' => (options['previous-next-index'].to_i) + 1)
-        records.push  search(options).records.first
-        r = empty_results(hits)
+        if options['per_page'].nil?
+          options['per_page'] = '20'
+        end
+        # puts 'NEXT-PREVIOUS OPTIONS: ' + options.inspect
+
+        rpp = options['per_page'].to_i
+
+        # determine result page and update options
+        goto_page = rid / rpp
+        if (rid % rpp) > 0
+          goto_page += 1
+        end
+        # puts 'GOTO PAGE: ' + goto_page.to_s
+        options['page'] = goto_page.to_s
+        pnum = options['page'].to_i
+
+        max = rpp * pnum
+        min = max - rpp + 1
+        result_index = rid - min
+
+        puts 'RESULT NUMBER: ' + rid.to_s
+        puts 'RESULT INDEX: ' + result_index.to_s
+        puts 'RPP: ' + rpp.to_s
+        puts 'PAGE: ' + pnum.to_s
+        puts 'MAX: ' + max.to_s
+        puts 'MIN: ' + min.to_s
+
+        cached_results = search(options)
+
+        # last result in set, get next result
+        if rid == max
+          @search_options.add_actions("GoToPage(#{cached_results.page_number+1})", @info)
+          next_result_set = search({}, true, false)
+          result_next = next_result_set.records.first
+        else
+          result_next = cached_results.records[result_index+1]
+        end
+
+        if result_next.nil?
+          puts 'ERROR: result_next is nil'
+        end
+
+        # first result in set that's not the very first result, get previous result
+        if result_index == 0 and rid != 1
+          @search_options.add_actions("GoToPage(#{cached_results.page_number-1})", @info)
+          previous_result_set = search({}, true, false)
+          result_prev = previous_result_set.records.last
+        else
+          result_prev = cached_results.records[result_index-1]
+        end
+
+        if result_prev.nil?
+          puts 'ERROR: result_prev is nil'
+        end
+
+        # return json result set with just the previous and next records in it
+        r = empty_results(cached_results.stat_total_hits)
         results = EBSCO::EDS::Results.new(r)
-        results.records = records
+        results.records = [result_prev, result_next]
         results.to_solr
+
       end
 
       def solr_retrieve_list(list: [], highlight: nil)
@@ -613,17 +668,22 @@ module EBSCO
             case method
               when :get
                 unless payload.nil?
-                  #qs = CGI.escape(payload.to_query_string)
-                  qs = payload.to_query_string
-                  puts 'QUERY STRING: ' + qs.inspect
+                  qs = CGI.escape(payload.to_query_string)
                   path << '?' + qs
                 end
                 req.url path
               when :post
-                req.url path
                 unless payload.nil?
-                  req.body = JSON.generate(payload)
+                  json_payload = JSON.generate(payload)
+                  # add a cache_id to post search requests to make them cacheable
+                  if path == '/edsapi/rest/Search'
+                    puts 'CHECKSUM PAYLOAD: ' + json_payload.inspect
+                    checksum = Digest::MD5.hexdigest json_payload
+                    path << '?cache_id=' + checksum
+                  end
+                  req.body = json_payload
                 end
+                req.url path
               else
                 raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
             end

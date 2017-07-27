@@ -291,11 +291,14 @@ module EBSCO
           qs << '&highlight=' + @RetrievalCriteria.Highlight
         end
 
+        unless @Actions.nil?
+          @Actions.each do |action|
+            qs << '&action=' + action
+          end
+        end
         qs
 
       end
-
-
 
       end
   

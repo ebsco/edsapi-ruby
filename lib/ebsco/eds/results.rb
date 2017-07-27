@@ -1,5 +1,6 @@
 require 'ebsco/eds/record'
 require 'yaml'
+require 'cgi'
 
 module EBSCO
 
@@ -9,7 +10,7 @@ module EBSCO
     class Results
 
       # Raw results as Hash
-      attr_reader :results
+      attr_accessor :results
       # Array of EBSCO::EDS::Record results
       attr_accessor :records
       # Array of EBSCO::EDS::Record Research Starters
@@ -19,13 +20,15 @@ module EBSCO
 
       attr_accessor :stat_total_hits
 
+      attr_reader :raw_options
+
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
-      def initialize(search_results, additional_limiters = {}, raw_options = {})
+      def initialize(search_results, additional_limiters = {}, options = {})
 
         @results = search_results
         @limiters = additional_limiters
-        @raw_options = raw_options
+        @raw_options = options
 
         # convert all results to a list of records
         @records = []
@@ -286,7 +289,21 @@ module EBSCO
       #      "AutoSuggest"=>"n"
       #    }
       def search_criteria
-        @results['SearchRequest']['SearchCriteria']
+        if @results['SearchRequestGet']['QueryString']
+          params = CGI::parse(@results['SearchRequestGet']['QueryString'])
+          sc = {}
+          sc['SearchMode'] = params['searchmode'].nil? ? 'all' : params['searchmode'][0].to_s
+          sc['IncludeFacets'] = params['includefacets'].nil? ? 'y' : params['includefacets'][0].to_s
+          sc['Sort'] = params['sort'].nil? ? 'relevance' : params['sort'][0].to_s
+          sc['AutoSuggest'] = params['autosuggest'].nil? ? 'n' : params['autosuggest'][0].to_s
+          sc['Expanders'] = params['expander'].nil? ? [] : params['expander'][0].to_s.split(',')
+          sc['RelatedContent'] = params['relatedcontent'].nil? ? [] : params['relatedcontent'][0].to_s.split(',')
+          query1 = params['query-1'][0].to_s.split(',')
+          sc['Queries'] = [{'BooleanOperator'=>query1[0], 'Term'=>query1[1]}]
+          sc
+        else
+          @results['SearchRequest']['SearchCriteria']
+        end
       end
 
       # Search criteria actions applied.
@@ -304,34 +321,43 @@ module EBSCO
       # ==== Example
       #   {"View"=>"brief", "ResultsPerPage"=>20, "PageNumber"=>1, "Highlight"=>"y"}
       def retrieval_criteria
-        @results['SearchRequest']['RetrievalCriteria']
+
+        # GET METHOD: requires the hash to be built from scratch
+        rc = {}
+        if @results['SearchRequestGet']
+          if @results['SearchRequestGet']['QueryString']
+            params = CGI::parse(@results['SearchRequestGet']['QueryString'])
+            rc['PageNumber'] = params['pagenumber'].nil? ? 1 : params['pagenumber'][0].to_i
+            rc['ResultsPerPage'] = params['resultsperpage'].nil? ? 20 : params['resultsperpage'][0].to_i
+            rc['Highlight'] = params['highlight'].nil? ? 'n' : params['highlight'][0].to_s
+            rc['View'] = params['view'].nil? ? 'brief' : params['view'][0].to_s
+          end
+        else
+          if @results['SearchRequest']
+            if @results['SearchRequest']['RetrievalCriteria']
+              rc = @results['SearchRequest']['RetrievalCriteria']
+            end
+          end
+        end
+        rc
+
       end
 
       # Queries used to produce the results. Returns an array of query hashes.
       # ==== Example
       #    [{"BooleanOperator"=>"AND", "Term"=>"volcano"}]
       def search_queries
-        @results['SearchRequest']['SearchCriteria']['Queries']
+        search_criteria['Queries']
       end
 
       # Current page number for the results. Returns an integer.
       def page_number
-        # get method
-        if @results['SearchRequest'].nil?
-          puts 'RAW OPTIONS: ' + @raw_options.inspect
-          @raw_options.RetrievalCriteria.PageNumber
-        else
-          if @results['SearchRequest']['RetrievalCriteria']['PageNumber'].nil?
-            1
-          else
-            @results['SearchRequest']['RetrievalCriteria']['PageNumber']
-          end
-        end
+        retrieval_criteria['PageNumber'] || 1
       end
 
       # Results per page. Returns an integer.
       def results_per_page
-        @results['SearchRequest']['RetrievalCriteria']['ResultsPerPage'] || 20
+        retrieval_criteria['ResultsPerPage'] || 20
       end
 
       # List of facets applied to the search.
