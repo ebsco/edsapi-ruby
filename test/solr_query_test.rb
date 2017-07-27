@@ -265,4 +265,18 @@ class EdsApiTests < Minitest::Test
       # puts solr_results['research_starters'].inspect
     end
   end
+
+  def test_solr_research_starters
+    VCR.use_cassette('test_solr_research_starters') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'hl' => 'off'})
+      #results = session.search({query: 'climate change', results_per_page: 1, highlight: 'y'})
+      refute_nil results.research_starters
+      results.research_starters.each { |starter|
+        refute_nil starter.eds_abstract
+      }
+      session.end
+    end
+  end
+
 end
