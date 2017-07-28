@@ -552,13 +552,13 @@ module EBSCO
             # highlight
             # ====================================================================================
             when :highlight, 'highlight'
-              @Highlight = value ? 'y' : 'n'
+              @Highlight = value
             # solr/blacklight version
             when 'hl'
               if value == 'on'
                 @Highlight = 'y'
               else
-                @Highlight = 'n'
+                @Highlight = 'y' # API bug: if set to 'n' you won't get research starter abstracts!
               end
 
             else
