@@ -8,6 +8,7 @@ module Faraday
     INFO_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Info')
     AUTH_URI = URI.parse('https://eds-api.ebscohost.com/authservice/rest/uidauth')
     SEARCH_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Search?')
+    RETRIEVE_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Retrieve?')
 
     def initialize(app, *args)
       super(app)
@@ -47,7 +48,7 @@ module Faraday
       #puts 'ENV: ' + env.inspect
       return unless cacheable?(env) && !env.request_headers['x-faraday-eds-cache']
 
-      puts "Cache WRITE: #{key(env)}"
+      info "Cache WRITE: #{key(env)}"
       custom_expires_in = @expires_in
       uri = env.url
 
@@ -63,7 +64,12 @@ module Faraday
 
       if uri.request_uri.start_with?(SEARCH_URI.request_uri)
         custom_expires_in = 1800 # 30 minutes
-        puts "#{uri} - Setting custom expires: #{custom_expires_in}"
+        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+      end
+
+      if uri.request_uri.start_with?(RETRIEVE_URI.request_uri)
+        custom_expires_in = 1800 # 30 minutes
+        info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
 
       @store.write(key(env), env, expires_in: custom_expires_in)
@@ -71,13 +77,12 @@ module Faraday
 
     def cacheable?(env)
       uri = env.url
-      puts 'URI: ' + uri.request_uri
-      if uri == AUTH_URI || uri == INFO_URI || uri.request_uri.start_with?(SEARCH_URI.request_uri)
-        puts "CACHEABLE URI: #{uri}"
+      if uri == AUTH_URI || uri == INFO_URI ||
+          uri.request_uri.start_with?(SEARCH_URI.request_uri) ||
+          uri.request_uri.start_with?(RETRIEVE_URI.request_uri)
         info "CACHEABLE URI: #{uri}"
         true
       else
-        puts "NOT CACHEABLE URI: #{uri}"
         info "NOT CACHEABLE URI: #{uri}"
         false
       end
@@ -90,9 +95,9 @@ module Faraday
       end
 
       if response_env
-        puts "Cache HIT: #{key(env)}"
+        info "Cache HIT: #{key(env)}"
       else
-        puts "Cache MISS: #{key(env)}"
+        info "Cache MISS: #{key(env)}"
       end
       response_env
     end
@@ -107,7 +112,6 @@ module Faraday
 
     def initialize_store
       return unless @store.is_a? Symbol
-
       require 'active_support/cache'
       @store = ActiveSupport::Cache.lookup_store(@store, @store_options)
     end

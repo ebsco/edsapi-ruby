@@ -256,7 +256,9 @@ module EBSCO
       #
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
         payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
-        retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
+        # retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
+        retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
+        retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
         record = EBSCO::EDS::Record.new(retrieve_response)
         # puts 'RECORD: ' + record.pretty_inspect
         record
@@ -274,7 +276,6 @@ module EBSCO
         if options['per_page'].nil?
           options['per_page'] = '20'
         end
-        # puts 'NEXT-PREVIOUS OPTIONS: ' + options.inspect
 
         rpp = options['per_page'].to_i
 
@@ -283,21 +284,12 @@ module EBSCO
         if (rid % rpp) > 0
           goto_page += 1
         end
-        # puts 'GOTO PAGE: ' + goto_page.to_s
         options['page'] = goto_page.to_s
         pnum = options['page'].to_i
 
         max = rpp * pnum
         min = max - rpp + 1
         result_index = rid - min
-
-        puts 'RESULT NUMBER: ' + rid.to_s
-        puts 'RESULT INDEX: ' + result_index.to_s
-        puts 'RPP: ' + rpp.to_s
-        puts 'PAGE: ' + pnum.to_s
-        puts 'MAX: ' + max.to_s
-        puts 'MIN: ' + min.to_s
-
         cached_results = search(options)
 
         # last result in set, get next result
@@ -677,7 +669,11 @@ module EBSCO
                   json_payload = JSON.generate(payload)
                   # add a cache_id to post search requests to make them cacheable
                   if path == '/edsapi/rest/Search'
-                    puts 'CHECKSUM PAYLOAD: ' + json_payload.inspect
+                    # replacements to avoid duplicate caches
+                    json_payload = json_payload.gsub(/"PageNumber":[0-9]+,/,'')
+                    json_payload = json_payload.gsub(/"ResultsPerPage":"([0-9]+)"/,'"ResultsPerPage":\1')
+                    json_payload = json_payload.gsub(/"Actions":\[]/,'"Actions":["GoToPage(1)"]')
+                    # puts 'CHECKSUM PAYLOAD: ' + json_payload.inspect
                     checksum = Digest::MD5.hexdigest json_payload
                     path << '?cache_id=' + checksum
                   end
