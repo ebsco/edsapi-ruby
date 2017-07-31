@@ -7,6 +7,8 @@ module Faraday
 
     INFO_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Info')
     AUTH_URI = URI.parse('https://eds-api.ebscohost.com/authservice/rest/uidauth')
+    SEARCH_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Search?')
+    RETRIEVE_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Retrieve?')
 
     def initialize(app, *args)
       super(app)
@@ -43,6 +45,7 @@ module Faraday
     end
 
     def cache_response(env)
+      #puts 'ENV: ' + env.inspect
       return unless cacheable?(env) && !env.request_headers['x-faraday-eds-cache']
 
       info "Cache WRITE: #{key(env)}"
@@ -59,12 +62,24 @@ module Faraday
         info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
 
+      if uri.request_uri.start_with?(SEARCH_URI.request_uri)
+        custom_expires_in = 1800 # 30 minutes
+        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+      end
+
+      if uri.request_uri.start_with?(RETRIEVE_URI.request_uri)
+        custom_expires_in = 1800 # 30 minutes
+        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+      end
+
       @store.write(key(env), env, expires_in: custom_expires_in)
     end
 
     def cacheable?(env)
       uri = env.url
-      if uri == AUTH_URI || uri == INFO_URI
+      if uri == AUTH_URI || uri == INFO_URI ||
+          uri.request_uri.start_with?(SEARCH_URI.request_uri) ||
+          uri.request_uri.start_with?(RETRIEVE_URI.request_uri)
         info "CACHEABLE URI: #{uri}"
         true
       else
@@ -74,6 +89,7 @@ module Faraday
     end
 
     def cached_response(env)
+
       if cacheable?(env) && !env.request_headers['x-faraday-eds-cache']
         response_env = @store.fetch(key(env))
       end
@@ -83,9 +99,6 @@ module Faraday
       else
         info "Cache MISS: #{key(env)}"
       end
-
-      # info "CACHE: #{response_env.inspect}"
-
       response_env
     end
 
@@ -99,7 +112,6 @@ module Faraday
 
     def initialize_store
       return unless @store.is_a? Symbol
-
       require 'active_support/cache'
       @store = ActiveSupport::Cache.lookup_store(@store, @store_options)
     end
