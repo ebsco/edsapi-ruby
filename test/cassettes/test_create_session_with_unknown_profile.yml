@@ -5,7 +5,7 @@ http_interactions:
     uri: https://eds-api.ebscohost.com/authservice/rest/uidauth
     body:
       encoding: UTF-8
-      string: '{"UserId":"<EDS_USER>","Password":"<EDS_PASS>"}'
+      string: '{"UserId":"<EDS_USER>","Password":"<EDS_PASS>","InterfaceId":"edsapi_ruby_gem"}'
     headers:
       Content-Type:
       - application/json;charset=UTF-8
@@ -27,7 +27,7 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 Apr 2017 14:55:50 GMT
+      - Thu, 03 Aug 2017 20:37:28 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
@@ -36,13 +36,11 @@ http_interactions:
       - ASP.NET
       content-length:
       - '131'
-      connection:
-      - close
     body:
       encoding: UTF-8
-      string: '{"AuthToken":"ACHXu6de_8wjN5xDhhLBKT114AFjEVjw6f97IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
+      string: '{"AuthToken":"ACRufItm-kRsppbnIcH2fsLtSzoyJVmDkJF7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
     http_version: 
-  recorded_at: Fri, 14 Apr 2017 14:55:51 GMT
+  recorded_at: Thu, 03 Aug 2017 20:37:29 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-none
@@ -57,7 +55,7 @@ http_interactions:
       x-sessionToken:
       - ''
       x-authenticationToken:
-      - ACHXu6de_8wjN5xDhhLBKT114AFjEVjw6f97IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACRufItm-kRsppbnIcH2fsLtSzoyJVmDkJF7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -70,25 +68,23 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 Apr 2017 14:55:51 GMT
+      - Thu, 03 Aug 2017 20:37:29 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACHXu6de_8wjN5xDhhLBKT114AFjEVjw6f97IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACRufItm-kRsppbnIcH2fsLtSzoyJVmDkJF7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - e6cda7f5-e9bb-408a-91f8-c876d2aa01dc
+      - d41cfd1f-ef66-4a9c-9182-dac105dd58e4
       x-powered-by:
       - ASP.NET
       content-length:
       - '145'
-      connection:
-      - close
     body:
       encoding: UTF-8
       string: '{"DetailedErrorDescription":"Profile: eds-none.","ErrorDescription":"Profile
         ID is not assocated with caller''s credentials.","ErrorNumber":"144"}'
     http_version: 
-  recorded_at: Fri, 14 Apr 2017 14:55:51 GMT
-recorded_with: VCR 3.0.3
+  recorded_at: Thu, 03 Aug 2017 20:37:30 GMT
+recorded_with: VCR 2.9.3
