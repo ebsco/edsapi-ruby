@@ -8,7 +8,6 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1})
       assert results.records.length > 0
-      # puts "RESULTS:\n" + results.inspect
       refute_nil results.stat_total_hits
       refute_nil results.stat_total_time
       refute_nil results.retrieval_criteria
@@ -116,7 +115,7 @@ class EdsApiTests < Minitest::Test
       assert results.applied_limiters.length > 0
       assert results.applied_expanders.length > 0
       results = session.clear_search
-      assert results.page_number == 1
+      assert results.page_number.nil?
       assert results.search_queries.nil?
       assert results.applied_facets == []
       assert results.applied_limiters == []

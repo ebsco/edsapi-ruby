@@ -88,7 +88,7 @@ module EBSCO
       # returns solr search response format
       def to_solr
 
-        solr_start = (page_number-1) * results_per_page
+        solr_start = 0
         hl_hash = {}
         solr_docs = []
         research_starters = []
@@ -105,6 +105,7 @@ module EBSCO
             end
             solr_docs.push(record.to_attr_hash)
           }
+          solr_start = solr_docs[0]['eds_result_id']-1
         end
 
         if @research_starters.any?
@@ -289,7 +290,7 @@ module EBSCO
       #      "AutoSuggest"=>"n"
       #    }
       def search_criteria
-        if @results['SearchRequestGet']['QueryString']
+        if @results['SearchRequestGet'] && @results['SearchRequestGet']['QueryString']
           params = CGI::parse(@results['SearchRequestGet']['QueryString'])
           sc = {}
           sc['SearchMode'] = params['searchmode'].nil? ? 'all' : params['searchmode'][0].to_s
@@ -352,7 +353,7 @@ module EBSCO
 
       # Current page number for the results. Returns an integer.
       def page_number
-        retrieval_criteria['PageNumber'] || 1
+        retrieval_criteria['PageNumber']
       end
 
       # Results per page. Returns an integer.

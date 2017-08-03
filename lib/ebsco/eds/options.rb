@@ -41,6 +41,11 @@ module EBSCO
           end
         end
 
+        # add page default of 1
+        unless options.has_key?('page') || options.has_key?('page_number')
+          options['page'] = 1
+        end
+
         options.each do |key, value|
 
           case key
@@ -50,7 +55,7 @@ module EBSCO
 
             # SOLR: Need to add page actions whenever other actions are present since the other actions
             # will always reset the page to 1 even though a PageNumber is present in RetrievalCriteria.
-            when 'page'
+            when 'page', 'page_number'
               @Actions.push "GoToPage(#{value.to_i})"
 
             # solr facet translation
@@ -545,8 +550,8 @@ module EBSCO
             when :page_number, 'page_number', 'page'
               @PageNumber = value.to_i
             # solr starts at page 0
-            when 'start'
-              @PageNumber = value.to_i + 1
+            # when 'start'
+            #  @PageNumber = value.to_i + 1
 
             # ====================================================================================
             # highlight

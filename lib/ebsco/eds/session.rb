@@ -1,13 +1,15 @@
 require 'ebsco/eds/version'
 require 'ebsco/eds/info'
 require 'ebsco/eds/results'
+require 'net/http/persistent'
 require 'faraday'
 require 'faraday/detailed_logger'
 require 'faraday_middleware'
+require 'faraday/adapter/net_http_persistent'
+require 'faraday_eds_middleware'
 require 'logger'
 require 'json'
 require 'active_support'
-require 'faraday_eds_middleware'
 require 'ebsco/eds/configuration'
 require 'digest/md5'
 
@@ -127,7 +129,6 @@ module EBSCO
             end :
             @debug = @config[:debug]
 
-
         # use cache for auth token and info calls?
         if @use_cache
           cache_dir = File.join(@cache_dir, 'faraday_eds_cache')
@@ -222,8 +223,6 @@ module EBSCO
         end
       end
 
-      # todo: need a lookahead and lookbehind option for blacklight next/previous detail page - do search but don't change the current_page
-
       # :category: Search & Retrieve Methods
       # Performs a simple search. All other search options assume default values.
       #
@@ -290,38 +289,44 @@ module EBSCO
         max = rpp * pnum
         min = max - rpp + 1
         result_index = rid - min
-        cached_results = search(options)
+        cached_results = search(options, false, false)
+        cached_results_found = cached_results.stat_total_hits
 
         # last result in set, get next result
         if rid == max
-          @search_options.add_actions("GoToPage(#{cached_results.page_number+1})", @info)
-          next_result_set = search({}, true, false)
+          options_next = options
+          options_next['page'] = cached_results.page_number+1
+          next_result_set = search(options_next, false, false)
           result_next = next_result_set.records.first
         else
-          result_next = cached_results.records[result_index+1]
+          unless rid == cached_results_found
+            result_next = cached_results.records[result_index+1]
+          end
         end
 
-        if result_next.nil?
-          puts 'ERROR: result_next is nil'
-        end
-
-        # first result in set that's not the very first result, get previous result
-        if result_index == 0 and rid != 1
-          @search_options.add_actions("GoToPage(#{cached_results.page_number-1})", @info)
-          previous_result_set = search({}, true, false)
-          result_prev = previous_result_set.records.last
+        if result_index == 0
+          # first result in set that's not the very first result, get previous result
+          if rid != 1
+            options_previous = options
+            options_previous['page'] = cached_results.page_number-1
+            previous_result_set = search(options_previous, false, false)
+            result_prev = previous_result_set.records.last
+          end
         else
           result_prev = cached_results.records[result_index-1]
-        end
-
-        if result_prev.nil?
-          puts 'ERROR: result_prev is nil'
         end
 
         # return json result set with just the previous and next records in it
         r = empty_results(cached_results.stat_total_hits)
         results = EBSCO::EDS::Results.new(r)
-        results.records = [result_prev, result_next]
+        next_previous_records = []
+        unless result_prev.nil?
+          next_previous_records << result_prev
+        end
+        unless result_next.nil?
+          next_previous_records << result_next
+        end
+        results.records = next_previous_records
         results.to_solr
 
       end
@@ -669,11 +674,7 @@ module EBSCO
                   json_payload = JSON.generate(payload)
                   # add a cache_id to post search requests to make them cacheable
                   if path == '/edsapi/rest/Search'
-                    # replacements to avoid duplicate caches
-                    json_payload = json_payload.gsub(/"PageNumber":[0-9]+,/,'')
-                    json_payload = json_payload.gsub(/"ResultsPerPage":"([0-9]+)"/,'"ResultsPerPage":\1')
-                    json_payload = json_payload.gsub(/"Actions":\[]/,'"Actions":["GoToPage(1)"]')
-                    # puts 'CHECKSUM PAYLOAD: ' + json_payload.inspect
+                    # puts 'CHECKSUM PAYLOAD: ' + json_payload
                     checksum = Digest::MD5.hexdigest json_payload
                     path << '?cache_id=' + checksum
                   end
@@ -752,7 +753,7 @@ module EBSCO
 
       def connection
         logger = Logger.new(@config[:log])
-        logger.level = Logger::DEBUG
+        logger.level = Logger.const_get(@config[:log_level])
         Faraday.new(url: @config[:eds_api_base]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
@@ -760,13 +761,13 @@ module EBSCO
           conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
           conn.headers['User-Agent'] = @config[:user_agent]
           conn.request :url_encoded
-          conn.use :eds_caching_middleware, store: @cache_store if @use_cache
+          conn.use :eds_caching_middleware, store: @cache_store, logger: @debug ? logger : nil if @use_cache
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
           conn.response :detailed_logger, logger if @debug
           conn.options[:open_timeout] = @config[:open_timeout]
           conn.options[:timeout] = @config[:timeout]
-          conn.adapter Faraday.default_adapter
+          conn.adapter :net_http_persistent
         end
       end
 
