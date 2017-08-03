@@ -144,7 +144,7 @@ module EBSCO
       # ====================================================================================
 
       def default_results_per_page
-        @view_result_settings['ResultsPerPage']
+        @view_result_settings['ResultsPerPage'].to_i
       end
 
       def max_results_per_page
