@@ -129,7 +129,7 @@ module EBSCO
             end :
             @debug = @config[:debug]
 
-        # use cache for auth token and info calls?
+        # use cache for auth token, info, search and retrieve calls?
         if @use_cache
           cache_dir = File.join(@cache_dir, 'faraday_eds_cache')
           @cache_store = ActiveSupport::Cache::FileStore.new cache_dir
@@ -255,9 +255,9 @@ module EBSCO
       #
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
         payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
-        # retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
-        retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
-        retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
+        retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
+        #retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
+        #retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
         record = EBSCO::EDS::Record.new(retrieve_response)
         # puts 'RECORD: ' + record.pretty_inspect
         record
@@ -668,16 +668,11 @@ module EBSCO
                   qs = CGI.escape(payload.to_query_string)
                   path << '?' + qs
                 end
-                req.url path
+               req.url path
               when :post
                 unless payload.nil?
                   json_payload = JSON.generate(payload)
-                  # add a cache_id to post search requests to make them cacheable
-                  if path == '/edsapi/rest/Search'
-                    # puts 'CHECKSUM PAYLOAD: ' + json_payload
-                    checksum = Digest::MD5.hexdigest json_payload
-                    path << '?cache_id=' + checksum
-                  end
+                  path << get_cache_id(path, json_payload) if @use_cache
                   req.body = json_payload
                 end
                 req.url path
@@ -835,6 +830,15 @@ module EBSCO
                     'AvailableCriteria'=>{'DateRange'=>{'MinDate'=>'0001-01', 'MaxDate'=>'0001-01'}}
                 }
         }
+      end
+
+      # generate a cache id for search and retrieve post requests, using a hash of the payload + guest mode
+      def get_cache_id(path, payload)
+        if path == '/edsapi/rest/Search' or path == '/edsapi/rest/Retrieve'
+          '?cache_id=' + Digest::MD5.hexdigest(payload + @guest.to_s)
+        else
+          ''
+        end
       end
 
     end
