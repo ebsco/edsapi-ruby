@@ -185,4 +185,27 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_results_list_html_fulltext_available
+    VCR.use_cassette('test_results_list_html_fulltext_available') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      results = session.search({query: 'Horowitz vs Berube', results_per_page: 10})
+      assert results.records.length > 0
+      assert results.records[0].eds_html_fulltext_available == true
+      session.end
+    end
+  end
+
+  def test_results_list_pdf_fulltext_available
+    VCR.use_cassette('test_results_list_pdf_fulltext_available') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      results = session.search({query: 'The Bamboozling Bite of Bitcoin', results_per_page: 10})
+      assert results.records.length > 0
+      assert results.records[0].eds_pdf_fulltext_available == true
+      assert results.records[0].eds_html_fulltext_available == false
+      assert results.records[0].eds_ebook_pdf_fulltext_available == false
+      assert results.records[0].eds_ebook_epub_fulltext_available == false
+      session.end
+    end
+  end
+
 end

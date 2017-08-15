@@ -167,7 +167,7 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  # CATALOG LINK (Institutional Repository exmaple)
+  # CATALOG LINK (Institutional Repository example)
   def test_retrieve_ir_article
     VCR.use_cassette('test_retrieve_ir_article') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})

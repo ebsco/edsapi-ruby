@@ -59,4 +59,19 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_sanitize_facets
+    VCR.use_cassette('test_sanitize_facets') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      # using session's add_facet method
+      results = session.search({query: 'interest', results_per_page: 1})
+      results2 = session.add_facet('ContentProvider', 'Business Insights: Essentials')
+      assert results2.stat_total_hits > 0
+      # using options
+      results3 = session.search({query: 'interest', results_per_page: 10,
+                                 'f' => {'eds_content_provider_facet' => ['Business Insights: Essentials']}})
+      assert results3.stat_total_hits > 0
+      session.end
+    end
+  end
+
 end

@@ -63,6 +63,10 @@ module EBSCO
           :eds_fulltext_word_count,
           :eds_result_id,
           :eds_plink,
+          :eds_ebook_pdf_fulltext_available,
+          :eds_ebook_epub_fulltext_available,
+          :eds_pdf_fulltext_available,
+          :eds_html_fulltext_available,
           :eds_html_fulltext,
           :eds_images,
           :eds_all_links,
@@ -196,9 +200,14 @@ module EBSCO
         @eds_cover_thumb_url = cover_thumb_url
         @eds_cover_medium_url = cover_medium_url
         @eds_fulltext_word_count = get_item_data_by_name('FullTextWordCount').to_i
+        @eds_html_fulltext_available = html_fulltext_available
         @eds_html_fulltext = html_fulltext
         @eds_images = images
         @eds_all_links = all_links
+        # init fulltext available props, reset by fulltext_links method later
+        @eds_pdf_fulltext_available = false
+        @eds_ebook_pdf_fulltext_available = false
+        @eds_ebook_epub_fulltext_available = false
         @eds_fulltext_links = fulltext_links
         @eds_non_fulltext_links = non_fulltext_links
         @eds_code_naics = get_item_data_by_name('CodeNAICS')
@@ -267,7 +276,16 @@ module EBSCO
         end
       end
 
-      # Fulltext.
+      # Fulltext available
+      def html_fulltext_available
+        if @record.fetch('FullText',{}).fetch('Text',{}).fetch('Availability',0) == '1'
+          true
+        else
+          false
+        end
+      end
+
+      # Fulltext - RETRIEVE ONLY
       def html_fulltext
         if @record.fetch('FullText',{}).fetch('Text',{}).fetch('Availability',0) == '1'
           @record.fetch('FullText',{}).fetch('Text',{})['Value']
@@ -334,6 +352,7 @@ module EBSCO
               link_icon = 'PDF Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
               links.push({url: link_url, label: link_label, icon: link_icon, type: 'pdf'})
+              @eds_pdf_fulltext_available = true
             end
           end
         end
@@ -354,6 +373,7 @@ module EBSCO
               link_icon = 'PDF eBook Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
               links.push({url: link_url, label: link_label, icon: link_icon, type: 'ebook-pdf'})
+              @eds_ebook_pdf_fulltext_available = true
             end
           end
         end
@@ -365,6 +385,7 @@ module EBSCO
               link_icon = 'ePub eBook Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
               links.push({url: link_url, label: link_label, icon: link_icon, type: 'ebook-epub'})
+              @eds_ebook_epub_fulltext_available = true
             end
           end
         end
@@ -402,6 +423,7 @@ module EBSCO
               link_icon = 'Linked Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
               links.push({url: link_url, label: link_label, icon: link_icon, type: 'smartlinks'})
+              @eds_pdf_fulltext_available = true
             end
           end
         end

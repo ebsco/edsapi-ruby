@@ -528,6 +528,7 @@ module EBSCO
       #   results = session.add_facet('SubjectEDS', 'water quality')
       #
       def add_facet(facet_id, facet_val)
+        facet_val = eds_sanitize(facet_val)
         add_actions "AddFacetFilter(#{facet_id}:#{facet_val})"
       end
 
@@ -839,6 +840,12 @@ module EBSCO
         else
           ''
         end
+      end
+
+      def eds_sanitize(str)
+        pattern = /(\'|\"|\*|\/|\-|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
+        str = str.gsub(pattern){ |match| '\\' + match }
+        str
       end
 
     end
