@@ -364,6 +364,8 @@ module EBSCO
                     _field_code = 'IB'
                   when 'descriptor'
                     _field_code = 'DE'
+                  when 'series'
+                    _field_code = 'SE'
                 end
               end
 
