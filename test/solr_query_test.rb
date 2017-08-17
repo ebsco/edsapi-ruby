@@ -281,4 +281,19 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_solr_date_range
+    VCR.use_cassette('test_solr_date_range') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({'q' => 'climate change', 'rows' => 1})
+      refute_nil results
+      range = results.to_solr.fetch('date_range',{})
+      refute_empty range
+      assert range[:mindate] == '1000-01'
+      assert range[:maxdate] == '2913-12'
+      assert range[:minyear] == '1000'
+      assert range[:maxyear] == '2913'
+      session.end
+    end
+  end
+
 end

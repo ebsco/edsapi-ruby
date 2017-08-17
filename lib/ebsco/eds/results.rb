@@ -158,6 +158,7 @@ module EBSCO
                 'start' => solr_start,
                 'docs' => solr_docs
             },
+            'date_range' => date_range,
             'research_starters' => research_starters,
             'publication_matches' => publication_matches,
             'highlighting' => hl_hash,
