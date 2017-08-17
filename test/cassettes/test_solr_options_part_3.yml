@@ -24,23 +24,23 @@ http_interactions:
     headers:
       cache-control:
       - private
+      content-length:
+      - '131'
       content-type:
       - application/json; charset=utf-8
-      date:
-      - Thu, 03 Aug 2017 20:35:10 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-powered-by:
       - ASP.NET
-      content-length:
-      - '131'
+      date:
+      - Thu, 17 Aug 2017 23:20:14 GMT
     body:
       encoding: UTF-8
-      string: '{"AuthToken":"ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
+      string: '{"AuthToken":"ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
     http_version: 
-  recorded_at: Thu, 03 Aug 2017 20:35:11 GMT
+  recorded_at: Thu, 17 Aug 2017 23:20:15 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
@@ -55,7 +55,7 @@ http_interactions:
       x-sessionToken:
       - ''
       x-authenticationToken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -65,31 +65,31 @@ http_interactions:
     headers:
       cache-control:
       - private
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 03 Aug 2017 20:35:11 GMT
-      server:
-      - Microsoft-IIS/8.5
-      x-aspnet-version:
-      - 4.0.30319
-      x-authenticationtoken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
-      x-msg-correlid:
-      - 310018e9-98df-4185-a3eb-cc8e6a3ad0e8
-      x-powered-by:
-      - ASP.NET
-      x-sessionno:
-      - "-1711855986"
-      x-sessiontoken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
       content-length:
       - '100'
+      content-type:
+      - application/json; charset=utf-8
+      server:
+      - Microsoft-IIS/8.5
+      x-sessiontoken:
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
+      x-authenticationtoken:
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-sessionno:
+      - '699804490'
+      x-msg-correlid:
+      - bbc1bee1-0a5d-41cc-95a2-9792f11d7c71
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Thu, 17 Aug 2017 23:20:14 GMT
     body:
       encoding: UTF-8
-      string: '{"SessionToken":"80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y="}'
+      string: '{"SessionToken":"8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw="}'
     http_version: 
-  recorded_at: Thu, 03 Aug 2017 20:35:11 GMT
+  recorded_at: Thu, 17 Aug 2017 23:20:15 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/Info
@@ -102,9 +102,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
       x-authenticationToken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -114,26 +114,28 @@ http_interactions:
     headers:
       cache-control:
       - private
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 03 Aug 2017 20:35:11 GMT
-      server:
-      - Microsoft-IIS/8.5
-      x-aspnet-version:
-      - 4.0.30319
-      x-authenticationtoken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
-      x-msg-correlid:
-      - 52eebbf4-edac-4911-92e5-98467b21f940
-      x-powered-by:
-      - ASP.NET
-      x-sessionno:
-      - "-1711855986"
-      x-sessiontoken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
       content-length:
       - '5139'
+      content-type:
+      - application/json; charset=utf-8
+      server:
+      - Microsoft-IIS/8.5
+      x-sessiontoken:
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
+      x-authenticationtoken:
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-sessionno:
+      - '699804490'
+      x-msg-correlid:
+      - 93301638-9143-4036-87d2-a8daef3249bc
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Thu, 17 Aug 2017 23:20:15 GMT
+      connection:
+      - Keep-Alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -669,10 +671,10 @@ http_interactions:
         U2V0dGluZ3MiOnsiU2Vzc2lvblRpbWVvdXQiOiIyODgwMCJ9LCJBcGlTZXR0
         aW5ncyI6eyJNYXhSZWNvcmRKdW1wQWhlYWQiOiIyNTAifX0=
     http_version: 
-  recorded_at: Thu, 03 Aug 2017 20:35:12 GMT
+  recorded_at: Thu, 17 Aug 2017 23:20:15 GMT
 - request:
     method: post
-    uri: https://eds-api.ebscohost.com/edsapi/rest/Search?cache_id=bd7c95af8278eb20e0b43b0e38db5d9d
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Search
     body:
       encoding: UTF-8
       string: '{"SearchCriteria":{"Queries":[{"FieldCode":"SU","Term":"lincoln"}],"SearchMode":"all","IncludeFacets":"y","FacetFilters":null,"Limiters":null,"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"]},"RetrievalCriteria":{"View":"brief","ResultsPerPage":10,"PageNumber":1,"Highlight":"y"},"Actions":["addfacetfilter(LocationLibrary:Main
@@ -683,9 +685,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
       x-authenticationToken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -695,26 +697,28 @@ http_interactions:
     headers:
       cache-control:
       - private
+      content-length:
+      - '971'
       content-type:
       - application/json; charset=utf-8
-      date:
-      - Thu, 03 Aug 2017 20:35:12 GMT
       server:
       - Microsoft-IIS/8.5
+      x-sessiontoken:
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
+      x-authenticationtoken:
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-sessionno:
+      - '699804490'
+      x-msg-correlid:
+      - a8fb7a97-5bc7-4f52-be34-eb824e705d1a
       x-aspnet-version:
       - 4.0.30319
-      x-authenticationtoken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
-      x-msg-correlid:
-      - 18d33c44-f112-4f48-a6fd-17c63238077a
       x-powered-by:
       - ASP.NET
-      x-sessionno:
-      - "-1711855986"
-      x-sessiontoken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
-      content-length:
-      - '963'
+      date:
+      - Thu, 17 Aug 2017 23:20:15 GMT
+      connection:
+      - Keep-Alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -727,59 +731,60 @@ http_interactions:
         W3siSWQiOiJQdWJsaWNhdGlvblllYXIiLCJWYWx1ZSI6Ikxhc3QgNTAgeWVh
         cnMifV19XSwiRXhwYW5kZXJzIjpbImZ1bGx0ZXh0IiwidGhlc2F1cnVzIiwi
         cmVsYXRlZHN1YmplY3RzIl0sIlNvcnQiOiJyZWxldmFuY2UiLCJSZWxhdGVk
-        Q29udGVudCI6WyJycyJdLCJBdXRvU3VnZ2VzdCI6Im4ifSwiUmV0cmlldmFs
-        Q3JpdGVyaWEiOnsiVmlldyI6ImJyaWVmIiwiUmVzdWx0c1BlclBhZ2UiOjEw
-        LCJIaWdobGlnaHQiOiJ5In0sIlNlYXJjaENyaXRlcmlhV2l0aEFjdGlvbnMi
-        OnsiUXVlcmllc1dpdGhBY3Rpb24iOlt7IlF1ZXJ5Ijp7IkJvb2xlYW5PcGVy
-        YXRvciI6IkFORCIsIkZpZWxkQ29kZSI6IlNVIiwiVGVybSI6ImxpbmNvbG4i
-        fSwiUmVtb3ZlQWN0aW9uIjoicmVtb3ZlcXVlcnkoMSkifV0sIkZhY2V0Rmls
-        dGVyc1dpdGhBY3Rpb24iOlt7IkZpbHRlcklkIjoxLCJGYWNldFZhbHVlc1dp
-        dGhBY3Rpb24iOlt7IkZhY2V0VmFsdWUiOnsiSWQiOiJMb2NhdGlvbkxpYnJh
-        cnkiLCJWYWx1ZSI6Ik1haW4gTGlicmFyeSJ9LCJSZW1vdmVBY3Rpb24iOiJy
-        ZW1vdmVmYWNldGZpbHRlcnZhbHVlKDEsTG9jYXRpb25MaWJyYXJ5Ok1haW4g
-        TGlicmFyeSkifV0sIlJlbW92ZUFjdGlvbiI6InJlbW92ZWZhY2V0ZmlsdGVy
-        KDEpIn0seyJGaWx0ZXJJZCI6MiwiRmFjZXRWYWx1ZXNXaXRoQWN0aW9uIjpb
-        eyJGYWNldFZhbHVlIjp7IklkIjoiUHVibGljYXRpb25ZZWFyIiwiVmFsdWUi
-        OiJMYXN0IDUwIHllYXJzIn0sIlJlbW92ZUFjdGlvbiI6InJlbW92ZWZhY2V0
-        ZmlsdGVydmFsdWUoMixQdWJsaWNhdGlvblllYXI6TGFzdCA1MCB5ZWFycyki
-        fV0sIlJlbW92ZUFjdGlvbiI6InJlbW92ZWZhY2V0ZmlsdGVyKDIpIn1dLCJF
-        eHBhbmRlcnNXaXRoQWN0aW9uIjpbeyJJZCI6ImZ1bGx0ZXh0IiwiUmVtb3Zl
-        QWN0aW9uIjoicmVtb3ZlZXhwYW5kZXIoZnVsbHRleHQpIn0seyJJZCI6InRo
-        ZXNhdXJ1cyIsIlJlbW92ZUFjdGlvbiI6InJlbW92ZWV4cGFuZGVyKHRoZXNh
-        dXJ1cykifSx7IklkIjoicmVsYXRlZHN1YmplY3RzIiwiUmVtb3ZlQWN0aW9u
-        IjoicmVtb3ZlZXhwYW5kZXIocmVsYXRlZHN1YmplY3RzKSJ9XX19LCJTZWFy
-        Y2hSZXN1bHQiOnsiU3RhdGlzdGljcyI6eyJUb3RhbEhpdHMiOjAsIlRvdGFs
-        U2VhcmNoVGltZSI6MTE5LCJEYXRhYmFzZXMiOlt7IklkIjoibmxlYmsiLCJM
-        YWJlbCI6ImVCb29rIENvbGxlY3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0dXMi
-        OiIwIiwiSGl0cyI6MH0seyJJZCI6ImUwMDB4bmEiLCJMYWJlbCI6ImVCb29r
-        IEFjYWRlbWljIENvbGxlY3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0dXMiOiIw
-        IiwiSGl0cyI6MH0seyJJZCI6ImVkc2FydCIsIkxhYmVsIjoiQVJUc3RvciBE
-        aWdpdGFsIExpYnJhcnkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6
-        ImU3MDB4bmEiLCJMYWJlbCI6ImVCb29rIFB1YmxpYyBMaWJyYXJ5IENvbGxl
-        Y3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJ
-        ZCI6ImNhdDAyMDYwYSIsIkxhYmVsIjoiRURTIERlbW8gQ2F0YWxvZyDigJMg
-        VVMgLSBVIG9mIEdlb3JnaWEiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJ
-        ZCI6ImVycyIsIkxhYmVsIjoiUmVzZWFyY2ggU3RhcnRlcnMiLCJTdGF0dXMi
-        OiIwIiwiSGl0cyI6MH0seyJJZCI6ImFzbiIsIkxhYmVsIjoiQWNhZGVtaWMg
-        U2VhcmNoIFVsdGltYXRlIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQi
-        OiJlZHNwZGgiLCJMYWJlbCI6IlBzeWNBUlRJQ0xFUyIsIlN0YXR1cyI6IjAi
-        LCJIaXRzIjowfSx7IklkIjoicHN5aCIsIkxhYmVsIjoiUHN5Y0lORk8iLCJT
-        dGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6InBkaCIsIkxhYmVsIjoiUHN5
-        Y0FSVElDTEVTIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNu
-        bWoiLCJMYWJlbCI6Ik5heG9zIE11c2ljIExpYnJhcnkgSmF6eiIsIlN0YXR1
-        cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzY3JjIiwiTGFiZWwiOiJDcmVk
-        byBSZWZlcmVuY2UiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVk
-        c2hsZCIsIkxhYmVsIjoiRGlnaXRhbCBBY2Nlc3MgdG8gU2Nob2xhcnNoaXAg
-        YXQgSGFydmFyZCAoREFTSCkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJ
-        ZCI6ImVkc2JhcyIsIkxhYmVsIjoiQkFTRSIsIlN0YXR1cyI6IjAiLCJIaXRz
-        IjowfV19LCJEYXRhIjp7IlJlY29yZEZvcm1hdCI6IkVQIERpc3BsYXkifSwi
-        QXZhaWxhYmxlQ3JpdGVyaWEiOnsiRGF0ZVJhbmdlIjp7Ik1pbkRhdGUiOiIw
-        MDAxLTAxIiwiTWF4RGF0ZSI6IjAwMDEtMDEifX19fQ==
+        Q29udGVudCI6WyJycyJdLCJBdXRvU3VnZ2VzdCI6Im4iLCJBdXRvQ29ycmVj
+        dCI6Im4ifSwiUmV0cmlldmFsQ3JpdGVyaWEiOnsiVmlldyI6ImJyaWVmIiwi
+        UmVzdWx0c1BlclBhZ2UiOjEwLCJIaWdobGlnaHQiOiJ5In0sIlNlYXJjaENy
+        aXRlcmlhV2l0aEFjdGlvbnMiOnsiUXVlcmllc1dpdGhBY3Rpb24iOlt7IlF1
+        ZXJ5Ijp7IkJvb2xlYW5PcGVyYXRvciI6IkFORCIsIkZpZWxkQ29kZSI6IlNV
+        IiwiVGVybSI6ImxpbmNvbG4ifSwiUmVtb3ZlQWN0aW9uIjoicmVtb3ZlcXVl
+        cnkoMSkifV0sIkZhY2V0RmlsdGVyc1dpdGhBY3Rpb24iOlt7IkZpbHRlcklk
+        IjoxLCJGYWNldFZhbHVlc1dpdGhBY3Rpb24iOlt7IkZhY2V0VmFsdWUiOnsi
+        SWQiOiJMb2NhdGlvbkxpYnJhcnkiLCJWYWx1ZSI6Ik1haW4gTGlicmFyeSJ9
+        LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVmYWNldGZpbHRlcnZhbHVlKDEsTG9j
+        YXRpb25MaWJyYXJ5Ok1haW4gTGlicmFyeSkifV0sIlJlbW92ZUFjdGlvbiI6
+        InJlbW92ZWZhY2V0ZmlsdGVyKDEpIn0seyJGaWx0ZXJJZCI6MiwiRmFjZXRW
+        YWx1ZXNXaXRoQWN0aW9uIjpbeyJGYWNldFZhbHVlIjp7IklkIjoiUHVibGlj
+        YXRpb25ZZWFyIiwiVmFsdWUiOiJMYXN0IDUwIHllYXJzIn0sIlJlbW92ZUFj
+        dGlvbiI6InJlbW92ZWZhY2V0ZmlsdGVydmFsdWUoMixQdWJsaWNhdGlvblll
+        YXI6TGFzdCA1MCB5ZWFycykifV0sIlJlbW92ZUFjdGlvbiI6InJlbW92ZWZh
+        Y2V0ZmlsdGVyKDIpIn1dLCJFeHBhbmRlcnNXaXRoQWN0aW9uIjpbeyJJZCI6
+        ImZ1bGx0ZXh0IiwiUmVtb3ZlQWN0aW9uIjoicmVtb3ZlZXhwYW5kZXIoZnVs
+        bHRleHQpIn0seyJJZCI6InRoZXNhdXJ1cyIsIlJlbW92ZUFjdGlvbiI6InJl
+        bW92ZWV4cGFuZGVyKHRoZXNhdXJ1cykifSx7IklkIjoicmVsYXRlZHN1Ympl
+        Y3RzIiwiUmVtb3ZlQWN0aW9uIjoicmVtb3ZlZXhwYW5kZXIocmVsYXRlZHN1
+        YmplY3RzKSJ9XX19LCJTZWFyY2hSZXN1bHQiOnsiU3RhdGlzdGljcyI6eyJU
+        b3RhbEhpdHMiOjAsIlRvdGFsU2VhcmNoVGltZSI6MzgsIkRhdGFiYXNlcyI6
+        W3siSWQiOiJubGViayIsIkxhYmVsIjoiZUJvb2sgQ29sbGVjdGlvbiAoRUJT
+        Q09ob3N0KSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZTAwMHhu
+        YSIsIkxhYmVsIjoiZUJvb2sgQWNhZGVtaWMgQ29sbGVjdGlvbiAoRUJTQ09o
+        b3N0KSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzYXJ0Iiwi
+        TGFiZWwiOiJBUlRzdG9yIERpZ2l0YWwgTGlicmFyeSIsIlN0YXR1cyI6IjAi
+        LCJIaXRzIjowfSx7IklkIjoiZTcwMHhuYSIsIkxhYmVsIjoiZUJvb2sgUHVi
+        bGljIExpYnJhcnkgQ29sbGVjdGlvbiAoRUJTQ09ob3N0KSIsIlN0YXR1cyI6
+        IjAiLCJIaXRzIjowfSx7IklkIjoiY2F0MDIwNjBhIiwiTGFiZWwiOiJFRFMg
+        RGVtbyBDYXRhbG9nIOKAkyBVUyAtIFUgb2YgR2VvcmdpYSIsIlN0YXR1cyI6
+        IjAiLCJIaXRzIjowfSx7IklkIjoiZXJzIiwiTGFiZWwiOiJSZXNlYXJjaCBT
+        dGFydGVycyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiYXNuIiwi
+        TGFiZWwiOiJBY2FkZW1pYyBTZWFyY2ggVWx0aW1hdGUiLCJTdGF0dXMiOiIw
+        IiwiSGl0cyI6MH0seyJJZCI6ImVkc3BkaCIsIkxhYmVsIjoiUHN5Y0FSVElD
+        TEVTIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwc3loIiwiTGFi
+        ZWwiOiJQc3ljSU5GTyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoi
+        cGRoIiwiTGFiZWwiOiJQc3ljQVJUSUNMRVMiLCJTdGF0dXMiOiIwIiwiSGl0
+        cyI6MH0seyJJZCI6ImVkc25taiIsIkxhYmVsIjoiTmF4b3MgTXVzaWMgTGli
+        cmFyeSBKYXp6IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNj
+        cmMiLCJMYWJlbCI6IkNyZWRvIFJlZmVyZW5jZSIsIlN0YXR1cyI6IjAiLCJI
+        aXRzIjowfSx7IklkIjoiZWRzaGxkIiwiTGFiZWwiOiJEaWdpdGFsIEFjY2Vz
+        cyB0byBTY2hvbGFyc2hpcCBhdCBIYXJ2YXJkIChEQVNIKSIsIlN0YXR1cyI6
+        IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzYmFzIiwiTGFiZWwiOiJCQVNFIiwi
+        U3RhdHVzIjoiMCIsIkhpdHMiOjB9XX0sIkRhdGEiOnsiUmVjb3JkRm9ybWF0
+        IjoiRVAgRGlzcGxheSJ9LCJBdmFpbGFibGVDcml0ZXJpYSI6eyJEYXRlUmFu
+        Z2UiOnsiTWluRGF0ZSI6IjAwMDEtMDEiLCJNYXhEYXRlIjoiMDAwMS0wMSJ9
+        fX19
     http_version: 
-  recorded_at: Thu, 03 Aug 2017 20:35:12 GMT
+  recorded_at: Thu, 17 Aug 2017 23:20:16 GMT
 - request:
     method: post
-    uri: https://eds-api.ebscohost.com/edsapi/rest/Search?cache_id=309ddc666e18f1c8746876c95cccbba1
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Search
     body:
       encoding: UTF-8
       string: '{"SearchCriteria":{"Queries":[{"FieldCode":"AU","Term":"lincoln"}],"SearchMode":"all","IncludeFacets":"y","FacetFilters":null,"Limiters":null,"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"]},"RetrievalCriteria":{"View":"brief","ResultsPerPage":10,"PageNumber":1,"Highlight":"y"},"Actions":["addfacetfilter(PublicationYear:More
@@ -790,9 +795,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
       x-authenticationToken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -802,26 +807,28 @@ http_interactions:
     headers:
       cache-control:
       - private
+      content-length:
+      - '915'
       content-type:
       - application/json; charset=utf-8
-      date:
-      - Thu, 03 Aug 2017 20:35:12 GMT
       server:
       - Microsoft-IIS/8.5
+      x-sessiontoken:
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
+      x-authenticationtoken:
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-sessionno:
+      - '699804490'
+      x-msg-correlid:
+      - 9a47aa09-6ca7-43cd-841a-b9863eb7a3e0
       x-aspnet-version:
       - 4.0.30319
-      x-authenticationtoken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
-      x-msg-correlid:
-      - 80448b6e-6b3f-44f9-84a6-e95b425af015
       x-powered-by:
       - ASP.NET
-      x-sessionno:
-      - "-1711855986"
-      x-sessiontoken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
-      content-length:
-      - '907'
+      date:
+      - Thu, 17 Aug 2017 23:20:15 GMT
+      connection:
+      - Keep-Alive
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -833,66 +840,67 @@ http_interactions:
         TW9yZSB0aGFuIDUwIHllYXJzIGFnbyJ9XX1dLCJFeHBhbmRlcnMiOlsiZnVs
         bHRleHQiLCJ0aGVzYXVydXMiLCJyZWxhdGVkc3ViamVjdHMiXSwiU29ydCI6
         InJlbGV2YW5jZSIsIlJlbGF0ZWRDb250ZW50IjpbInJzIl0sIkF1dG9TdWdn
-        ZXN0IjoibiJ9LCJSZXRyaWV2YWxDcml0ZXJpYSI6eyJWaWV3IjoiYnJpZWYi
-        LCJSZXN1bHRzUGVyUGFnZSI6MTAsIkhpZ2hsaWdodCI6InkifSwiU2VhcmNo
-        Q3JpdGVyaWFXaXRoQWN0aW9ucyI6eyJRdWVyaWVzV2l0aEFjdGlvbiI6W3si
-        UXVlcnkiOnsiQm9vbGVhbk9wZXJhdG9yIjoiQU5EIiwiRmllbGRDb2RlIjoi
-        QVUiLCJUZXJtIjoibGluY29sbiJ9LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVx
-        dWVyeSgxKSJ9XSwiRmFjZXRGaWx0ZXJzV2l0aEFjdGlvbiI6W3siRmlsdGVy
-        SWQiOjEsIkZhY2V0VmFsdWVzV2l0aEFjdGlvbiI6W3siRmFjZXRWYWx1ZSI6
-        eyJJZCI6IlB1YmxpY2F0aW9uWWVhciIsIlZhbHVlIjoiTW9yZSB0aGFuIDUw
-        IHllYXJzIGFnbyJ9LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVmYWNldGZpbHRl
-        cnZhbHVlKDEsUHVibGljYXRpb25ZZWFyOk1vcmUgdGhhbiA1MCB5ZWFycyBh
-        Z28pIn1dLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVmYWNldGZpbHRlcigxKSJ9
-        XSwiRXhwYW5kZXJzV2l0aEFjdGlvbiI6W3siSWQiOiJmdWxsdGV4dCIsIlJl
-        bW92ZUFjdGlvbiI6InJlbW92ZWV4cGFuZGVyKGZ1bGx0ZXh0KSJ9LHsiSWQi
-        OiJ0aGVzYXVydXMiLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcih0
-        aGVzYXVydXMpIn0seyJJZCI6InJlbGF0ZWRzdWJqZWN0cyIsIlJlbW92ZUFj
-        dGlvbiI6InJlbW92ZWV4cGFuZGVyKHJlbGF0ZWRzdWJqZWN0cykifV19fSwi
-        U2VhcmNoUmVzdWx0Ijp7IlN0YXRpc3RpY3MiOnsiVG90YWxIaXRzIjowLCJU
-        b3RhbFNlYXJjaFRpbWUiOjE5LCJEYXRhYmFzZXMiOlt7IklkIjoibmxlYmsi
-        LCJMYWJlbCI6ImVCb29rIENvbGxlY3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0
-        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImUwMDB4bmEiLCJMYWJlbCI6ImVC
-        b29rIEFjYWRlbWljIENvbGxlY3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0dXMi
-        OiIwIiwiSGl0cyI6MH0seyJJZCI6ImVkc2FydCIsIkxhYmVsIjoiQVJUc3Rv
-        ciBEaWdpdGFsIExpYnJhcnkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJ
-        ZCI6ImU3MDB4bmEiLCJMYWJlbCI6ImVCb29rIFB1YmxpYyBMaWJyYXJ5IENv
-        bGxlY3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0s
-        eyJJZCI6ImNhdDAyMDYwYSIsIkxhYmVsIjoiRURTIERlbW8gQ2F0YWxvZyDi
-        gJMgVVMgLSBVIG9mIEdlb3JnaWEiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0s
-        eyJJZCI6ImVycyIsIkxhYmVsIjoiUmVzZWFyY2ggU3RhcnRlcnMiLCJTdGF0
-        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImFzbiIsIkxhYmVsIjoiQWNhZGVt
-        aWMgU2VhcmNoIFVsdGltYXRlIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
-        SWQiOiJlZHNwZGgiLCJMYWJlbCI6IlBzeWNBUlRJQ0xFUyIsIlN0YXR1cyI6
-        IjAiLCJIaXRzIjowfSx7IklkIjoicHN5aCIsIkxhYmVsIjoiUHN5Y0lORk8i
-        LCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6InBkaCIsIkxhYmVsIjoi
-        UHN5Y0FSVElDTEVTIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJl
-        ZHNubWoiLCJMYWJlbCI6Ik5heG9zIE11c2ljIExpYnJhcnkgSmF6eiIsIlN0
-        YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzY3JjIiwiTGFiZWwiOiJD
-        cmVkbyBSZWZlcmVuY2UiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6
-        ImVkc2hsZCIsIkxhYmVsIjoiRGlnaXRhbCBBY2Nlc3MgdG8gU2Nob2xhcnNo
-        aXAgYXQgSGFydmFyZCAoREFTSCkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0s
-        eyJJZCI6ImVkc2JhcyIsIkxhYmVsIjoiQkFTRSIsIlN0YXR1cyI6IjAiLCJI
-        aXRzIjowfV19LCJEYXRhIjp7IlJlY29yZEZvcm1hdCI6IkVQIERpc3BsYXki
-        fSwiQXZhaWxhYmxlQ3JpdGVyaWEiOnsiRGF0ZVJhbmdlIjp7Ik1pbkRhdGUi
-        OiIwMDAxLTAxIiwiTWF4RGF0ZSI6IjAwMDEtMDEifX19fQ==
+        ZXN0IjoibiIsIkF1dG9Db3JyZWN0IjoibiJ9LCJSZXRyaWV2YWxDcml0ZXJp
+        YSI6eyJWaWV3IjoiYnJpZWYiLCJSZXN1bHRzUGVyUGFnZSI6MTAsIkhpZ2hs
+        aWdodCI6InkifSwiU2VhcmNoQ3JpdGVyaWFXaXRoQWN0aW9ucyI6eyJRdWVy
+        aWVzV2l0aEFjdGlvbiI6W3siUXVlcnkiOnsiQm9vbGVhbk9wZXJhdG9yIjoi
+        QU5EIiwiRmllbGRDb2RlIjoiQVUiLCJUZXJtIjoibGluY29sbiJ9LCJSZW1v
+        dmVBY3Rpb24iOiJyZW1vdmVxdWVyeSgxKSJ9XSwiRmFjZXRGaWx0ZXJzV2l0
+        aEFjdGlvbiI6W3siRmlsdGVySWQiOjEsIkZhY2V0VmFsdWVzV2l0aEFjdGlv
+        biI6W3siRmFjZXRWYWx1ZSI6eyJJZCI6IlB1YmxpY2F0aW9uWWVhciIsIlZh
+        bHVlIjoiTW9yZSB0aGFuIDUwIHllYXJzIGFnbyJ9LCJSZW1vdmVBY3Rpb24i
+        OiJyZW1vdmVmYWNldGZpbHRlcnZhbHVlKDEsUHVibGljYXRpb25ZZWFyOk1v
+        cmUgdGhhbiA1MCB5ZWFycyBhZ28pIn1dLCJSZW1vdmVBY3Rpb24iOiJyZW1v
+        dmVmYWNldGZpbHRlcigxKSJ9XSwiRXhwYW5kZXJzV2l0aEFjdGlvbiI6W3si
+        SWQiOiJmdWxsdGV4dCIsIlJlbW92ZUFjdGlvbiI6InJlbW92ZWV4cGFuZGVy
+        KGZ1bGx0ZXh0KSJ9LHsiSWQiOiJ0aGVzYXVydXMiLCJSZW1vdmVBY3Rpb24i
+        OiJyZW1vdmVleHBhbmRlcih0aGVzYXVydXMpIn0seyJJZCI6InJlbGF0ZWRz
+        dWJqZWN0cyIsIlJlbW92ZUFjdGlvbiI6InJlbW92ZWV4cGFuZGVyKHJlbGF0
+        ZWRzdWJqZWN0cykifV19fSwiU2VhcmNoUmVzdWx0Ijp7IlN0YXRpc3RpY3Mi
+        OnsiVG90YWxIaXRzIjowLCJUb3RhbFNlYXJjaFRpbWUiOjIxLCJEYXRhYmFz
+        ZXMiOlt7IklkIjoibmxlYmsiLCJMYWJlbCI6ImVCb29rIENvbGxlY3Rpb24g
+        KEVCU0NPaG9zdCkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImUw
+        MDB4bmEiLCJMYWJlbCI6ImVCb29rIEFjYWRlbWljIENvbGxlY3Rpb24gKEVC
+        U0NPaG9zdCkiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVkc2Fy
+        dCIsIkxhYmVsIjoiQVJUc3RvciBEaWdpdGFsIExpYnJhcnkiLCJTdGF0dXMi
+        OiIwIiwiSGl0cyI6MH0seyJJZCI6ImU3MDB4bmEiLCJMYWJlbCI6ImVCb29r
+        IFB1YmxpYyBMaWJyYXJ5IENvbGxlY3Rpb24gKEVCU0NPaG9zdCkiLCJTdGF0
+        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImNhdDAyMDYwYSIsIkxhYmVsIjoi
+        RURTIERlbW8gQ2F0YWxvZyDigJMgVVMgLSBVIG9mIEdlb3JnaWEiLCJTdGF0
+        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVycyIsIkxhYmVsIjoiUmVzZWFy
+        Y2ggU3RhcnRlcnMiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImFz
+        biIsIkxhYmVsIjoiQWNhZGVtaWMgU2VhcmNoIFVsdGltYXRlIiwiU3RhdHVz
+        IjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNwZGgiLCJMYWJlbCI6IlBzeWNB
+        UlRJQ0xFUyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoicHN5aCIs
+        IkxhYmVsIjoiUHN5Y0lORk8iLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJ
+        ZCI6InBkaCIsIkxhYmVsIjoiUHN5Y0FSVElDTEVTIiwiU3RhdHVzIjoiMCIs
+        IkhpdHMiOjB9LHsiSWQiOiJlZHNubWoiLCJMYWJlbCI6Ik5heG9zIE11c2lj
+        IExpYnJhcnkgSmF6eiIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoi
+        ZWRzY3JjIiwiTGFiZWwiOiJDcmVkbyBSZWZlcmVuY2UiLCJTdGF0dXMiOiIw
+        IiwiSGl0cyI6MH0seyJJZCI6ImVkc2hsZCIsIkxhYmVsIjoiRGlnaXRhbCBB
+        Y2Nlc3MgdG8gU2Nob2xhcnNoaXAgYXQgSGFydmFyZCAoREFTSCkiLCJTdGF0
+        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVkc2JhcyIsIkxhYmVsIjoiQkFT
+        RSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfV19LCJEYXRhIjp7IlJlY29yZEZv
+        cm1hdCI6IkVQIERpc3BsYXkifSwiQXZhaWxhYmxlQ3JpdGVyaWEiOnsiRGF0
+        ZVJhbmdlIjp7Ik1pbkRhdGUiOiIwMDAxLTAxIiwiTWF4RGF0ZSI6IjAwMDEt
+        MDEifX19fQ==
     http_version: 
-  recorded_at: Thu, 03 Aug 2017 20:35:12 GMT
+  recorded_at: Thu, 17 Aug 2017 23:20:16 GMT
 - request:
     method: post
     uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
     body:
       encoding: UTF-8
-      string: '{"SessionToken":"80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y="}'
+      string: '{"SessionToken":"8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw="}'
     headers:
       Content-Type:
       - application/json;charset=UTF-8
       Accept:
       - application/json
       x-sessionToken:
-      - 80c9ef10-851f-4c98-ad49-c59754f5cb40.3GT0Ie5mmgGhiaL2826c2xAoKS5ziSPasuZaQsjiG1Y=
+      - 8fd57f91-43e9-4d7d-bfd6-8683198459f0.kcdnojlrbomw1MwHUbssUdURZv62yQUmFXWQyJ1ECCw=
       x-authenticationToken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -902,25 +910,25 @@ http_interactions:
     headers:
       cache-control:
       - private
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 03 Aug 2017 20:35:12 GMT
-      server:
-      - Microsoft-IIS/8.5
-      x-aspnet-version:
-      - 4.0.30319
-      x-authenticationtoken:
-      - ACTNim00xGvXi4Zjc_HwCEKL8wcr0lmDkAd7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
-      x-msg-correlid:
-      - 17001b54-bff6-4180-9d10-75793f5627f1
-      x-powered-by:
-      - ASP.NET
       content-length:
       - '20'
+      content-type:
+      - application/json; charset=utf-8
+      server:
+      - Microsoft-IIS/8.5
+      x-authenticationtoken:
+      - ACV3Ehrn9fgA9oKqtg4uHU9-olfqglmWK7d7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - 7fcf37f6-e9be-468d-8f4a-ac7e350d528b
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Thu, 17 Aug 2017 23:20:15 GMT
     body:
       encoding: UTF-8
       string: '{"IsSuccessful":"y"}'
     http_version: 
-  recorded_at: Thu, 03 Aug 2017 20:35:12 GMT
+  recorded_at: Thu, 17 Aug 2017 23:20:16 GMT
 recorded_with: VCR 2.9.3
