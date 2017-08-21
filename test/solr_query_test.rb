@@ -284,14 +284,29 @@ class EdsApiTests < Minitest::Test
   def test_solr_date_range
     VCR.use_cassette('test_solr_date_range') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({'q' => 'white nose syndrome', 'rows' => 1})
+      refute_nil results
+      range = results.to_solr.fetch('date_range',{})
+      refute_empty range
+      assert range[:mindate] == '1972-01'
+      assert range[:maxdate] == '2017-09'
+      assert range[:minyear] == '1972'
+      assert range[:maxyear] == '2017'
+      session.end
+    end
+  end
+
+  def test_solr_date_range_max_year_cleanup
+    VCR.use_cassette('test_solr_date_range_max_year_cleanup') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({'q' => 'climate change', 'rows' => 1})
       refute_nil results
       range = results.to_solr.fetch('date_range',{})
       refute_empty range
       assert range[:mindate] == '1000-01'
-      assert range[:maxdate] == '2913-12'
+      assert range[:maxdate] == '2018-01'
       assert range[:minyear] == '1000'
-      assert range[:maxyear] == '2913'
+      assert range[:maxyear] == '2018'
       session.end
     end
   end
