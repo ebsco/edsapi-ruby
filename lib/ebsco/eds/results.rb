@@ -1,6 +1,7 @@
 require 'ebsco/eds/record'
 require 'yaml'
 require 'cgi'
+require 'date'
 
 module EBSCO
 
@@ -512,7 +513,15 @@ module EBSCO
         maxdate = @results['SearchResult']['AvailableCriteria']['DateRange']['MaxDate']
         minyear = mindate[0..3]
         maxyear = maxdate[0..3]
-        {mindate: mindate, maxdate: maxdate, minyear:minyear, maxyear:maxyear}
+
+        # cap maxdate/maxyear to current year + 1 (to filter any erroneous database metadata)
+        current_year = Time.new.year
+        if maxyear.to_i > current_year
+          maxyear = current_year + 1
+          maxdate = (current_year + 1).to_s + '-01'
+        end
+
+        {mindate: mindate.to_s, maxdate: maxdate.to_s, minyear:minyear.to_s, maxyear:maxyear.to_s}
       end
 
       # Provides alternative search terms to correct spelling, etc.

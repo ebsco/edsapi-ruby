@@ -64,6 +64,7 @@ module EBSCO
               if value.has_key?('eds_publication_type_facet')
                 format_list = value['eds_publication_type_facet']
                 format_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(SourceType:#{item})"
                 end
               end
@@ -71,6 +72,7 @@ module EBSCO
               if value.has_key?('eds_language_facet')
                 lang_list = value['eds_language_facet']
                 lang_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(Language:#{item})"
                 end
               end
@@ -78,6 +80,7 @@ module EBSCO
               if value.has_key?('eds_subject_topic_facet')
                 subj_list = value['eds_subject_topic_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(SubjectEDS:#{item})"
                 end
               end
@@ -85,6 +88,7 @@ module EBSCO
               if value.has_key?('eds_subjects_geographic_facet')
                 subj_list = value['eds_subjects_geographic_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(SubjectGeographic:#{item})"
                 end
               end
@@ -92,6 +96,7 @@ module EBSCO
               if value.has_key?('eds_publisher_facet')
                 subj_list = value['eds_publisher_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(Publisher:#{item})"
                 end
               end
@@ -99,6 +104,7 @@ module EBSCO
               if value.has_key?('eds_journal_facet')
                 subj_list = value['eds_journal_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(Journal:#{item})"
                 end
               end
@@ -106,6 +112,7 @@ module EBSCO
               if value.has_key?('eds_category_facet')
                 subj_list = value['eds_category_facet']
                 subj_list.each do |item|
+                  item = eds_sanitize item
                   @Actions.push "addfacetfilter(Category:#{item})"
                 end
               end
