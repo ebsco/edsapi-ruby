@@ -696,6 +696,29 @@ module EBSCO
                   @auth_token = nil
                   @auth_token = create_auth_token
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
+                # invalid source type, attempt to recover gracefully
+                # when '130'
+                #   bad_source_type = e.fault[:error_body]['DetailedErrorDescription']
+                #   bad_source_type.gsub!(/Value Provided\s+/, '')
+                #   bad_source_type.gsub!(/\.\s*$/, '')
+                #   new_actions = []
+                #   payload.Actions.each { |action|
+                #     if action.start_with?('addfacetfilter(SourceType:')
+                #       if bad_source_type.nil?
+                #         # skip the source type since we don't know if it's bad or not
+                #       else
+                #         if !action.include?('SourceType:'+bad_source_type+')')
+                #           # not a bad source type, keep it
+                #           new_actions >> action
+                #         end
+                #       end
+                #     else
+                #       # not a source type action, add it
+                #       new_actions << action
+                #     end
+                #   }
+                #   payload.Actions = new_actions
+                #   do_request(method, path: path, payload: payload, attempt: attempt+1)
                 else
                   raise e
               end
