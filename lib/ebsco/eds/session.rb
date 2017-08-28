@@ -211,8 +211,32 @@ module EBSCO
             if @search_options.nil? || !add_actions
               @search_options = EBSCO::EDS::Options.new(options, @info)
             end
+
             _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
+
+            # create temp format facet results if needed
+            if options['f']
+              if options['f'].key?('eds_publication_type_facet')
+                format_options = options
+                format_options['f'] = options['f'].except('eds_publication_type_facet')
+                format_search_options = EBSCO::EDS::Options.new(format_options, @info)
+                _format_response = do_request(:post, path: '/edsapi/rest/Search', payload: format_search_options)
+                @search_results.temp_format_facet_results = EBSCO::EDS::Results.new(_format_response, @info.available_limiters, format_options)
+              end
+            end
+
+            # create temp content provider facet results if needed
+            if options['f']
+              if options['f'].key?('eds_content_provider_facet')
+                content_options = options
+                content_options['f'] = options['f'].except('eds_content_provider_facet')
+                content_search_options = EBSCO::EDS::Options.new(content_options, @info)
+                _content_response = do_request(:post, path: '/edsapi/rest/Search', payload: content_search_options)
+                @search_results.temp_content_provider_facet_results = EBSCO::EDS::Results.new(_content_response, @info.available_limiters, content_options)
+              end
+            end
+
             if increment_page
               @current_page = @search_results.page_number
             end
@@ -866,7 +890,7 @@ module EBSCO
       end
 
       def eds_sanitize(str)
-        pattern = /(\'|\"|\*|\/|\-|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
+        pattern = /(\'|\"|\*|\/|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
         str = str.gsub(pattern){ |match| '\\' + match }
         str
       end

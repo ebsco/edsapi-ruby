@@ -218,7 +218,7 @@ module EBSCO
       end
 
       def eds_sanitize(str)
-        pattern = /(\'|\"|\*|\/|\-|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
+        pattern = /(\'|\"|\*|\/|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
         str = str.gsub(pattern){ |match| '\\' + match }
         str
       end

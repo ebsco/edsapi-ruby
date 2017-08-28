@@ -23,6 +23,9 @@ module EBSCO
 
       attr_reader :raw_options
 
+      attr_accessor :temp_format_facet_results
+      attr_accessor :temp_content_provider_facet_results
+
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
       def initialize(search_results, additional_limiters = {}, options = {})
@@ -472,7 +475,13 @@ module EBSCO
       #    ]
       def facets (facet_provided_id = 'all')
         facets_hash = []
-        available_facets = @results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+
+        if temp_format_facet_results.nil?
+          available_facets = @results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+        else
+          available_facets = temp_format_facet_results.results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+        end
+
         available_facets.each do |available_facet|
           if available_facet['Id'] == facet_provided_id || facet_provided_id == 'all'
             facet_label = available_facet['Label']
@@ -493,6 +502,14 @@ module EBSCO
       def solr_facets (facet_provided_id = 'all')
         facet_values = []
         available_facets = @results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+
+        if facet_provided_id == 'SourceType' && !temp_format_facet_results.nil?
+          available_facets = temp_format_facet_results.results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+        end
+        if facet_provided_id == 'ContentProvider' && !temp_content_provider_facet_results.nil?
+          available_facets = temp_content_provider_facet_results.results.fetch('SearchResult',{}).fetch('AvailableFacets',{})
+        end
+
         available_facets.each do |available_facet|
           if available_facet['Id'] == facet_provided_id || facet_provided_id == 'all'
             available_facet['AvailableFacetValues'].each do |available_facet_value|
