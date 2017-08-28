@@ -1,14 +1,10 @@
 require 'faraday'
 require 'uri'
+require 'ebsco/eds/configuration'
 
 module Faraday
 
   class EdsCachingMiddleware < Faraday::Middleware
-
-    INFO_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Info')
-    AUTH_URI = URI.parse('https://eds-api.ebscohost.com/authservice/rest/uidauth')
-    SEARCH_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Search?')
-    RETRIEVE_URI = URI.parse('https://eds-api.ebscohost.com/edsapi/rest/Retrieve?')
 
     def initialize(app, *args)
       super(app)
@@ -22,6 +18,21 @@ module Faraday
       @store_options[:namespace] ||= @namespace
 
       initialize_store
+
+      eds_config = EBSCO::EDS::Configuration.new
+      if options[:config]
+        @config = eds_config.configure_with(options[:config])
+        @config = eds_config.configure if @config.nil?
+      else
+        @config = eds_config.configure(options)
+      end
+      (ENV.has_key? 'EDS_API_BASE') ? @api_base = ENV['EDS_API_BASE'] : @api_base = @config[:eds_api_base]
+
+      @info_uri = URI.parse(@api_base + '/edsapi/rest/Info')
+      @auth_uri = URI.parse(@api_base + '/authservice/rest/uidauth')
+      @search_uri = URI.parse(@api_base + '/edsapi/rest/Search?')
+      @retrieve_uri = URI.parse(@api_base + '/edsapi/rest/Retrieve?')
+
     end
 
     def call(env)
@@ -48,26 +59,26 @@ module Faraday
       #puts 'ENV: ' + env.inspect
       return unless cacheable?(env) && !env.request_headers['x-faraday-eds-cache']
 
-      info "Cache WRITE: #{key(env)}"
+      puts "Cache WRITE: #{key(env)}"
       custom_expires_in = @expires_in
       uri = env.url
 
-      if uri == AUTH_URI
+      if uri == @auth_uri
         custom_expires_in = 1800 # 30 minutes
         info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
 
-      if uri == INFO_URI
+      if uri == @info_uri
         custom_expires_in = 86400 # 24 hours
         info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
 
-      if uri.request_uri.start_with?(SEARCH_URI.request_uri)
+      if uri.request_uri.start_with?(@search_uri.request_uri)
         custom_expires_in = 1800 # 30 minutes
         info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
 
-      if uri.request_uri.start_with?(RETRIEVE_URI.request_uri)
+      if uri.request_uri.start_with?(@retrieve_uri.request_uri)
         custom_expires_in = 1800 # 30 minutes
         info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
@@ -77,13 +88,18 @@ module Faraday
 
     def cacheable?(env)
       uri = env.url
-      if uri == AUTH_URI || uri == INFO_URI ||
-          uri.request_uri.start_with?(SEARCH_URI.request_uri) ||
-          uri.request_uri.start_with?(RETRIEVE_URI.request_uri)
-        info "CACHEABLE URI: #{uri}"
-        true
+      if uri == @auth_uri || uri == @info_uri ||
+          uri.request_uri.start_with?(@search_uri.request_uri) ||
+          uri.request_uri.start_with?(@retrieve_uri.request_uri)
+        if !env.body.nil? && env.body.include?('"jump_request"')
+          puts "NOT CACHEABLE URI (jump_request): #{uri}"
+          false
+        else
+          puts "CACHEABLE URI: #{uri}"
+          true
+        end
       else
-        info "NOT CACHEABLE URI: #{uri}"
+        puts "NOT CACHEABLE URI: #{uri}"
         false
       end
     end
@@ -95,9 +111,9 @@ module Faraday
       end
 
       if response_env
-        info "Cache HIT: #{key(env)}"
+        puts "Cache HIT: #{key(env)}"
       else
-        info "Cache MISS: #{key(env)}"
+        puts "Cache MISS: #{key(env)}"
       end
       response_env
     end

@@ -17,7 +17,7 @@ module EBSCO
             :auth => 'user',
             :auth_token => '',
             :session_token => '',
-            :eds_api_base => 'https://eds-api.ebscohost.com',
+            :eds_api_base => 'https://eds-api-b.ebscohost.com',
             :uid_auth_url => '/authservice/rest/uidauth',
             :ip_auth_url => '/authservice/rest/ipauth',
             :create_session_url => '/edsapi/rest/CreateSession',
@@ -29,13 +29,15 @@ module EBSCO
             :interface_id => 'edsapi_ruby_gem',
             :log => 'faraday.log',
             :log_level => 'INFO',
-            :max_attempts => 2,
+            :max_attempts => 3,
             :max_results_per_page => 100,
             :ebook_preferred_format => 'ebook-pdf',
             :use_cache => true,
             :eds_cache_dir => ENV['TMPDIR'] || '/tmp',
             :timeout => 60,
-            :open_timeout => 12
+            :open_timeout => 12,
+            :max_page_jumps => 6,
+            :max_page_jump_attempts => 10
         }
         @valid_config_keys = @config.keys
       end
