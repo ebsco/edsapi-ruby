@@ -43,5 +43,8 @@ module EBSCO
     # Raised when EDS returns the HTTP status code 503
     class ServiceUnavailable < Error; end
 
+    # raised when connection fails
+    class ConnectionFailed < Error; end
+
   end
 end

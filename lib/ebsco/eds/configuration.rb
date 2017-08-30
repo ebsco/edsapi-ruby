@@ -17,7 +17,7 @@ module EBSCO
             :auth => 'user',
             :auth_token => '',
             :session_token => '',
-            :eds_api_base => 'https://eds-api-b.ebscohost.com',
+            :api_hosts_list => ['eds-api.ebscohost.com'],
             :uid_auth_url => '/authservice/rest/uidauth',
             :ip_auth_url => '/authservice/rest/ipauth',
             :create_session_url => '/edsapi/rest/CreateSession',

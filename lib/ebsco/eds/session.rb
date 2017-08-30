@@ -70,7 +70,8 @@ module EBSCO
         @auth_token = ''
         @config = {}
         @guest = true
-        @api_base = ''
+        @api_hosts_list = ''
+        @api_host_index = 0
 
         eds_config = EBSCO::EDS::Configuration.new
         if options[:config]
@@ -130,7 +131,7 @@ module EBSCO
             end :
             @debug = @config[:debug]
 
-        (ENV.has_key? 'EDS_API_BASE') ? @api_base = ENV['EDS_API_BASE'] : @api_base = @config[:eds_api_base]
+        (ENV.has_key? 'EDS_HOSTS') ? @api_hosts_list = ENV['EDS_HOSTS'].split(',') : @api_hosts_list = @config[:api_hosts_list]
 
         # use cache for auth token, info, search and retrieve calls?
         if @use_cache
@@ -710,7 +711,19 @@ module EBSCO
           end
           resp.body
         rescue Error => e
+
+          # try alternate EDS hosts
+          if e.is_a?(EBSCO::EDS::InternalServerError) || e.is_a?(EBSCO::EDS::ServiceUnavailable) || e.is_a?(EBSCO::EDS::ConnectionFailed)
+            if @api_hosts_list.length > @api_host_index+1
+              @api_host_index = @api_host_index+1
+              do_request(method, path: path, payload: payload, attempt: attempt+1)
+            else
+              raise EBSCO::EDS::ApiError, 'EBSCO API error: Unable to establish a connection to any EDS host.'
+            end
+          end
+
           if e.respond_to? 'fault'
+
             error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
             unless error_code.nil?
               case error_code
@@ -726,8 +739,6 @@ module EBSCO
 
                 # trying to paginate in results list beyond 250 results
                 when '138'
-
-                  puts 'JUMP ERROR: ' + e.inspect
 
                   is_jump_retry = false
                   is_orig_retry = false
@@ -828,9 +839,9 @@ module EBSCO
         begin
           if @debug
             if payload.instance_variable_defined?(:@Actions)
-              puts 'JUMP ACTION: ' + payload.Actions.inspect
+              puts 'JUMP ACTION: ' + payload.Actions.inspect if @debug
             end
-            puts 'JUMP ATTEMPT: ' + attempt.to_s
+            puts 'JUMP ATTEMPT: ' + attempt.to_s if @debug
           end
           # turn off caching
           resp = jump_connection.send(method) do |req|
@@ -908,7 +919,7 @@ module EBSCO
       def connection
         logger = Logger.new(@config[:log])
         logger.level = Logger.const_get(@config[:log_level])
-        Faraday.new(url: @api_base) do |conn|
+        Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
           conn.headers['x-sessionToken'] = @session_token ? @session_token : ''
@@ -929,7 +940,7 @@ module EBSCO
       def jump_connection
         logger = Logger.new(@config[:log])
         logger.level = Logger.const_get(@config[:log_level])
-        Faraday.new(url: @api_base) do |conn|
+        Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
           conn.headers['x-sessionToken'] = @session_token ? @session_token : ''
@@ -1021,7 +1032,7 @@ module EBSCO
       end
 
       def eds_sanitize(str)
-        pattern = /(\'|\"|\*|\/|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
+        pattern = /([)(:,])/
         str = str.gsub(pattern){ |match| '\\' + match }
         str
       end
@@ -1031,7 +1042,6 @@ module EBSCO
         jump_incr = 250/search_options.RetrievalCriteria.ResultsPerPage.to_i
         attempts = dest_page/jump_incr
         jump_pages = []
-        puts 'CURRENT PAGE: ' + @current_page.inspect
         (1..attempts).to_a.each do |n|
           jump_pages.push(jump_incr*n)
         end
