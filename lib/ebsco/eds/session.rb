@@ -70,6 +70,8 @@ module EBSCO
         @auth_token = ''
         @config = {}
         @guest = true
+        @api_hosts_list = ''
+        @api_host_index = 0
 
         eds_config = EBSCO::EDS::Configuration.new
         if options[:config]
@@ -128,6 +130,8 @@ module EBSCO
               @debug = false
             end :
             @debug = @config[:debug]
+
+        (ENV.has_key? 'EDS_HOSTS') ? @api_hosts_list = ENV['EDS_HOSTS'].split(',') : @api_hosts_list = @config[:api_hosts_list]
 
         # use cache for auth token, info, search and retrieve calls?
         if @use_cache
@@ -707,7 +711,19 @@ module EBSCO
           end
           resp.body
         rescue Error => e
+
+          # try alternate EDS hosts
+          if e.is_a?(EBSCO::EDS::InternalServerError) || e.is_a?(EBSCO::EDS::ServiceUnavailable) || e.is_a?(EBSCO::EDS::ConnectionFailed)
+            if @api_hosts_list.length > @api_host_index+1
+              @api_host_index = @api_host_index+1
+              do_request(method, path: path, payload: payload, attempt: attempt+1)
+            else
+              raise EBSCO::EDS::ApiError, 'EBSCO API error: Unable to establish a connection to any EDS host.'
+            end
+          end
+
           if e.respond_to? 'fault'
+
             error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
             unless error_code.nil?
               case error_code
@@ -720,6 +736,66 @@ module EBSCO
                   @auth_token = nil
                   @auth_token = create_auth_token
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
+
+                # trying to paginate in results list beyond 250 results
+                when '138'
+
+                  is_jump_retry = false
+                  is_orig_retry = false
+
+                  # create a jump request payload
+                  jump_payload = payload.clone
+
+                  # retry failed jump requests (known API issue)
+                  if jump_payload.instance_variable_defined?(:@Comment)
+                    if jump_payload.Comment == 'jump_request'
+                      is_jump_retry = true
+                      puts '138 JUMP RETRY ================================================================' if @debug
+                      sleep Random.new.rand(1..3)
+                      do_jump_request(method, path: path, payload: jump_payload, attempt: attempt+1)
+                    elsif jump_payload.Comment == 'jump_request_orig'
+                      is_orig_retry = true
+                      puts '138 ORIG RETRY ================================================================' if @debug
+                      sleep Random.new.rand(1..3)
+                      jump_response = do_jump_request(method, path: path, payload: payload, attempt: attempt+1)
+                      if jump_response.success?
+                        return jump_response.body
+                      end
+                    else
+                      puts '138 ERROR =====================================================================' if @debug
+                    end
+                  end
+
+                  # only perform these steps if it's the original 138 error
+                  unless is_jump_retry or is_orig_retry
+                    # remove these variables since they prevent a jump request (they continue to cause more 138 errors)
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@AutoSuggest)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@AutoSuggest)
+                    end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@Expanders)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@Expanders)
+                    end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@RelatedContent)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@RelatedContent)
+                    end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@Limiters)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@Limiters)
+                    end
+
+                    # get list of jump pages and make requests for each one before requesting the original request
+                    jump_pages = get_jump_pages(payload)
+                    # todo: truncate to @confi[:max_page_jumps]
+                    jump_pages.each { |page|
+                      jump_payload.Actions = ["GoToPage(#{page})"]
+                      jump_payload.Comment = 'jump_request' # comment the request so we can retry if necessary
+                      do_jump_request(method, path: path, payload: jump_payload, attempt: attempt+1)
+                    }
+
+                    # now make the original request (which can also require retries)
+                    payload.Comment = 'jump_request_orig'
+                    do_request(method, path: path, payload: payload, attempt: attempt+1)
+                  end
+
                 # invalid source type, attempt to recover gracefully
                 # when '130'
                 #   bad_source_type = e.fault[:error_body]['DetailedErrorDescription']
@@ -743,6 +819,8 @@ module EBSCO
                 #   }
                 #   payload.Actions = new_actions
                 #   do_request(method, path: path, payload: payload, attempt: attempt+1)
+
+
                 else
                   raise e
               end
@@ -750,6 +828,50 @@ module EBSCO
           else
             raise e
           end
+        end
+      end
+
+      def do_jump_request(method, path:, payload: nil, attempt: 0) # :nodoc:
+
+        if attempt > @config[:max_page_jump_attempts]
+          raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
+        end
+        begin
+          if @debug
+            if payload.instance_variable_defined?(:@Actions)
+              puts 'JUMP ACTION: ' + payload.Actions.inspect if @debug
+            end
+            puts 'JUMP ATTEMPT: ' + attempt.to_s if @debug
+          end
+          # turn off caching
+          resp = jump_connection.send(method) do |req|
+            case method
+              when :get
+                req.url path
+              when :post
+                req.url path
+                unless payload.nil?
+                  req.body = JSON.generate(payload)
+                end
+              else
+                raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
+            end
+          end
+          resp
+        rescue Error => e
+          if e.respond_to? 'fault'
+            error_code = e.fault[:error_body]['ErrorNumber'] || e.fault[:error_body]['ErrorCode']
+            unless error_code.nil?
+              case error_code
+                when '138'
+                  sleep Random.new.rand(1..3)
+                  do_jump_request(method, path: path, payload: payload, attempt: attempt+1)
+                else
+                  raise e
+              end
+            end
+          end
+
         end
       end
 
@@ -797,7 +919,7 @@ module EBSCO
       def connection
         logger = Logger.new(@config[:log])
         logger.level = Logger.const_get(@config[:log_level])
-        Faraday.new(url: @config[:eds_api_base]) do |conn|
+        Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
           conn.headers['x-sessionToken'] = @session_token ? @session_token : ''
@@ -805,6 +927,26 @@ module EBSCO
           conn.headers['User-Agent'] = @config[:user_agent]
           conn.request :url_encoded
           conn.use :eds_caching_middleware, store: @cache_store, logger: @debug ? logger : nil if @use_cache
+          conn.use :eds_exception_middleware
+          conn.response :json, content_type: /\bjson$/
+          conn.response :detailed_logger, logger if @debug
+          conn.options[:open_timeout] = @config[:open_timeout]
+          conn.options[:timeout] = @config[:timeout]
+          conn.adapter :net_http_persistent
+        end
+      end
+
+      # same as above but no caching
+      def jump_connection
+        logger = Logger.new(@config[:log])
+        logger.level = Logger.const_get(@config[:log_level])
+        Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
+          conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
+          conn.headers['Accept'] = 'application/json'
+          conn.headers['x-sessionToken'] = @session_token ? @session_token : ''
+          conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
+          conn.headers['User-Agent'] = @config[:user_agent]
+          conn.request :url_encoded
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
           conn.response :detailed_logger, logger if @debug
@@ -890,12 +1032,23 @@ module EBSCO
       end
 
       def eds_sanitize(str)
-        pattern = /(\'|\"|\*|\/|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
+        pattern = /([)(:,])/
         str = str.gsub(pattern){ |match| '\\' + match }
         str
       end
 
-    end
+      def get_jump_pages(search_options)
+        dest_page = search_options.RetrievalCriteria.PageNumber.to_i
+        jump_incr = 250/search_options.RetrievalCriteria.ResultsPerPage.to_i
+        attempts = dest_page/jump_incr
+        jump_pages = []
+        (1..attempts).to_a.each do |n|
+          jump_pages.push(jump_incr*n)
+        end
+        puts 'JUMP PAGES: ' + jump_pages.inspect if @debug
+        jump_pages
+      end
 
+    end
   end
 end

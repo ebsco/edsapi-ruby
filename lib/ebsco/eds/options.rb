@@ -6,7 +6,7 @@ module EBSCO
 
     class Options
       include JSONable
-      attr_accessor :SearchCriteria, :RetrievalCriteria, :Actions
+      attr_accessor :SearchCriteria, :RetrievalCriteria, :Actions, :Comment
       def initialize(options = {}, info)
   
         @SearchCriteria = EBSCO::EDS::SearchCriteria.new(options, info)
@@ -14,6 +14,8 @@ module EBSCO
         @RetrievalCriteria = EBSCO::EDS::RetrievalCriteria.new(options, info)
   
         @Actions = []
+
+        @Comment = ''
 
         # add DefaultOn=y Type=select limiters
         # info.available_limiters.each do |limiter|
@@ -218,7 +220,7 @@ module EBSCO
       end
 
       def eds_sanitize(str)
-        pattern = /(\'|\"|\*|\/|\\|\)|\$|\+|\(|\^|\?|\!|\~|\`|\:)/
+        pattern = /([)(:,])/
         str = str.gsub(pattern){ |match| '\\' + match }
         str
       end
