@@ -365,7 +365,6 @@ module EBSCO
           list.each { |id|
             dbid = id.split('__',2).first
             accession = id.split('__',2).last
-            accession.gsub!(/_/, '.')
             records.push retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
           }
         end
@@ -690,7 +689,7 @@ module EBSCO
           raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
         end
         begin
-          resp = connection.send(method) do |req|
+           resp = connection.send(method) do |req|
             case method
               when :get
                 unless payload.nil?
