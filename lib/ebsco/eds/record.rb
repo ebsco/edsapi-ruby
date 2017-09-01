@@ -44,6 +44,7 @@ module EBSCO
           :eds_publication_date,
           :eds_publication_year,
           :eds_publication_info,
+          :eds_publication_status,
           :eds_publisher,
           :eds_document_type,
           :eds_document_doi,
@@ -155,7 +156,7 @@ module EBSCO
         @eds_database_name = @record['Header']['DbLabel']
         @eds_access_level = @record['Header']['AccessLevel']
         @eds_relevancy_score =  @record['Header']['RelevancyScore']
-        @id = @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_')
+        @id = @eds_database_id + '__' + @eds_accession_number
         @eds_title = title
         @eds_source_title = source_title
         @eds_composed_title = get_item_data_by_name('TitleSource')
@@ -183,6 +184,7 @@ module EBSCO
         @eds_publication_date = bib_publication_date || get_item_data_by_name('DatePub')
         @eds_publication_year = bib_publication_year || get_item_data_by_name('DatePub')
         @eds_publication_info = get_item_data_by_label('Publication Information')
+        @eds_publication_status = get_item_data_by_label('Publication Status')
         @eds_publisher = get_item_data_by_name('Publisher')
         @eds_document_type = get_item_data_by_name('TypeDocument')
         @eds_document_doi = get_item_data_by_name('DOI') || bib_doi
@@ -714,7 +716,7 @@ module EBSCO
           end
         end
         if all_links
-          hash['eds_fulltext_link'] = { 'id' => @eds_database_id + '__' + @eds_accession_number.gsub(/\./,'_'),
+          hash['eds_fulltext_link'] = { 'id' => @eds_database_id + '__' + @eds_accession_number,
                                         'links' => all_links }
         end
 

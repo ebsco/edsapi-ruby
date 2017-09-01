@@ -223,4 +223,32 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  # accession number with dot: edsagr.US201600263208
+  def test_retrieve_accession_number_with_dot
+    VCR.use_cassette('test_retrieve_accession_number_with_dot') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      if session.dbid_in_profile 'edsagr'
+        record = session.retrieve({dbid: 'edsagr', an: 'edsagr.US201600263208'})
+        assert record.eds_title == 'Effects of glyphosate-based herbicides on survival, development, growth and sex ratios of wood frogs (Lithobates sylvaticus) tadpoles. I: Chronic laboratory exposures to VisionMax'
+      else
+        puts "WARNING: skipping test_retrieve_accession_number_with_dot, edsagr db isn't in the profile."
+      end
+      session.end
+    end
+  end
+
+
+  def test_record_with_publication_status
+    VCR.use_cassette('test_record_with_publication_status') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      if session.dbid_in_profile 'edsstc'
+        record = session.retrieve({dbid: 'edsstc', an: '946928'})
+        assert record.eds_publication_status == 'PREPRINT'
+      else
+        puts "WARNING: skipping test_record_with_publication_status, edsstc db isn't in the profile."
+      end
+      session.end
+    end
+  end
+
 end
