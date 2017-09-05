@@ -750,7 +750,7 @@ module EBSCO
           if _item_property.nil?
             nil
           else
-            CGI.unescapeHTML(_item_property['Data'])
+            CGI.unescapeHTML(_item_property['Data']).gsub('&', '&amp;')
           end
         end
       end
@@ -764,7 +764,7 @@ module EBSCO
           if _item_property.nil?
             nil
           else
-            CGI.unescapeHTML(_item_property['Data'])
+            CGI.unescapeHTML(_item_property['Data']).gsub('&', '&amp;')
           end
         end
       end
