@@ -165,7 +165,7 @@ module EBSCO
         @eds_authors = bib_authors_list
         @eds_authors_composed = get_item_data_by_name('Author')
         @eds_author_affiliations = get_item_data_by_name('AffiliationAuthor')
-        @eds_subjects = bib_subjects || get_item_data_by_name('Subject')
+        @eds_subjects =  get_item_data_by_name('Subject') || bib_subjects
         @eds_subjects_geographic = get_item_data_by_name('SubjectGeographic')
         @eds_subjects_person = get_item_data_by_name('SubjectPerson')
         @eds_subjects_company = get_item_data_by_name('SubjectCompany')
@@ -353,7 +353,7 @@ module EBSCO
               link_label = 'PDF Full Text'
               link_icon = 'PDF Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
-              links.push({url: link_url, label: link_label, icon: link_icon, type: 'pdf'})
+              links.push({url: link_url, label: link_label, icon: link_icon, type: 'pdf', expires: true})
               @eds_pdf_fulltext_available = true
             end
           end
@@ -374,7 +374,7 @@ module EBSCO
               link_label = 'PDF eBook Full Text'
               link_icon = 'PDF eBook Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
-              links.push({url: link_url, label: link_label, icon: link_icon, type: 'ebook-pdf'})
+              links.push({url: link_url, label: link_label, icon: link_icon, type: 'ebook-pdf', expires: true})
               @eds_ebook_pdf_fulltext_available = true
             end
           end
@@ -386,7 +386,7 @@ module EBSCO
               link_label = 'ePub eBook Full Text'
               link_icon = 'ePub eBook Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
-              links.push({url: link_url, label: link_label, icon: link_icon, type: 'ebook-epub'})
+              links.push({url: link_url, label: link_label, icon: link_icon, type: 'ebook-epub', expires: true})
               @eds_ebook_epub_fulltext_available = true
             end
           end
@@ -413,7 +413,7 @@ module EBSCO
                 link_label = item['Label']
               end
               link_icon = 'Catalog Link Icon'
-              links.push({url: link_url, label: link_label, icon: link_icon, type: 'cataloglink'})
+              links.push({url: link_url, label: link_label, icon: link_icon, type: 'cataloglink', expires: false})
             end
           end
         end
@@ -424,7 +424,7 @@ module EBSCO
               link_label = 'Linked Full Text'
               link_icon = 'Linked Full Text Icon'
               link_url = ebscolink['Url'] || 'detail'
-              links.push({url: link_url, label: link_label, icon: link_icon, type: 'smartlinks'})
+              links.push({url: link_url, label: link_label, icon: link_icon, type: 'smartlinks', expires: false})
               @eds_pdf_fulltext_available = true
             end
           end
@@ -436,7 +436,7 @@ module EBSCO
             link_url = ft_customlink['Url']
             link_label = ft_customlink['Text']
             link_icon = ft_customlink['Icon']
-            links.push({url: link_url, label: link_label, icon: link_icon, type: 'customlink-fulltext'})
+            links.push({url: link_url, label: link_label, icon: link_icon, type: 'customlink-fulltext', expires: false})
           end
         end
 
@@ -452,7 +452,7 @@ module EBSCO
             link_url = other_customlink['Url']
             link_label = other_customlink['Text']
             link_icon = other_customlink['Icon']
-            links.push({url: link_url, label: link_label, icon: link_icon, type: 'customlink-other'})
+            links.push({url: link_url, label: link_label, icon: link_icon, type: 'customlink-other', expires: false})
           end
         end
 

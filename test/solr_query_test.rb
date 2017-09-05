@@ -162,6 +162,24 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_search_limiters_by_id
+    VCR.use_cassette('test_search_limiters_by_id') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      query = {
+          'f' => {
+              'eds_search_limiters_facet'=>['FT1', 'FT', 'RVC']
+          },
+          'q'=>'lincoln',
+          'search_field'=>'all_fields',
+          'controller'=>'catalog',
+          'action'=>'index',
+          'hl'=>'off' }
+      results = session.search(query)
+      refute_nil results.to_solr
+      session.end
+    end
+  end
+
   def test_this_year
     VCR.use_cassette('test_this_year') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
