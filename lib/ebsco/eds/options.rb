@@ -159,7 +159,7 @@ module EBSCO
               end
               info.available_limiters.each do |limiter|
                 # only handle 'select' limiters (ones with values of 'y' or 'n')
-                if _search_limiter_list.include? limiter['Label'] and limiter['Type'] == 'select'
+                if ( _search_limiter_list.include? limiter['Label'] or _search_limiter_list.include? limiter['Id']) and limiter['Type'] == 'select'
                   @Actions.push "addLimiter(#{limiter['Id']}:y)"
                 end
               end
