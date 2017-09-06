@@ -40,6 +40,8 @@ class EdsApiTests < Minitest::Test
       results9 = session.search({'q' => 'sheiber', 'start' => 0, 'rows' => 1, 'search_field' => 'author'})
       results10 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'search_field' => 'descriptor'})
       results11 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'search_field' => 'series'})
+      results12 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'search_field' => 'subject_heading'})
+      results13 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'search_field' => 'keywords'})
       refute_nil results1
       refute_nil results2
       refute_nil results3
@@ -51,6 +53,8 @@ class EdsApiTests < Minitest::Test
       refute_nil results9
       refute_nil results10
       refute_nil results11
+      refute_nil results12
+      refute_nil results13
       session.end
     end
   end

@@ -375,6 +375,10 @@ module EBSCO
                     _field_code = 'DE'
                   when 'series'
                     _field_code = 'SE'
+                  when 'subject_heading'
+                    _field_code = 'SH'
+                  when 'keywords'
+                    _field_code = 'KW'
                 end
               end
 
