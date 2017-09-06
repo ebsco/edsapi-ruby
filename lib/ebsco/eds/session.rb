@@ -133,6 +133,14 @@ module EBSCO
 
         (ENV.has_key? 'EDS_HOSTS') ? @api_hosts_list = ENV['EDS_HOSTS'].split(',') : @api_hosts_list = @config[:api_hosts_list]
 
+        (ENV.has_key? 'EDS_RECOVER_FROM_BAD_SOURCE_TYPE') ?
+            if %w(y Y yes Yes true True).include?(ENV['EDS_RECOVER_FROM_BAD_SOURCE_TYPE'])
+              @recover_130 = true
+            else
+              @recover_130 = false
+            end :
+            @recover_130 = @config[:recover_from_bad_source_type]
+
         # use cache for auth token, info, search and retrieve calls?
         if @use_cache
           cache_dir = File.join(@cache_dir, 'faraday_eds_cache')
@@ -796,29 +804,32 @@ module EBSCO
                   end
 
                 # invalid source type, attempt to recover gracefully
-                # when '130'
-                #   bad_source_type = e.fault[:error_body]['DetailedErrorDescription']
-                #   bad_source_type.gsub!(/Value Provided\s+/, '')
-                #   bad_source_type.gsub!(/\.\s*$/, '')
-                #   new_actions = []
-                #   payload.Actions.each { |action|
-                #     if action.start_with?('addfacetfilter(SourceType:')
-                #       if bad_source_type.nil?
-                #         # skip the source type since we don't know if it's bad or not
-                #       else
-                #         if !action.include?('SourceType:'+bad_source_type+')')
-                #           # not a bad source type, keep it
-                #           new_actions >> action
-                #         end
-                #       end
-                #     else
-                #       # not a source type action, add it
-                #       new_actions << action
-                #     end
-                #   }
-                #   payload.Actions = new_actions
-                #   do_request(method, path: path, payload: payload, attempt: attempt+1)
-
+                when '130'
+                  if @recover_130
+                    bad_source_type = e.fault[:error_body]['DetailedErrorDescription']
+                    bad_source_type.gsub!(/Value Provided\s+/, '')
+                    bad_source_type.gsub!(/\.\s*$/, '')
+                    new_actions = []
+                    payload.Actions.each { |action|
+                      if action.downcase.start_with?('addfacetfilter(sourcetype:')
+                        if bad_source_type.nil?
+                          # skip the source type since we don't know if it's bad or not
+                        else
+                          if !action.include?('SourceType:'+bad_source_type+')')
+                            # not a bad source type, keep it
+                            new_actions >> action
+                          end
+                        end
+                      else
+                        # not a source type action, add it
+                        new_actions << action
+                      end
+                    }
+                    payload.Actions = new_actions
+                    do_request(method, path: path, payload: payload, attempt: attempt+1)
+                  else
+                    raise e
+                  end
 
                 else
                   raise e

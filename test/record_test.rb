@@ -269,7 +269,8 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
       if session.dbid_in_profile 'bas'
         record = session.retrieve({dbid: 'bas', an: 'BAS899713'})
-        assert record.eds_subjects.start_with?('<searchLink fieldCode="SH"')
+        assert record.eds_subjects.start_with?('<searchLink fieldcode="SH"')
+        assert record.eds_subjects.include?('Anthropology &amp; Sociology')
       else
         puts "WARNING: skipping test_record_with_subject_search_links, bas db isn't in the profile."
       end

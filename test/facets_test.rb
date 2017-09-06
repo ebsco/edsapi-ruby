@@ -74,4 +74,24 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_gpo_facet_bug_workaround
+    VCR.use_cassette('test_gpo_facet_bug_workaround') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({query: 'poverty', results_per_page: 1})
+      results2 = session.add_facet('ContentProvider', 'Government Printing Office Catalog')
+      assert results2.stat_total_hits > 0
+      assert_raises(EBSCO::EDS::BadRequest) do
+        session.add_facet('SourceType', 'Government Documents')
+      end
+      # turn on recover_from_bad_source_type
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi', recover_from_bad_source_type: true})
+      results = session.search({query: 'poverty', results_per_page: 1})
+      results2 = session.add_facet('ContentProvider', 'Government Printing Office Catalog')
+      assert results2.stat_total_hits > 0
+      results3 = session.add_facet('SourceType', 'Government Documents')
+      assert results3.stat_total_hits > 0
+      session.end
+    end
+  end
+
 end
