@@ -1,6 +1,7 @@
 require 'yaml'
 require 'json'
 require 'cgi'
+require 'sanitize'
 
 module EBSCO
 
@@ -750,7 +751,7 @@ module EBSCO
           if _item_property.nil?
             nil
           else
-            CGI.unescapeHTML(_item_property['Data']).gsub('&', '&amp;')
+            sanitize_data(_item_property['Data'])
           end
         end
       end
@@ -764,9 +765,21 @@ module EBSCO
           if _item_property.nil?
             nil
           else
-            CGI.unescapeHTML(_item_property['Data']).gsub('&', '&amp;')
+            sanitize_data(_item_property['Data'])
           end
         end
+      end
+
+      # sanitize html, allow custom links
+      def sanitize_data(data)
+        html = CGI.unescapeHTML(data.to_s)
+        sanitize_config = Sanitize::Config.merge(Sanitize::Config::RELAXED,
+                                                 :elements => Sanitize::Config::RELAXED[:elements] + ['relatesto', 'searchlink'],
+                                                 :attributes => Sanitize::Config::RELAXED[:attributes].merge(
+                                                     'searchlink' => ['fieldcode', 'term']
+                                                 )
+        )
+        Sanitize.fragment(html, sanitize_config)
       end
 
       # dynamically add item metadata as 'eds_extra_ItemNameOrLabel'
