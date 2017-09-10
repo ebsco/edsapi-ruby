@@ -770,6 +770,67 @@ module EBSCO
         end
       end
 
+      def get_item_data(options)
+
+        if @items.empty?
+          nil
+        else
+
+          if options[:name] and options[:label] and options[:group]
+
+            @items.each do |item|
+              if item['Name'] == options[:name] && item['Label'] == options[:label] && item['Group'] == options[:group]
+                return sanitize_data(item['Data'])
+              end
+            end
+
+          elsif options[:name] and options[:label]
+
+            @items.each do |item|
+              if item['Name'] == options[:name] && item['Label'] == options[:label]
+                return sanitize_data(item['Data'])
+              end
+            end
+
+          elsif options[:name] and options[:group]
+
+            @items.each do |item|
+              if item['Name'] == options[:name] && item['Group'] == options[:group]
+                return sanitize_data(item['Data'])
+              end
+            end
+
+          elsif options[:label] and options[:group]
+
+            @items.each do |item|
+              if item['Label'] == options[:label] && item['Group'] == options[:group]
+                return sanitize_data(item['Data'])
+              end
+            end
+
+          elsif options[:label]
+
+            @items.each do |item|
+              if item['Label'] == options[:label]
+                return sanitize_data(item['Data'])
+              end
+            end
+
+          elsif options[:name]
+
+            @items.each do |item|
+              if item['Name'] == options[:name]
+                return sanitize_data(item['Data'])
+              end
+            end
+
+          else
+            nil
+          end
+
+        end
+      end
+
       # sanitize html, allow custom links
       def sanitize_data(data)
         html = CGI.unescapeHTML(data.to_s)

@@ -24,25 +24,6 @@ module EBSCO
         #   end
         # end
 
-        # blacklight year range slider input
-        # "range"=>{"pub_year_tisim"=>{"begin"=>"1970", "end"=>"1980"}}
-        if options.has_key?('range')
-          if options['range'].has_key?('pub_year_tisim')
-            begin_year = nil
-            end_year = nil
-            if options['range']['pub_year_tisim'].has_key?('begin')
-              begin_year = options['range']['pub_year_tisim']['begin']
-            end
-            if options['range']['pub_year_tisim'].has_key?('end')
-              end_year = options['range']['pub_year_tisim']['end']
-            end
-            unless begin_year.nil? or end_year.nil?
-              pub_year_tisim_range = begin_year + '-01/' + end_year + '-01'
-              @Actions.push "addlimiter(DT1:#{pub_year_tisim_range})"
-            end
-          end
-        end
-
         # add page default of 1
         unless options.has_key?('page') || options.has_key?('page_number')
           options['page'] = 1
@@ -59,145 +40,6 @@ module EBSCO
             # will always reset the page to 1 even though a PageNumber is present in RetrievalCriteria.
             when 'page', 'page_number'
               @Actions.push "GoToPage(#{value.to_i})"
-
-            # solr facet translation
-            # "f"=>{"format"=>["eBooks"]}
-            when 'f'
-              if value.has_key?('eds_publication_type_facet')
-                format_list = value['eds_publication_type_facet']
-                format_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(SourceType:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_language_facet')
-                lang_list = value['eds_language_facet']
-                lang_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(Language:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_subject_topic_facet')
-                subj_list = value['eds_subject_topic_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(SubjectEDS:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_subjects_geographic_facet')
-                subj_list = value['eds_subjects_geographic_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(SubjectGeographic:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_publisher_facet')
-                subj_list = value['eds_publisher_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(Publisher:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_journal_facet')
-                subj_list = value['eds_journal_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(Journal:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_category_facet')
-                subj_list = value['eds_category_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(Category:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_content_provider_facet')
-                subj_list = value['eds_content_provider_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(ContentProvider:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_library_location_facet')
-                subj_list = value['eds_library_location_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(LocationLibrary:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_library_collection_facet')
-                subj_list = value['eds_library_collection_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(CollectionLibrary:#{item})"
-                end
-              end
-
-              if value.has_key?('eds_author_university_facet')
-                subj_list = value['eds_author_university_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  @Actions.push "addfacetfilter(AuthorUniversity:#{item})"
-                end
-              end
-
-              # translate solr search limiters into EDS API addLimiter calls
-              # matches are determined by the limiter labels passed in by solr
-              _search_limiter_list = []
-              if value.has_key?('eds_search_limiters_facet')
-                _search_limiter_list = value['eds_search_limiters_facet']
-              end
-              info.available_limiters.each do |limiter|
-                # only handle 'select' limiters (ones with values of 'y' or 'n')
-                if ( _search_limiter_list.include? limiter['Label'] or _search_limiter_list.include? limiter['Id']) and limiter['Type'] == 'select'
-                  @Actions.push "addLimiter(#{limiter['Id']}:y)"
-                end
-              end
-
-              if value.has_key?('eds_publication_year_range_facet')
-                _list = value['eds_publication_year_range_facet']
-                _this_year = Date.today.year
-                _this_month = Date.today.month
-                _list.each do |item|
-                  if item == 'This year'
-                    _range = _this_year.to_s + '-01/' + _this_year.to_s + '-' + _this_month.to_s
-                    @Actions.push "addlimiter(DT1:#{_range})"
-                  end
-                  if item == 'Last 3 years'
-                    _range = (_this_year-3).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
-                    @Actions.push "addlimiter(DT1:#{_range})"
-                  end
-                  if item == 'Last 10 years'
-                    _range = (_this_year-10).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
-                    @Actions.push "addlimiter(DT1:#{_range})"
-                  end
-                  if item == 'Last 50 years'
-                    _range = (_this_year-50).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
-                    @Actions.push "addlimiter(DT1:#{_range})"
-                  end
-                  if item == 'More than 50 years ago'
-                    _range = '0000-01/' + (_this_year-50).to_s + '-12'
-                    @Actions.push "addlimiter(DT1:#{_range})"
-                  end
-                end
-              end
-
-              if value.has_key?('eds_publication_year_facet')
-                year_list = value['eds_publication_year_facet']
-                year_list.each do |item|
-                  @Actions.push "addfacetfilter(PublicationYear:#{item})"
-                end
-              end
 
           end
         end
@@ -334,12 +176,34 @@ module EBSCO
         _my_expanders = []
         _available_expander_ids = info.available_expander_ids
 
-        @Limiter = nil
+        @Limiters = nil
         _my_limiters = []
+
+        @FacetFilters = []
+        _my_filters = {'FilterId' => 1, 'FacetValues' => []}
 
         @RelatedContent = info.default_related_content_types
         _my_related_content = []
         _available_related_content_types = info.available_related_content_types
+
+        # blacklight year range slider input
+        # "range"=>{"pub_year_tisim"=>{"begin"=>"1970", "end"=>"1980"}}
+        if options.has_key?('range')
+          if options['range'].has_key?('pub_year_tisim')
+            begin_year = nil
+            end_year = nil
+            if options['range']['pub_year_tisim'].has_key?('begin')
+              begin_year = options['range']['pub_year_tisim']['begin']
+            end
+            if options['range']['pub_year_tisim'].has_key?('end')
+              end_year = options['range']['pub_year_tisim']['end']
+            end
+            unless begin_year.nil? or end_year.nil?
+              pub_year_tisim_range = begin_year + '-01/' + end_year + '-01'
+              _my_limiters.push({:Id => 'DT1', :Values => [pub_year_tisim_range]})
+            end
+          end
+        end
 
         options.each do |key, value|
 
@@ -464,8 +328,151 @@ module EBSCO
               @Expanders = _my_expanders
 
             # ====================================================================================
+            # solr limiters & facets
+            # ====================================================================================
+
+            when 'f'
+              _search_limiter_list = []
+              if value.has_key?('eds_search_limiters_facet')
+                _search_limiter_list = value['eds_search_limiters_facet']
+              end
+              info.available_limiters.each do |limiter|
+                # only handle 'select' limiters (ones with values of 'y' or 'n')
+                if ( _search_limiter_list.include? limiter['Label'] or _search_limiter_list.include? limiter['Id']) and limiter['Type'] == 'select'
+                  _my_limiters.push({:Id => limiter['Id'], :Values => ['y']})
+                end
+              end
+
+              # date limiters
+              if value.has_key?('eds_publication_year_range_facet')
+                _list = value['eds_publication_year_range_facet']
+                _this_year = Date.today.year
+                _this_month = Date.today.month
+                _list.each do |item|
+                  if item == 'This year'
+                    _range = _this_year.to_s + '-01/' + _this_year.to_s + '-' + _this_month.to_s
+                    _my_limiters.push({:Id => 'DT1', :Values => [_range]})
+                  end
+                  if item == 'Last 3 years'
+                    _range = (_this_year-3).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
+                    _my_limiters.push({:Id => 'DT1', :Values => [_range]})
+                  end
+                  if item == 'Last 10 years'
+                    _range = (_this_year-10).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
+                    _my_limiters.push({:Id => 'DT1', :Values => [_range]})
+                  end
+                  if item == 'Last 50 years'
+                    _range = (_this_year-50).to_s + '-' + _this_month.to_s + '/' + _this_year.to_s + '-' + _this_month.to_s
+                    _my_limiters.push({:Id => 'DT1', :Values => [_range]})
+                  end
+                  if item == 'More than 50 years ago'
+                    _range = '0000-01/' + (_this_year-50).to_s + '-12'
+                    _my_limiters.push({:Id => 'DT1', :Values => [_range]})
+                  end
+                end
+              end
+
+              # SourceType
+              if value.has_key?('eds_publication_type_facet')
+                f_list = value['eds_publication_type_facet']
+                f_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'SourceType', 'Value' => item})
+                end
+              end
+              # Language
+              if value.has_key?('eds_language_facet')
+                lang_list = value['eds_language_facet']
+                lang_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'Language', 'Value' => item})
+                end
+              end
+              # SubjectEDS
+              if value.has_key?('eds_subject_topic_facet')
+                subj_list = value['eds_subject_topic_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'SubjectEDS', 'Value' => item})
+                end
+              end
+              # SubjectGeographic
+              if value.has_key?('eds_subjects_geographic_facet')
+                subj_list = value['eds_subjects_geographic_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'SubjectGeographic', 'Value' => item})
+                end
+              end
+              # Publisher
+              if value.has_key?('eds_publisher_facet')
+                subj_list = value['eds_publisher_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'Publisher', 'Value' => item})
+                end
+              end
+              # Journal
+              if value.has_key?('eds_journal_facet')
+                subj_list = value['eds_journal_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'Journal', 'Value' => item})
+                end
+              end
+              # Category
+              if value.has_key?('eds_category_facet')
+                subj_list = value['eds_category_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'Category', 'Value' => item})
+                end
+              end
+              # ContentProvider
+              if value.has_key?('eds_content_provider_facet')
+                subj_list = value['eds_content_provider_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'ContentProvider', 'Value' => item})
+                end
+              end
+              # LocationLibrary
+              if value.has_key?('eds_library_location_facet')
+                subj_list = value['eds_library_location_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'LocationLibrary', 'Value' => item})
+                end
+              end
+              # CollectionLibrary
+              if value.has_key?('eds_library_collection_facet')
+                subj_list = value['eds_library_collection_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'CollectionLibrary', 'Value' => item})
+                end
+              end
+              # AuthorUniversity
+              if value.has_key?('eds_author_university_facet')
+                subj_list = value['eds_author_university_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  _my_filters['FacetValues'].push({'Id' => 'AuthorUniversity', 'Value' => item})
+                end
+              end
+              # PublicationYear
+              if value.has_key?('eds_publication_year_facet')
+                year_list = value['eds_publication_year_facet']
+                year_list.each do |item|
+                  _my_filters['FacetValues'].push({'Id' => 'PublicationYear', 'Value' => item})
+                end
+              end
+
+
+            # ====================================================================================
             # limiters
             # ====================================================================================
+
             when :limiters
               value.each do |item|
                 _key = item.split(':',2).first.upcase
@@ -520,9 +527,24 @@ module EBSCO
 
           end
 
+        end # end options parsing
+
+        # set solr facet filters, if any
+        if _my_filters['FacetValues'].length > 0
+          @FacetFilters = [_my_filters]
         end
 
+        # set solr limiters, if any
+        @Limiters = _my_limiters
+
       end
+
+      def eds_sanitize(str)
+        pattern = /([)(:,])/
+        str = str.gsub(pattern){ |match| '\\' + match }
+        str
+      end
+
     end
 
     class RetrievalCriteria
