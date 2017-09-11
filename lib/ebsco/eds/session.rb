@@ -231,7 +231,7 @@ module EBSCO
             # create temp format facet results if needed
             if options['f']
               if options['f'].key?('eds_publication_type_facet')
-                format_options = options
+                format_options = options.dup
                 format_options['f'] = options['f'].except('eds_publication_type_facet')
                 format_search_options = EBSCO::EDS::Options.new(format_options, @info)
                 format_search_options.Comment = 'temp source type facets'
@@ -243,7 +243,7 @@ module EBSCO
             # create temp content provider facet results if needed
             if options['f']
               if options['f'].key?('eds_content_provider_facet')
-                content_options = options
+                content_options = options.dup
                 content_options['f'] = options['f'].except('eds_content_provider_facet')
                 content_search_options = EBSCO::EDS::Options.new(content_options, @info)
                 content_search_options.Comment = 'temp content provider facet'
