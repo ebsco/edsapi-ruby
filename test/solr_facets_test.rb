@@ -150,9 +150,9 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_search_limiters_facet' => ['Peer  reviewed']}})
+                                 'f' => {'eds_search_limiters_facet' => ['RV']}})
       results3 = session.search({query: 'climate change', results_per_page: 10,
-                                 'f' => {'eds_search_limiters_facet' => ['Stanford has it']}})
+                                 'f' => {'eds_search_limiters_facet' => ['FT1']}})
 
       assert results1.stat_total_hits > 0
       assert results2.stat_total_hits > 0

@@ -106,6 +106,7 @@ module EBSCO
         @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
         @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
         @cache_dir =  (ENV.has_key? 'EDS_CACHE_DIR') ? ENV['EDS_CACHE_DIR'] : @config[:eds_cache_dir]
+        @log_level =  (ENV.has_key? 'EDS_LOG_LEVEL') ? ENV['EDS_LOG_LEVEL'] : @config[:log_level]
 
         (ENV.has_key? 'EDS_GUEST') ?
             if %w(n N no No false False).include?(ENV['EDS_GUEST'])
@@ -230,9 +231,10 @@ module EBSCO
             # create temp format facet results if needed
             if options['f']
               if options['f'].key?('eds_publication_type_facet')
-                format_options = options
+                format_options = options.dup
                 format_options['f'] = options['f'].except('eds_publication_type_facet')
                 format_search_options = EBSCO::EDS::Options.new(format_options, @info)
+                format_search_options.Comment = 'temp source type facets'
                 _format_response = do_request(:post, path: '/edsapi/rest/Search', payload: format_search_options)
                 @search_results.temp_format_facet_results = EBSCO::EDS::Results.new(_format_response, @info.available_limiters, format_options)
               end
@@ -241,9 +243,10 @@ module EBSCO
             # create temp content provider facet results if needed
             if options['f']
               if options['f'].key?('eds_content_provider_facet')
-                content_options = options
+                content_options = options.dup
                 content_options['f'] = options['f'].except('eds_content_provider_facet')
                 content_search_options = EBSCO::EDS::Options.new(content_options, @info)
+                content_search_options.Comment = 'temp content provider facet'
                 _content_response = do_request(:post, path: '/edsapi/rest/Search', payload: content_search_options)
                 @search_results.temp_content_provider_facet_results = EBSCO::EDS::Results.new(_content_response, @info.available_limiters, content_options)
               end
@@ -928,7 +931,7 @@ module EBSCO
 
       def connection
         logger = Logger.new(@config[:log])
-        logger.level = Logger.const_get(@config[:log_level])
+        logger.level = Logger.const_get(@log_level)
         Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
@@ -949,7 +952,7 @@ module EBSCO
       # same as above but no caching
       def jump_connection
         logger = Logger.new(@config[:log])
-        logger.level = Logger.const_get(@config[:log_level])
+        logger.level = Logger.const_get(@log_level)
         Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
           conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
           conn.headers['Accept'] = 'application/json'
