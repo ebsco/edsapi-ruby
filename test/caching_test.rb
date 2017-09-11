@@ -27,7 +27,7 @@ class EdsApiTests < Minitest::Test
       refute_nil guest_results
       assert guest_results.records[0].eds_title == 'This title is unavailable for guests, please login to see more information.'
       file_count = Dir[File.join(test_cache_dir, '**', '*')].count { |file| File.file?(file) }
-      assert file_count == 3 # Info, uidauth, Search (guest=true)
+      assert file_count == 4 # Info, uidauth, Search (guest=true)
 
       ENV['EDS_GUEST'] = 'n'
       not_guest_session = EBSCO::EDS::Session.new({use_cache: true, eds_cache_dir: test_cache_dir, profile: 'eds-api'})
@@ -35,7 +35,7 @@ class EdsApiTests < Minitest::Test
       refute_nil not_guest_results
       assert not_guest_results.records[0].eds_title != 'This title is unavailable for guests, please login to see more information.'
       file_count = Dir[File.join(test_cache_dir, '**', '*')].count { |file| File.file?(file) }
-      assert file_count == 4 # Info, uidauth, Search (guest=true), Search (guest=false)
+      assert file_count == 6 # Info, uidauth, Search (guest=true), Search (guest=false)
 
       # [2] try searches again just using the cache
       guest_results = guest_session.search(query)
