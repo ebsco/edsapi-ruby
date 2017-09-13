@@ -761,12 +761,10 @@ module EBSCO
                     if jump_payload.Comment == 'jump_request'
                       is_jump_retry = true
                       puts '138 JUMP RETRY ================================================================' if @debug
-                      sleep Random.new.rand(1..3)
                       do_jump_request(method, path: path, payload: jump_payload, attempt: attempt+1)
                     elsif jump_payload.Comment == 'jump_request_orig'
                       is_orig_retry = true
                       puts '138 ORIG RETRY ================================================================' if @debug
-                      sleep Random.new.rand(1..3)
                       jump_response = do_jump_request(method, path: path, payload: payload, attempt: attempt+1)
                       if jump_response.success?
                         return jump_response.body

@@ -86,6 +86,7 @@ module EBSCO
       # end
 
 
+      # Caution: experimental, not ready for production
       # query-1=AND,volcano&sort=relevance&includefacets=y&searchmode=all&autosuggest=n&view=brief&resultsperpage=20&pagenumber=1&highlight=y
       def to_query_string
         qs = ''
@@ -117,7 +118,7 @@ module EBSCO
 
         # limiters
         unless @SearchCriteria.Limiters.nil?
-          qs << '&limiter=' + @SearchCriteria.Limiters
+          qs << '&limiter=' + @SearchCriteria.Limiters.join(',')
         end
 
         # expanders
@@ -125,7 +126,7 @@ module EBSCO
 
         # facet filters
         unless @SearchCriteria.FacetFilters.nil?
-          qs << '&facetfilter=1,' + @SearchCriteria.FacetFilters
+          qs << '&facetfilter=1,' + @SearchCriteria.FacetFilters.join(',')
         end
 
         # related content
@@ -144,7 +145,7 @@ module EBSCO
           qs << '&pagenumber=' + @RetrievalCriteria.PageNumber.to_s
         end
         unless @RetrievalCriteria.Highlight.nil?
-          qs << '&highlight=' + @RetrievalCriteria.Highlight
+          qs << '&highlight=' + @RetrievalCriteria.Highlight.to_s
         end
 
         unless @Actions.nil?
