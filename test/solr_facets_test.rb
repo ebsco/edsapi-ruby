@@ -224,4 +224,19 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  # No PublicationYear facet when a content provider is specified in the search
+  # TODO create Service Issue?
+  def test_eds_publication_year_range_with_content_provider
+    VCR.use_cassette('test_eds_publication_year_range_with_content_provider') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results1 = session.search({'q' => 'carbon nanotubes'})
+      results2 = session.search({'q' => 'carbon nanotubes',
+                                 results_per_page: 1,
+                                 'f' => {'eds_content_provider_facet' => ['MEDLINE']}})
+      assert results1.solr_facets('PublicationYear').any?
+      assert !results2.solr_facets('PublicationYear').any?
+      session.end
+    end
+  end
+
 end

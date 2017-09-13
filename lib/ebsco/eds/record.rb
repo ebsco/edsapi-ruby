@@ -160,49 +160,54 @@ module EBSCO
         @id = @eds_database_id + '__' + @eds_accession_number
         @eds_title = title
         @eds_source_title = source_title
-        @eds_composed_title = get_item_data_by_name('TitleSource')
-        @eds_other_titles = get_item_data_by_name('TitleAlt')
-        @eds_abstract = get_item_data_by_name('Abstract')
+        @eds_composed_title = get_item_data({name: 'TitleSource'})
+        @eds_other_titles = get_item_data({name: 'TitleAlt'})
+        @eds_abstract = get_item_data({name: 'Abstract'})
         @eds_authors = bib_authors_list
-        @eds_authors_composed = get_item_data_by_name('Author')
-        @eds_author_affiliations = get_item_data_by_name('AffiliationAuthor')
-        @eds_subjects =  get_item_data_by_name('Subject') || bib_subjects
-        @eds_subjects_geographic = get_item_data_by_name('SubjectGeographic')
-        @eds_subjects_person = get_item_data_by_name('SubjectPerson')
-        @eds_subjects_company = get_item_data_by_name('SubjectCompany')
-        @eds_subjects_bisac = get_item_data_by_name('SubjectBISAC')
-        @eds_subjects_mesh = get_item_data_by_name('SubjectMESH')
-        @eds_subjects_genre = get_item_data_by_name('SubjectGenre')
-        @eds_author_supplied_keywords = get_item_data_by_name('Keyword')
-        @eds_notes = get_item_data_by_name('Note')
-        @eds_subset = get_item_data_by_name('Subset')
-        @eds_languages = get_item_data_by_name('Language') || bib_languages
+        @eds_authors_composed = get_item_data({name: 'Author'})
+        @eds_author_affiliations = get_item_data({name: 'AffiliationAuthor'})
+        @eds_subjects =
+            get_item_data({name: 'Subject', label: 'Subject Terms', group: 'Su'}) ||
+            get_item_data({name: 'Subject', label: 'Subject Indexing', group: 'Su'}) ||
+            bib_subjects
+        @eds_subjects_geographic =
+            get_item_data({name: 'SubjectGeographic', label: 'Geographic Terms', group: 'Su'}) ||
+            get_item_data({name: 'Subject', label: 'Subject Geographic', group: 'Su'})
+        @eds_subjects_person = get_item_data({name: 'SubjectPerson'})
+        @eds_subjects_company = get_item_data({name: 'SubjectCompany'})
+        @eds_subjects_bisac = get_item_data({name: 'SubjectBISAC'})
+        @eds_subjects_mesh = get_item_data({name: 'SubjectMESH'})
+        @eds_subjects_genre = get_item_data({name: 'SubjectGenre'})
+        @eds_author_supplied_keywords = get_item_data({name: 'Keyword'})
+        @eds_notes = get_item_data({name: 'Note'})
+        @eds_subset = get_item_data({name: 'Subset'})
+        @eds_languages = get_item_data({name: 'Language'}) || bib_languages
         @eds_page_count = bib_page_count
         @eds_page_start = bib_page_start
-        @eds_physical_description = get_item_data_by_name('PhysDesc')
-        @eds_publication_type = @record['Header']['PubType'] || get_item_data_by_name('TypePub')
+        @eds_physical_description = get_item_data({name: 'PhysDesc'})
+        @eds_publication_type = @record['Header']['PubType'] || get_item_data({name: 'TypePub'})
         @eds_publication_type_id = @record['Header']['PubTypeId']
-        @eds_publication_date = bib_publication_date || get_item_data_by_name('DatePub')
-        @eds_publication_year = bib_publication_year || get_item_data_by_name('DatePub')
-        @eds_publication_info = get_item_data_by_label('Publication Information')
-        @eds_publication_status = get_item_data_by_label('Publication Status')
-        @eds_publisher = get_item_data_by_name('Publisher')
-        @eds_document_type = get_item_data_by_name('TypeDocument')
-        @eds_document_doi = get_item_data_by_name('DOI') || bib_doi
-        @eds_document_oclc = get_item_data_by_label('OCLC')
-        @eds_issn_print = get_item_data_by_name('ISSN') || bib_issn_print
+        @eds_publication_date = bib_publication_date || get_item_data({name: 'DatePub'})
+        @eds_publication_year = bib_publication_year || get_item_data({name: 'DatePub'})
+        @eds_publication_info = get_item_data({label: 'Publication Information'})
+        @eds_publication_status = get_item_data({label: 'Publication Status'})
+        @eds_publisher = get_item_data({name: 'Publisher'})
+        @eds_document_type = get_item_data({name: 'TypeDocument'})
+        @eds_document_doi = get_item_data({name: 'DOI'}) || bib_doi
+        @eds_document_oclc = get_item_data({label: 'OCLC'})
+        @eds_issn_print = get_item_data({name: 'ISSN'}) || bib_issn_print
         @eds_issns = bib_issns
         @eds_isbn_print = bib_isbn_print
         @eds_isbns_related = item_related_isbns
         @eds_isbn_electronic = bib_isbn_electronic
         @eds_isbns = bib_isbns || item_related_isbns
-        @eds_series =  get_item_data_by_name('SeriesInfo')
+        @eds_series =  get_item_data({name: 'SeriesInfo'})
         @eds_volume = bib_volume
         @eds_issue = bib_issue
         @eds_covers = images
         @eds_cover_thumb_url = cover_thumb_url
         @eds_cover_medium_url = cover_medium_url
-        @eds_fulltext_word_count = get_item_data_by_name('FullTextWordCount').to_i
+        @eds_fulltext_word_count = get_item_data({name: 'FullTextWordCount'}).to_i
         @eds_html_fulltext_available = html_fulltext_available
         @eds_html_fulltext = html_fulltext
         @eds_images = images
@@ -213,12 +218,12 @@ module EBSCO
         @eds_ebook_epub_fulltext_available = false
         @eds_fulltext_links = fulltext_links
         @eds_non_fulltext_links = non_fulltext_links
-        @eds_code_naics = get_item_data_by_name('CodeNAICS')
-        @eds_abstract_supplied_copyright = get_item_data_by_name('AbstractSuppliedCopyright')
-        @eds_descriptors = get_item_data_by_label('Descriptors')
+        @eds_code_naics = get_item_data({name: 'CodeNAICS'})
+        @eds_abstract_supplied_copyright = get_item_data({name: 'AbstractSuppliedCopyright'})
+        @eds_descriptors = get_item_data({label: 'Descriptors'})
         @eds_publication_id = @record['Header']['PublicationId']
         @eds_publication_is_searchable = @record['Header']['IsSearchable']
-        @eds_publication_scope_note = get_item_data_by_name('NoteScope')
+        @eds_publication_scope_note = get_item_data({name: 'NoteScope'})
 
         # add item metadata
         @items.each do |item|
@@ -245,8 +250,7 @@ module EBSCO
 
       # The title.
       def title
-        # _retval = get_item_data_by_name('Title') || bib_title
-        _retval = bib_title || get_item_data_by_name('Title')
+        _retval = bib_title || get_item_data({name: 'Title'})
         # TODO: make this configurable
         if _retval.nil?
           _retval = 'This title is unavailable for guests, please login to see more information.'
@@ -256,7 +260,7 @@ module EBSCO
 
       # The source title (example: 'Salem Press Encyclopedia')
       def source_title
-        _retval = bib_source_title || get_item_data_by_name('TitleSource')
+        _retval = bib_source_title || get_item_data({name: 'TitleSource'})
         _reval = nil? if _retval == title # suppress if it's identical to title
         _retval.nil?? nil : _retval
       end
@@ -313,7 +317,7 @@ module EBSCO
 
       # related ISBNs
       def item_related_isbns
-        isbns = get_item_data_by_label('Related ISBNs')
+        isbns = get_item_data({label: 'Related ISBNs'})
         if isbns
           isbns.split(' ').map!{|item| item.gsub(/\.$/, '')}
         else
@@ -742,33 +746,6 @@ module EBSCO
       # ITEM DATA HELPERS
       # ====================================================================================
 
-      # look up by 'Name' and return 'Data'
-      def get_item_data_by_name(name)
-        if @items.empty?
-          nil
-        else
-          _item_property = @items.find{|item| item['Name'] == name}
-          if _item_property.nil?
-            nil
-          else
-            sanitize_data(_item_property['Data'])
-          end
-        end
-      end
-
-      # look up by 'Label' and return 'Data'
-      def get_item_data_by_label(label)
-        if @items.empty?
-          nil
-        else
-          _item_property = @items.find{|item| item['Label'] == label}
-          if _item_property.nil?
-            nil
-          else
-            sanitize_data(_item_property['Data'])
-          end
-        end
-      end
 
       def get_item_data(options)
 
@@ -780,9 +757,11 @@ module EBSCO
 
             @items.each do |item|
               if item['Name'] == options[:name] && item['Label'] == options[:label] && item['Group'] == options[:group]
+                # puts 'FOUND ALL 3: ' + item.inspect
                 return sanitize_data(item['Data'])
               end
             end
+            return nil
 
           elsif options[:name] and options[:label]
 
@@ -791,6 +770,7 @@ module EBSCO
                 return sanitize_data(item['Data'])
               end
             end
+            return nil
 
           elsif options[:name] and options[:group]
 
@@ -799,6 +779,7 @@ module EBSCO
                 return sanitize_data(item['Data'])
               end
             end
+            return nil
 
           elsif options[:label] and options[:group]
 
@@ -807,6 +788,7 @@ module EBSCO
                 return sanitize_data(item['Data'])
               end
             end
+            return nil
 
           elsif options[:label]
 
@@ -815,6 +797,7 @@ module EBSCO
                 return sanitize_data(item['Data'])
               end
             end
+            return nil
 
           elsif options[:name]
 
@@ -823,6 +806,7 @@ module EBSCO
                 return sanitize_data(item['Data'])
               end
             end
+            return nil
 
           else
             nil

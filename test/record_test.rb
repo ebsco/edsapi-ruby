@@ -278,4 +278,33 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_records_with_different_geographic_subject_tags
+    VCR.use_cassette('test_records_with_different_geographic_subject_tags') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+
+      # <Name>SubjectGeographic</Name>
+      # <Label>Geographic Terms</Label>
+      # <Group>Su</Group>
+      if session.dbid_in_profile 'aph'
+        record = session.retrieve({dbid: 'aph', an: '123200654'})
+        assert record.eds_subjects_geographic.start_with?('<searchLink fieldcode="DE"')
+        assert record.eds_subjects_geographic.include?('MALDIVES')
+      else
+        puts "WARNING: skipping test_records_with_different_geographic_subject_tags, aph db isn't in the profile."
+      end
+
+      # <Name>Subject</Name>
+      # <Label>Subject Geographic</Label>
+      # <Group>Su</Group>
+      if session.dbid_in_profile 'edsgcc'
+        record = session.retrieve({dbid: 'edsgcc', an: 'edsgcl.299362683'})
+        assert record.eds_subjects_geographic.start_with?('<searchLink fieldcode="DE"')
+        assert record.eds_subjects_geographic.include?('Canada')
+      else
+        puts "WARNING: skipping test_records_with_different_geographic_subject_tags, edsgcc db isn't in the profile."
+      end
+      session.end
+    end
+  end
+
 end

@@ -31,4 +31,14 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_options_to_query_string
+    VCR.use_cassette('test_options_to_query_string') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      results = session.search({query: 'volcano', view: 'brief', results_per_page: 5, page_number: 2, highlight: false})
+      query_string = 'query=volcano&searchmode=all&includefacets=y&sort=relevance&autosuggest=y&limiter=&expander=relatedsubjects,thesaurus,fulltext&facetfilter=1,&relatedcontent=rs&view=brief&resultsperpage=5&pagenumber=2&highlight=false&action=GoToPage(1)'
+      assert session.search_options.to_query_string == query_string
+      session.end
+    end
+  end
+
 end
