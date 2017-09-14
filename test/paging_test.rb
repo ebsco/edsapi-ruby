@@ -161,44 +161,38 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  # TODO: resolve
   def test_solr_beyond_250_results_with_source_type_facet_and_language_facet
     VCR.use_cassette('test_solr_beyond_250_results_with_source_type_facet_and_language_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
-      assert_raises EBSCO::EDS::ApiError do
-        session.search({'q' => 'cats',
-                                'f' => {'eds_language_facet' => ['english'],
-                                        'eds_publication_type_facet'=>['Books']},
-                                'page' => 5, 'per_page' => 100, 'search_field' => 'all_fields'})
-      end
+      results = session.search({'q' => 'cats',
+                              'f' => {'eds_language_facet' => ['english'],
+                                      'eds_publication_type_facet'=>['Books']},
+                              'page' => 5, 'per_page' => 100, 'search_field' => 'all_fields'})
+      assert results.page_number == 5
       session.end
     end
   end
 
-  # TODO: resolve
   def test_solr_beyond_250_results_with_content_provider_facet_and_language_facet
     VCR.use_cassette('test_solr_beyond_250_results_with_content_provider_facet_and_language_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
-      assert_raises EBSCO::EDS::ApiError do
-        session.search({'q' => 'cats',
-                              'f' => {'eds_content_provider_facet'=>['Academic Search Ultimate'],
-                                      'eds_language_facet'=>['english']},
-                              'page' => 5, 'per_page' => 100, 'search_field' => 'all_fields'})
-      end
+      results = session.search({'q' => 'cats',
+                            'f' => {'eds_content_provider_facet'=>['Academic Search Ultimate'],
+                                    'eds_language_facet'=>['english']},
+                            'page' => 5, 'per_page' => 100, 'search_field' => 'all_fields'})
+      assert results.page_number == 5
       session.end
     end
   end
 
-  # TODO: resolve
   def test_solr_beyond_250_results_with_content_provider_facet_and_source_type_facet
     VCR.use_cassette('test_solr_beyond_250_results_with_content_provider_facet_and_source_type_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
-      assert_raises EBSCO::EDS::ApiError do
-        session.search({'q' => 'cats',
-                        'f' => {'eds_content_provider_facet'=>['Academic Search Ultimate'],
-                                'eds_publication_type_facet'=>['Academic Journals']},
-                        'page' => 5, 'per_page' => 100, 'search_field' => 'all_fields'})
-      end
+      results = session.search({'q' => 'cats',
+                      'f' => {'eds_content_provider_facet'=>['Academic Search Ultimate'],
+                              'eds_publication_type_facet'=>['Academic Journals']},
+                      'page' => 5, 'per_page' => 100, 'search_field' => 'all_fields'})
+      assert results.page_number == 5
       session.end
     end
   end
