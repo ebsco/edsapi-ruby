@@ -38,7 +38,9 @@ module EBSCO
             :open_timeout => 12,
             :max_page_jumps => 6,
             :max_page_jump_attempts => 10,
-            :recover_from_bad_source_type => false
+            :recover_from_bad_source_type => false,
+            :all_subjects_search_links => false,
+            :decode_sanitize_html => true
         }
         @valid_config_keys = @config.keys
       end

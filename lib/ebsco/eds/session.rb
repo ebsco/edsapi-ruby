@@ -207,10 +207,11 @@ module EBSCO
         # use existing/updated SearchOptions
         if options.empty?
           if @search_options.nil?
-            @search_results = EBSCO::EDS::Results.new(empty_results)
+            @search_results = EBSCO::EDS::Results.new(empty_results,@config)
           else
             _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
-            @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
+            @search_results = EBSCO::EDS::Results.new(_response, @config,
+                                                      @info.available_limiters, options)
             if increment_page
               @current_page = @search_results.page_number
             end
@@ -226,7 +227,8 @@ module EBSCO
             end
 
             _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
-            @search_results = EBSCO::EDS::Results.new(_response, @info.available_limiters, options)
+            @search_results = EBSCO::EDS::Results.new(_response, @config,
+                                                      @info.available_limiters, options)
 
             # create temp format facet results if needed
             if options['f']
@@ -236,7 +238,10 @@ module EBSCO
                 format_search_options = EBSCO::EDS::Options.new(format_options, @info)
                 format_search_options.Comment = 'temp source type facets'
                 _format_response = do_request(:post, path: '/edsapi/rest/Search', payload: format_search_options)
-                @search_results.temp_format_facet_results = EBSCO::EDS::Results.new(_format_response, @info.available_limiters, format_options)
+                @search_results.temp_format_facet_results = EBSCO::EDS::Results.new(_format_response,
+                                                                                    @config,
+                                                                                    @info.available_limiters,
+                                                                                    format_options)
               end
             end
 
@@ -248,7 +253,10 @@ module EBSCO
                 content_search_options = EBSCO::EDS::Options.new(content_options, @info)
                 content_search_options.Comment = 'temp content provider facet'
                 _content_response = do_request(:post, path: '/edsapi/rest/Search', payload: content_search_options)
-                @search_results.temp_content_provider_facet_results = EBSCO::EDS::Results.new(_content_response, @info.available_limiters, content_options)
+                @search_results.temp_content_provider_facet_results = EBSCO::EDS::Results.new(_content_response,
+                                                                                              @config,
+                                                                                              @info.available_limiters,
+                                                                                              content_options)
               end
             end
 
@@ -297,8 +305,8 @@ module EBSCO
         retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
         #retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
         #retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
-        record = EBSCO::EDS::Record.new(retrieve_response)
-        # puts 'RECORD: ' + record.pretty_inspect
+        record = EBSCO::EDS::Record.new(retrieve_response, @config)
+        # puts 'RECORD: ' + record.inspect
         record
       end
 
@@ -357,7 +365,7 @@ module EBSCO
 
         # return json result set with just the previous and next records in it
         r = empty_results(cached_results.stat_total_hits)
-        results = EBSCO::EDS::Results.new(r)
+        results = EBSCO::EDS::Results.new(r, @config)
         next_previous_records = []
         unless result_prev.nil?
           next_previous_records << result_prev
@@ -380,7 +388,7 @@ module EBSCO
           }
         end
         r = empty_results(records.length)
-        results = EBSCO::EDS::Results.new(r)
+        results = EBSCO::EDS::Results.new(r, @config)
         results.records = records
         results.to_solr
       end

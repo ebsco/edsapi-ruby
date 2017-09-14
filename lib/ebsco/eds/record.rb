@@ -121,7 +121,6 @@ module EBSCO
           'Related ISBNs'
       ]
 
-
       # Raw record as returned by the \EDS API via search or retrieve
       attr_accessor(*ATTRIBUTES)
 
@@ -130,7 +129,25 @@ module EBSCO
       end
 
       # Creates a search or retrieval result record
-      def initialize(results_record)
+      def initialize(results_record, eds_config = nil)
+
+        # translate all subject search link field codes to DE?
+        @all_subjects_search_links = false
+        if eds_config
+          @all_subjects_search_links = eds_config[:all_subjects_search_links]
+        end
+        if ENV.has_key? 'EDS_ALL_SUBJECTS_SEARCH_LINKS'
+          @all_subjects_search_links = ENV['EDS_ALL_SUBJECTS_SEARCH_LINKS']
+        end
+
+        # decode and sanitize html in item data?
+        @decode_sanitize_html = true
+        if eds_config
+          @decode_sanitize_html = eds_config[:decode_sanitize_html]
+        end
+        if ENV.has_key? 'EDS_DECODE_SANITIZE_HTML'
+          @decode_sanitize_html = ENV['EDS_DECODE_SANITIZE_HTML']
+        end
 
         if results_record.key? 'Record'
           @record = results_record['Record'] # single record returned by retrieve api
@@ -295,7 +312,40 @@ module EBSCO
       # Fulltext - RETRIEVE ONLY
       def html_fulltext
         if @record.fetch('FullText',{}).fetch('Text',{}).fetch('Availability',0) == '1'
-          @record.fetch('FullText',{}).fetch('Text',{})['Value']
+
+          # sanitize?
+          if @decode_sanitize_html
+
+            # transformer
+            clean_fulltext = lambda do |env|
+              node = env[:node]
+              if node.name == 'title'
+                node.name = 'h1'
+              end
+              if node.name == 'sbt'
+                node.name = 'h2'
+              end
+              if node.name == 'jsection'
+                node.name = 'h3'
+              end
+              if node.name == 'et'
+                node.name = 'h3'
+              end
+              node
+            end
+
+            fulltext_config = Sanitize::Config.merge(Sanitize::Config::RELAXED,
+                                                     :elements => Sanitize::Config::RELAXED[:elements] +
+                                                        %w[relatesto searchlink],
+                                                    :attributes => Sanitize::Config::RELAXED[:attributes].merge(
+                                                        'searchlink' => %w[fieldcode term]),
+            :remove_contents => true,
+            :transformers => [clean_fulltext])
+
+            html_decode_and_sanitize(@record.fetch('FullText',{}).fetch('Text',{})['Value'], fulltext_config)
+          else
+            @record.fetch('FullText',{}).fetch('Text',{})['Value']
+          end
         else
           nil
         end
@@ -757,8 +807,7 @@ module EBSCO
 
             @items.each do |item|
               if item['Name'] == options[:name] && item['Label'] == options[:label] && item['Group'] == options[:group]
-                # puts 'FOUND ALL 3: ' + item.inspect
-                return sanitize_data(item['Data'])
+                return sanitize_data(item)
               end
             end
             return nil
@@ -767,7 +816,7 @@ module EBSCO
 
             @items.each do |item|
               if item['Name'] == options[:name] && item['Label'] == options[:label]
-                return sanitize_data(item['Data'])
+                return sanitize_data(item)
               end
             end
             return nil
@@ -776,7 +825,7 @@ module EBSCO
 
             @items.each do |item|
               if item['Name'] == options[:name] && item['Group'] == options[:group]
-                return sanitize_data(item['Data'])
+                return sanitize_data(item)
               end
             end
             return nil
@@ -785,7 +834,7 @@ module EBSCO
 
             @items.each do |item|
               if item['Label'] == options[:label] && item['Group'] == options[:group]
-                return sanitize_data(item['Data'])
+                return sanitize_data(item)
               end
             end
             return nil
@@ -794,7 +843,7 @@ module EBSCO
 
             @items.each do |item|
               if item['Label'] == options[:label]
-                return sanitize_data(item['Data'])
+                return sanitize_data(item)
               end
             end
             return nil
@@ -803,7 +852,7 @@ module EBSCO
 
             @items.each do |item|
               if item['Name'] == options[:name]
-                return sanitize_data(item['Data'])
+                return sanitize_data(item)
               end
             end
             return nil
@@ -815,16 +864,47 @@ module EBSCO
         end
       end
 
-      # sanitize html, allow custom links
-      def sanitize_data(data)
-        html = CGI.unescapeHTML(data.to_s)
-        sanitize_config = Sanitize::Config.merge(Sanitize::Config::RELAXED,
-                                                 :elements => Sanitize::Config::RELAXED[:elements] + ['relatesto', 'searchlink'],
+      # decode & sanitize html tags found in item data; apply any special transformations
+      def sanitize_data(item)
+
+        if item['Data']
+          data = item['Data']
+
+          # group-specific transformations
+          if item['Group']
+            group = item['Group']
+            if group == 'Su'
+              # translate searchLink field codes to DE?
+              if @all_subjects_search_links
+                data = data.gsub(/(searchLink fieldCode=&quot;)([A-Z]+)/, '\1DE')
+              end
+            end
+          end
+
+          # decode-sanitize?
+          if @decode_sanitize_html
+           data = html_decode_and_sanitize(data)
+          end
+
+          data
+
+        else
+          nil # no item data present
+        end
+
+      end
+
+      # Decode any html elements and then run it through sanitize to preserve entities (eg: ampersand) and strip out
+      # elements/attributes that aren't explicitly whitelisted.
+      # The RELAXED config: https://github.com/rgrove/sanitize/blob/master/lib/sanitize/config/relaxed.rb
+      def html_decode_and_sanitize(data, config = nil)
+        default_config = Sanitize::Config.merge(Sanitize::Config::RELAXED,
+                                                 :elements => Sanitize::Config::RELAXED[:elements] +
+                                                     %w[relatesto searchlink],
                                                  :attributes => Sanitize::Config::RELAXED[:attributes].merge(
-                                                     'searchlink' => ['fieldcode', 'term']
-                                                 )
-        )
-        Sanitize.fragment(html, sanitize_config)
+                                                     'searchlink' => %w[fieldcode term]))
+        sanitize_config = config.nil? ? default_config : config
+        Sanitize.fragment(CGI.unescapeHTML(data.to_s), sanitize_config)
       end
 
       # dynamically add item metadata as 'eds_extra_ItemNameOrLabel'
