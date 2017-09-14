@@ -181,7 +181,7 @@ module EBSCO
         _my_limiters = []
 
         @FacetFilters = []
-        _my_filters = {'FilterId' => 1, 'FacetValues' => []}
+        filter_id = 1
 
         @RelatedContent = info.default_related_content_types
         _my_related_content = []
@@ -373,20 +373,13 @@ module EBSCO
                 end
               end
 
-              # SourceType
-              if value.has_key?('eds_publication_type_facet')
-                f_list = value['eds_publication_type_facet']
-                f_list.each do |item|
-                  item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'SourceType', 'Value' => item})
-                end
-              end
               # Language
               if value.has_key?('eds_language_facet')
                 lang_list = value['eds_language_facet']
                 lang_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'Language', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Language', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # SubjectEDS
@@ -394,7 +387,8 @@ module EBSCO
                 subj_list = value['eds_subject_topic_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'SubjectEDS', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'SubjectEDS', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # SubjectGeographic
@@ -402,7 +396,8 @@ module EBSCO
                 subj_list = value['eds_subjects_geographic_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'SubjectGeographic', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'SubjectGeographic', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # Publisher
@@ -410,7 +405,8 @@ module EBSCO
                 subj_list = value['eds_publisher_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'Publisher', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Publisher', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # Journal
@@ -418,7 +414,8 @@ module EBSCO
                 subj_list = value['eds_journal_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'Journal', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Journal', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # Category
@@ -426,15 +423,8 @@ module EBSCO
                 subj_list = value['eds_category_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'Category', 'Value' => item})
-                end
-              end
-              # ContentProvider
-              if value.has_key?('eds_content_provider_facet')
-                subj_list = value['eds_content_provider_facet']
-                subj_list.each do |item|
-                  item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'ContentProvider', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Category', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # LocationLibrary
@@ -442,7 +432,8 @@ module EBSCO
                 subj_list = value['eds_library_location_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'LocationLibrary', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'LocationLibrary', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # CollectionLibrary
@@ -450,7 +441,8 @@ module EBSCO
                 subj_list = value['eds_library_collection_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'CollectionLibrary', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'CollectionLibrary', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # AuthorUniversity
@@ -458,17 +450,39 @@ module EBSCO
                 subj_list = value['eds_author_university_facet']
                 subj_list.each do |item|
                   item = eds_sanitize item
-                  _my_filters['FacetValues'].push({'Id' => 'AuthorUniversity', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'AuthorUniversity', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
               # PublicationYear
               if value.has_key?('eds_publication_year_facet')
                 year_list = value['eds_publication_year_facet']
                 year_list.each do |item|
-                  _my_filters['FacetValues'].push({'Id' => 'PublicationYear', 'Value' => item})
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'PublicationYear', 'Value' => item}]})
+                  filter_id += 1
                 end
               end
 
+              # Special Cases:
+
+              # SourceType
+              if value.has_key?('eds_publication_type_facet')
+                f_list = value['eds_publication_type_facet']
+                f_list.each do |item|
+                  item = eds_sanitize item
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => item}]})
+                  filter_id += 1
+                end
+              end
+              # ContentProvider
+              if value.has_key?('eds_content_provider_facet')
+                subj_list = value['eds_content_provider_facet']
+                subj_list.each do |item|
+                  item = eds_sanitize item
+                  @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'ContentProvider', 'Value' => item}]})
+                  filter_id += 1
+                end
+              end
 
             # ====================================================================================
             # limiters
@@ -529,11 +543,6 @@ module EBSCO
           end
 
         end # end options parsing
-
-        # set solr facet filters, if any
-        if _my_filters['FacetValues'].length > 0
-          @FacetFilters = [_my_filters]
-        end
 
         # set solr limiters, if any
         @Limiters = _my_limiters
