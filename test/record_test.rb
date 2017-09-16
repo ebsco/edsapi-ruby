@@ -266,7 +266,7 @@ class EdsApiTests < Minitest::Test
 
   def test_record_with_subject_search_links
     VCR.use_cassette('test_record_with_subject_search_links') do
-      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi', decode_sanitize_html: true})
       if session.dbid_in_profile 'bas'
         record = session.retrieve({dbid: 'bas', an: 'BAS899713'})
         assert record.eds_subjects.start_with?('<searchLink fieldcode="SH"')
@@ -280,7 +280,7 @@ class EdsApiTests < Minitest::Test
 
   def test_records_with_different_geographic_subject_tags
     VCR.use_cassette('test_records_with_different_geographic_subject_tags') do
-      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi', decode_sanitize_html: true})
 
       # <Name>SubjectGeographic</Name>
       # <Label>Geographic Terms</Label>

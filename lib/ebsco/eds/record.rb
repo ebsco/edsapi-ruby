@@ -141,7 +141,7 @@ module EBSCO
         end
 
         # decode and sanitize html in item data?
-        @decode_sanitize_html = true
+        @decode_sanitize_html = false
         if eds_config
           @decode_sanitize_html = eds_config[:decode_sanitize_html]
         end
@@ -186,6 +186,7 @@ module EBSCO
         @eds_subjects =
             get_item_data({name: 'Subject', label: 'Subject Terms', group: 'Su'}) ||
             get_item_data({name: 'Subject', label: 'Subject Indexing', group: 'Su'}) ||
+            get_item_data({name: 'Subject', label: 'Subject Category', group: 'Su'}) ||
             bib_subjects
         @eds_subjects_geographic =
             get_item_data({name: 'SubjectGeographic', label: 'Geographic Terms', group: 'Su'}) ||

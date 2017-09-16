@@ -40,7 +40,7 @@ module EBSCO
             :max_page_jump_attempts => 10,
             :recover_from_bad_source_type => false,
             :all_subjects_search_links => false,
-            :decode_sanitize_html => true
+            :decode_sanitize_html => false
         }
         @valid_config_keys = @config.keys
       end

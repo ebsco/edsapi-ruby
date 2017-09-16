@@ -244,6 +244,8 @@ module EBSCO
                     _field_code = 'SH'
                   when 'keywords'
                     _field_code = 'KW'
+                  when /[A-Z]{2}/
+                    _field_code = _field
                 end
               end
 
