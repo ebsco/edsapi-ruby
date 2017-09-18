@@ -28,7 +28,7 @@ module EBSCO
 
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
-      def initialize(search_results, additional_limiters = {}, options = {})
+      def initialize(search_results, eds_config = nil, additional_limiters = {}, options = {})
 
         @results = search_results
         @limiters = additional_limiters
@@ -39,7 +39,7 @@ module EBSCO
         if @results['SearchResult']['Data']['Records']
           @results['SearchResult']['Data']['Records'].each { |record|
 
-            @records.push(EBSCO::EDS::Record.new(record))
+            @records.push(EBSCO::EDS::Record.new(record, eds_config))
 
             # # records hidden in guest mode
             # if record['Header']['AccessLevel']
@@ -64,7 +64,7 @@ module EBSCO
               rs_entries = related_item.fetch('Records',{})
               if rs_entries.count > 0
                 rs_entries.each do |rs_record|
-                  @research_starters.push(EBSCO::EDS::Record.new(rs_record))
+                  @research_starters.push(EBSCO::EDS::Record.new(rs_record, eds_config))
                 end
               end
             end
@@ -80,7 +80,7 @@ module EBSCO
               _publication_matches = related_item.fetch('PublicationRecords',{})
               if _publication_matches.count > 0
                 _publication_matches.each do |publication_record|
-                  @publication_match.push(EBSCO::EDS::Record.new(publication_record))
+                  @publication_match.push(EBSCO::EDS::Record.new(publication_record, eds_config))
                 end
               end
             end
