@@ -826,7 +826,7 @@ module EBSCO
                         else
                           if !action.include?('SourceType:'+bad_source_type+')')
                             # not a bad source type, keep it
-                            new_actions >> action
+                            new_actions << action
                           end
                         end
                       else
@@ -834,6 +834,31 @@ module EBSCO
                         new_actions << action
                       end
                     }
+
+                    new_filters = []
+                    filter_id = 1
+                    payload.SearchCriteria.FacetFilters.each { |filter|
+                      filter['FacetValues'].each { |facet_val|
+                        if facet_val['Id'] == 'SourceType'
+                          if bad_source_type.nil?
+                            # skip the source type since we don't know if it's bad or not
+                          else
+                            # not a bad sourcetype, add it
+                            if !facet_val['Value'].include?(bad_source_type)
+                            filter['FilterId'] = filter_id
+                            filter_id += 1
+                            new_filters << filter
+                            end
+                          end
+                        else
+                          # not a SourceType filter, add it
+                          filter['FilterId'] = filter_id
+                          filter_id += 1
+                          new_filters << filter
+                        end
+                      }
+                    }
+                    payload.SearchCriteria.FacetFilters = new_filters
                     payload.Actions = new_actions
                     do_request(method, path: path, payload: payload, attempt: attempt+1)
                   else
