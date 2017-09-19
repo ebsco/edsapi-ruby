@@ -1,4 +1,5 @@
 require 'ebsco/eds/record'
+require 'ebsco/eds/facet_titleize'
 require 'yaml'
 require 'cgi'
 require 'date'
@@ -86,6 +87,9 @@ module EBSCO
             end
           end
         end
+
+        # titleize facets
+        @titleize_facets = %w[Language Journal SubjectEDS SubjectGeographic Publisher]
 
       end
 
@@ -489,6 +493,10 @@ module EBSCO
             facet_values = []
             available_facet['AvailableFacetValues'].each do |available_facet_value|
               facet_value = available_facet_value['Value']
+              if @titleize_facets.include?(facet_id)
+                title = EBSCO::EDS::Titleize.new
+                facet_value = title.titleize(facet_value)
+              end
               facet_count = available_facet_value['Count']
               facet_action = available_facet_value['AddAction']
               facet_values.push({value: facet_value, hitcount: facet_count, action: facet_action})
@@ -514,6 +522,10 @@ module EBSCO
           if available_facet['Id'] == facet_provided_id || facet_provided_id == 'all'
             available_facet['AvailableFacetValues'].each do |available_facet_value|
               facet_value = available_facet_value['Value']
+              if @titleize_facets.include?(facet_provided_id)
+                title = EBSCO::EDS::Titleize.new
+                facet_value = title.titleize(facet_value)
+              end
               facet_count = available_facet_value['Count']
               facet_values.push(facet_value, facet_count)
             end

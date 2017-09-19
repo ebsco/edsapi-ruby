@@ -238,4 +238,17 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_facet_titleize
+    VCR.use_cassette('test_facet_titleize') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({query: 'white nose syndrome', results_per_page: 1})
+      assert results.to_solr.to_json.include?('U.S. G.P.O.') # publisher
+      assert results.to_solr.to_json.include?('Albany (N.Y.)') # subjectGeographic
+      assert results.to_solr.to_json.include?('White-Nose Syndrome') # subjectEDS
+      assert results.to_solr.to_json.include?('Spanish; Castilian') # language
+      assert results.to_solr.to_json.include?('Earth Island Journal') # journal
+      session.end
+    end
+  end
+
 end
