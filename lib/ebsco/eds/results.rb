@@ -211,24 +211,47 @@ module EBSCO
       #                           "freq":1}]}],
       #     "correctlySpelled":false}}
       def solr_spellcheck
+
+        suggestions = []
         unless did_you_mean.nil?
+          suggestions = [
+              search_terms.first.to_s, {
+                'numFound' => 1,
+                'startOffset' => 0,
+                'endOffset' => 7,
+                'origFreq' => 0,
+                'suggestion' => [{
+                 'word' => did_you_mean.to_s,
+                 'freq' => 1 }]
+            }
+          ]
+        end
+
+        corrections = []
+        unless auto_corrections.nil?
+          corrections = [
+              search_terms.first.to_s, {
+                'numFound' => 1,
+                'startOffset' => 0,
+                'endOffset' => 7,
+                'origFreq' => 0,
+                'correction' => [{
+                 'word' => auto_corrections.to_s,
+                 'freq' => 1 }]
+              }
+            ]
+        end
+
+        unless did_you_mean.nil? && auto_corrections.nil?
           {
               'spellcheck' => {
-                  'suggestions' => [
-                      search_terms.first.to_s, {
-                      'numFound' => 1,
-                      'startOffset' => 0,
-                      'endOffset' => 7,
-                      'origFreq' => 0,
-                      'suggestion' => [{
-                          'word' => did_you_mean.to_s,
-                          'freq' => 1 }]
-                    }
-                  ],
+                  'suggestions' => suggestions,
+                  'corrections' => corrections,
                       'correctlySpelled' => false
               }
           }
         end
+
       end
 
       # Publication date facets:
@@ -296,7 +319,8 @@ module EBSCO
       #      "Expanders"=>["fulltext", "thesaurus", "relatedsubjects"],
       #      "Sort"=>"relevance",
       #      "RelatedContent"=>["rs"],
-      #      "AutoSuggest"=>"n"
+      #      "AutoSuggest"=>"n",
+      #      "AutoCorrect"=>"n"
       #    }
       def search_criteria
         if @results['SearchRequestGet'] && @results['SearchRequestGet']['QueryString']
@@ -306,6 +330,7 @@ module EBSCO
           sc['IncludeFacets'] = params['includefacets'].nil? ? 'y' : params['includefacets'][0].to_s
           sc['Sort'] = params['sort'].nil? ? 'relevance' : params['sort'][0].to_s
           sc['AutoSuggest'] = params['autosuggest'].nil? ? 'n' : params['autosuggest'][0].to_s
+          sc['AutoCorrect'] = params['autocorrect'].nil? ? 'n' : params['autocorrect'][0].to_s
           sc['Expanders'] = params['expander'].nil? ? [] : params['expander'][0].to_s.split(',')
           sc['RelatedContent'] = params['relatedcontent'].nil? ? [] : params['relatedcontent'][0].to_s.split(',')
           query1 = params['query-1'][0].to_s.split(',')
@@ -561,6 +586,14 @@ module EBSCO
       def did_you_mean
         dym_suggestions = @results.fetch('SearchResult', {}).fetch('AutoSuggestedTerms',{})
         dym_suggestions.each do |term|
+          return term
+        end
+        nil
+      end
+
+      def auto_corrections
+        auto_corrected_terms = @results.fetch('SearchResult', {}).fetch('AutoCorrectedTerms',{})
+        auto_corrected_terms.each do |term|
           return term
         end
         nil
