@@ -110,6 +110,9 @@ module EBSCO
         # auto-suggest
         qs << '&autosuggest=' + @SearchCriteria.AutoSuggest
 
+        # auto-correct
+        qs << '&autocorrect=' + @SearchCriteria.AutoCorrect
+
         # limiters
         unless @SearchCriteria.Limiters.nil?
           qs << '&limiter=' + @SearchCriteria.Limiters.join(',')
@@ -156,7 +159,7 @@ module EBSCO
     class SearchCriteria
       include JSONable
       attr_accessor :Queries, :SearchMode, :IncludeFacets, :FacetFilters, :Limiters, :Sort, :PublicationId,
-                    :RelatedContent, :AutoSuggest, :Expanders
+                    :RelatedContent, :AutoSuggest, :Expanders, :AutoCorrect
 
       def initialize(options = {}, info)
 
@@ -165,6 +168,7 @@ module EBSCO
         @IncludeFacets = 'y'
         @Sort = 'relevance'
         @AutoSuggest = info.default_auto_suggest
+        @AutoCorrect = info.default_auto_correct
         _has_query = false
 
         @Expanders = info.default_expander_ids
@@ -293,8 +297,14 @@ module EBSCO
             when :publication_id
               @PublicationId = value
 
-            when :auto_suggest
+            # ====================================================================================
+            # auto suggest & correct
+            # ====================================================================================
+            when :auto_suggest, 'auto_suggest'
               @AutoSuggest = value ? 'y' : 'n'
+
+            when :auto_correct, 'auto_correct'
+              @AutoCorrect = value ? 'y' : 'n'
 
             # ====================================================================================
             # expanders

@@ -18,7 +18,7 @@ class EdsApiTests < Minitest::Test
         'action'=>'index'
     }
 
-    VCR.use_cassette('test_search_caching_as_guest_and_not_guest') do
+    VCR.use_cassette('caching_test/profile_1/test_search_caching_as_guest_and_not_guest') do
 
       # [1] search as guest and not-guest, creating cache files
       ENV['EDS_GUEST'] = 'y'
@@ -62,7 +62,7 @@ class EdsApiTests < Minitest::Test
     env_test_guest = ENV['EDS_GUEST']
     opts = {dbid: 'psyh', an: '2017-31191-002'}
 
-    VCR.use_cassette('test_retrieve_caching_as_guest_and_not_guest') do
+    VCR.use_cassette('caching_test/profile_1/test_retrieve_caching_as_guest_and_not_guest') do
 
       # [1] Retrieve documents, create cache files
       ENV['EDS_GUEST'] = 'y'

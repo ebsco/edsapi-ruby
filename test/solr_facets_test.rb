@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_eds_publication_type_facet
-    VCR.use_cassette('test_eds_publication_type_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_publication_type_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -16,7 +16,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_language_facet
-    VCR.use_cassette('test_eds_language_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_language_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -29,7 +29,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_subject_topic_facet
-    VCR.use_cassette('test_eds_subject_topic_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_subject_topic_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -42,7 +42,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_subjects_geographic_facet
-    VCR.use_cassette('test_eds_subjects_geographic_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_subjects_geographic_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -55,7 +55,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_publisher_facet
-    VCR.use_cassette('test_eds_publisher_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_publisher_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -68,7 +68,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_journal_facet
-    VCR.use_cassette('test_eds_journal_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_journal_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -81,7 +81,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_category_facet
-    VCR.use_cassette('test_eds_category_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_category_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -94,7 +94,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_content_provider_facet
-    VCR.use_cassette('test_eds_content_provider_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_content_provider_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -107,7 +107,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_library_location_facet
-    VCR.use_cassette('test_eds_library_location_facet') do
+    VCR.use_cassette('solr_facets_test/profile_1/test_eds_library_location_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -120,7 +120,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_library_collection_facet
-    VCR.use_cassette('test_eds_library_collection_facet') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_eds_library_collection_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -146,7 +146,7 @@ class EdsApiTests < Minitest::Test
   # end
 
   def test_eds_search_limiters_facet
-    VCR.use_cassette('test_eds_search_limiters_facet') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_eds_search_limiters_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -166,7 +166,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_publication_year_range_facet
-    VCR.use_cassette('test_eds_publication_year_range_facet') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_eds_publication_year_range_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -199,7 +199,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_publication_year_facet
-    VCR.use_cassette('test_eds_publication_year_facet') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_eds_publication_year_facet') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({query: 'climate change', results_per_page: 10})
       results2 = session.search({query: 'climate change', results_per_page: 10,
@@ -212,7 +212,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_eds_publication_year_range
-    VCR.use_cassette('test_eds_publication_year_range') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_eds_publication_year_range') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({'q' => 'volcano'})
       results2 = session.search({'q' => 'volcano', 'range'=>{'pub_year_tisim'=>{'begin'=>'2001', 'end'=>'2007'}}})
@@ -226,7 +226,7 @@ class EdsApiTests < Minitest::Test
 
   # No PublicationYear facet when a content provider is specified in the search
   def test_eds_publication_year_range_with_content_provider
-    VCR.use_cassette('test_eds_publication_year_range_with_content_provider') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_eds_publication_year_range_with_content_provider') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results1 = session.search({'q' => 'carbon nanotubes'})
       results2 = session.search({'q' => 'carbon nanotubes',
@@ -239,7 +239,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_facet_titleize
-    VCR.use_cassette('test_facet_titleize') do
+    VCR.use_cassette('solr_facets_test/profile_2/test_facet_titleize') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({query: 'white nose syndrome', results_per_page: 1})
       assert results.to_solr.to_json.include?('U.S. G.P.O.') # publisher

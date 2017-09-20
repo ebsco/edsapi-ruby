@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_info_request
-    VCR.use_cassette('test_info_request') do
+    VCR.use_cassette('info_test/profile_1/test_info_request') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       assert session.info.available_search_modes.length == 4
       refute_nil session.info.available_sorts
@@ -21,6 +21,8 @@ class EdsApiTests < Minitest::Test
       refute_nil session.info.available_related_content('rs')
       refute_nil session.info.did_you_mean
       refute_nil session.info.did_you_mean('AutoSuggest')
+      refute_nil session.info.default_auto_correct
+      refute_nil session.info.did_you_mean('AutoCorrect')
 
       assert session.research_starters_match_in_profile
       assert !session.publication_match_in_profile
