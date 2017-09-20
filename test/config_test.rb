@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_options_config
-    VCR.use_cassette('test_options_config') do
+    VCR.use_cassette('config_test/profile_1/test_options_config') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', interface_id: 'just a test'})
       assert session.config[:interface_id] == 'just a test'
       session.end
@@ -40,7 +40,7 @@ class EdsApiTests < Minitest::Test
     File.open('eds-test.yaml','w') do |file|
       file.write test_config.to_yaml
     end
-    VCR.use_cassette('test_yaml_file_config') do
+    VCR.use_cassette('config_test/profile_1/test_yaml_file_config') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test.yaml'})
       assert session.config[:interface_id] == 'ok ok ok'
       session.end
@@ -83,7 +83,7 @@ class EdsApiTests < Minitest::Test
       file.write yaml_string
     end
 
-    VCR.use_cassette('test_yaml_file_bad_syntax') do
+    VCR.use_cassette('config_test/profile_1/test_yaml_file_bad_syntax') do
       s2 = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test-2.yaml'})
       assert s2.config[:interface_id] == 'edsapi_ruby_gem'
       s2.end
@@ -93,7 +93,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_yaml_no_file
-    VCR.use_cassette('test_yaml_no_file', :record => :new_episodes) do
+    VCR.use_cassette('config_test/profile_1/test_yaml_no_file', :record => :new_episodes) do
       s = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', config: 'eds-test88.yaml'})
       assert s.config[:interface_id] == 'edsapi_ruby_gem'
       s.end

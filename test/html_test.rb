@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_all_change_subject_fields
-    VCR.use_cassette('test_all_change_subject_fields') do
+    VCR.use_cassette('html_test/profile_2/test_all_change_subject_fields') do
       session_with_orig_field_codes = EBSCO::EDS::Session.new({guest: false,
                                                        use_cache: false,
                                                        profile: 'edsapi',
@@ -54,7 +54,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_author_html_sanitize
-    VCR.use_cassette('test_author_html_sanitize') do
+    VCR.use_cassette('html_test/profile_2/test_author_html_sanitize') do
      session_with_sanitize = EBSCO::EDS::Session.new({guest: false,
                                                        use_cache: false,
                                                        profile: 'edsapi',
@@ -71,7 +71,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_sanitize_html_fulltext
-    VCR.use_cassette('test_sanitize_html_fulltext') do
+    VCR.use_cassette('html_test/profile_2/test_sanitize_html_fulltext') do
     session_with_sanitize = EBSCO::EDS::Session.new({guest: false,
                                                      use_cache: false,
                                                      profile: 'edsapi',

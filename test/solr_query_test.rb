@@ -4,7 +4,7 @@ require 'json'
 class EdsApiTests < Minitest::Test
 
   def test_basic_solr_search
-    VCR.use_cassette('test_basic_solr_search') do
+    VCR.use_cassette('solr_query_test/profile_1/test_basic_solr_search') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results_yellow = session.search({'q' => 'yellow'})
       refute_nil results_yellow
@@ -16,7 +16,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_pagination
-    VCR.use_cassette('test_pagination') do
+    VCR.use_cassette('solr_query_test/profile_1/test_pagination') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({'q' => 'volcano', 'start' => 0, 'rows' => 10})
       refute_nil results
@@ -27,7 +27,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_search_fields
-    VCR.use_cassette('test_solr_search_fields') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_search_fields') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results1 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1})
       results2 = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'search_field' => 'title'})
@@ -60,7 +60,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_highlighting
-    VCR.use_cassette('test_highlighting') do
+    VCR.use_cassette('solr_query_test/profile_1/test_highlighting') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({'q' => 'volcano', 'start' => 0, 'rows' => 10, 'hl' => 'on'})
       refute_empty results.to_solr.fetch('highlighting',{})
@@ -69,7 +69,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_options_part_1
-    VCR.use_cassette('test_solr_options_part_1') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_options_part_1') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
@@ -93,7 +93,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_options_part_2
-    VCR.use_cassette('test_solr_options_part_2') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_options_part_2') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
@@ -116,7 +116,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_options_part_3
-    VCR.use_cassette('test_solr_options_part_3') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_options_part_3') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
@@ -149,7 +149,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_search_limiters
-    VCR.use_cassette('test_search_limiters') do
+    VCR.use_cassette('solr_query_test/profile_1/test_search_limiters') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
@@ -167,7 +167,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_search_limiters_by_id
-    VCR.use_cassette('test_search_limiters_by_id') do
+    VCR.use_cassette('solr_query_test/profile_1/test_search_limiters_by_id') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
@@ -185,7 +185,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_this_year
-    VCR.use_cassette('test_this_year') do
+    VCR.use_cassette('solr_query_test/profile_1/test_this_year') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'f' => {
@@ -205,7 +205,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_spellcheck
-    VCR.use_cassette('test_spellcheck') do
+    VCR.use_cassette('solr_query_test/profile_1/test_spellcheck') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       query = {
           'per_page'=>'10',
@@ -222,8 +222,28 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_auto_correction
+    VCR.use_cassette('solr_query_test/profile_1/test_auto_correction') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      query = {
+          'per_page'=>'1',
+          'sort'=>'pub_date_sort desc',
+          'q'=>'string thery',
+          'search_field'=>'all_fields',
+          'controller'=>'catalog',
+          'action'=>'index',
+          'hl'=>'off',
+          'auto_correct' => true}
+      results = session.search(query)
+      refute_nil results.to_solr
+      assert results.to_solr.to_s.include?('"correction"=>[{"word"=>"string theory", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"suggestion"=>[{"word"=>"string thery", "freq"=>1}]}]')
+      session.end
+    end
+  end
+
   def test_solr_retrieve_list
-    VCR.use_cassette('test_solr_retrieve_list') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_retrieve_list') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       response = session.solr_retrieve_list(list: ['e000xna__719559', 'ers__100039113'])
       assert response['response']['numFound'] == 2
@@ -231,18 +251,18 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  def test_solr_dbid_accession_number_parsing
-    VCR.use_cassette('test_solr_dbid_accession_number_parsing') do
-      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
-      # double dot accession numbers split correctly?
-      response = session.solr_retrieve_list(list: ['edsbas__edsbas_ftunivalberta_oai_era_library_ualberta_ca_ark__54379_t7h128ng843'])
-      assert response['response']['numFound'] == 1
-      session.end
-    end
-  end
+  # def test_solr_dbid_accession_number_parsing
+  #   VCR.use_cassette('solr_query_test/profile_4/test_solr_dbid_accession_number_parsing') do
+  #     session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds_api'})
+  #     # double dot accession numbers split correctly?
+  #     response = session.solr_retrieve_list(list: ['edsbas__edsbas.ftunivalberta.oai.era.library.ualberta.ca.ark..54379.t7h128ng843'])
+  #     assert response['response']['numFound'] == 1
+  #     session.end
+  #   end
+  # end
 
   def test_solr_next_previous_links
-    VCR.use_cassette('test_solr_next_previous_links') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_next_previous_links') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       opts = {'f' =>
                   {'eds_language_facet' => ['spanish']},
@@ -260,7 +280,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_next_previous_links_first_result
-    VCR.use_cassette('test_solr_next_previous_links_first_result') do
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_next_previous_links_first_result') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       opts = {'f' =>
                   {'eds_language_facet' => ['spanish']},
@@ -279,7 +299,7 @@ class EdsApiTests < Minitest::Test
 
 
   def test_solr_related_content
-    VCR.use_cassette('test_solr_related_content') do
+    VCR.use_cassette('solr_query_test/profile_2/test_solr_related_content') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({'q' => 'nature', 'per_page'=>'1'})
       refute_nil results
@@ -291,7 +311,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_research_starters
-    VCR.use_cassette('test_solr_research_starters') do
+    VCR.use_cassette('solr_query_test/profile_2/test_solr_research_starters') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({'q' => 'climate change', 'start' => 0, 'rows' => 1, 'hl' => 'off'})
       #results = session.search({query: 'climate change', results_per_page: 1, highlight: 'y'})
@@ -304,22 +324,22 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_solr_date_range
-    VCR.use_cassette('test_solr_date_range') do
-      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+    VCR.use_cassette('solr_query_test/profile_1/test_solr_date_range') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({'q' => 'white nose syndrome', 'rows' => 1})
       refute_nil results
       range = results.to_solr.fetch('date_range',{})
       refute_empty range
-      assert range[:mindate] == '1972-01'
-      assert range[:maxdate] == '2017-09'
-      assert range[:minyear] == '1972'
+      assert range[:mindate] == '1900-01'
+      assert range[:maxdate] == '2017-11'
+      assert range[:minyear] == '1900'
       assert range[:maxyear] == '2017'
       session.end
     end
   end
 
   def test_solr_date_range_max_year_cleanup
-    VCR.use_cassette('test_solr_date_range_max_year_cleanup') do
+    VCR.use_cassette('solr_query_test/profile_2/test_solr_date_range_max_year_cleanup') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({'q' => 'climate change', 'rows' => 1})
       refute_nil results
@@ -329,6 +349,16 @@ class EdsApiTests < Minitest::Test
       assert range[:maxdate] == '2018-01'
       assert range[:minyear] == '1000'
       assert range[:maxyear] == '2018'
+      session.end
+    end
+  end
+
+  def test_auto_correct_in_spellcheck_response
+    VCR.use_cassette('solr_query_test/profile_1/test_auto_correct_in_spellcheck_response') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
+      results = session.search({query: 'string thery', results_per_page: 1, auto_correct: true})
+      assert results.to_solr.to_s.include?('"corrections"=>["string", {"numFound"=>1, "startOffset"=>0, "endOffset"=>7, "origFreq"=>0, "correction"=>[{"word"=>"string theory", "freq"=>1}]')
+      assert results.to_solr.to_s.include?('"suggestions"=>["string", {"numFound"=>1, "startOffset"=>0, "endOffset"=>7, "origFreq"=>0, "suggestion"=>[{"word"=>"string thery", "freq"=>1}]}]')
       session.end
     end
   end

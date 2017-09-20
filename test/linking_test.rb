@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_smartlinks
-    VCR.use_cassette('test_smartlinks') do
+    VCR.use_cassette('linking_test/profile_3/test_smartlinks') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edslinkapi'})
       if session.dbid_in_profile 'cmedm'
         record = session.retrieve({dbid: 'cmedm', an: '27788591'})
@@ -17,7 +17,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_customlinks_fulltext
-    VCR.use_cassette('test_customlinks_fulltext') do
+    VCR.use_cassette('linking_test/profile_3/test_customlinks_fulltext') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edslinkapi'})
       if session.dbid_in_profile 'edsoai'
         record = session.retrieve({dbid: 'edsoai', an: 'edsoai.975318230'})
@@ -36,7 +36,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_non_fulltext_links
-    VCR.use_cassette('test_non_fulltext_links') do
+    VCR.use_cassette('linking_test/profile_3/test_non_fulltext_links') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edslinkapi'})
       if session.dbid_in_profile 'cat02069a'
         record = session.retrieve({dbid: 'cat02069a', an: 'd.mvs.601243'})
