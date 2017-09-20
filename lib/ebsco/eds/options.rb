@@ -61,12 +61,6 @@ module EBSCO
         end
       end
 
-      def eds_sanitize(str)
-        pattern = /([)(:,])/
-        str = str.gsub(pattern){ |match| '\\' + match }
-        str
-      end
-
       # def is_valid_action(action, info)
       #   # actions in info that require an enumerated value (e.g., addlimiter(LA99:Bulgarian))
       #   _available_actions = info.available_actions
@@ -116,6 +110,9 @@ module EBSCO
         # auto-suggest
         qs << '&autosuggest=' + @SearchCriteria.AutoSuggest
 
+        # auto-correct
+        qs << '&autocorrect=' + @SearchCriteria.AutoCorrect
+
         # limiters
         unless @SearchCriteria.Limiters.nil?
           qs << '&limiter=' + @SearchCriteria.Limiters.join(',')
@@ -162,7 +159,7 @@ module EBSCO
     class SearchCriteria
       include JSONable
       attr_accessor :Queries, :SearchMode, :IncludeFacets, :FacetFilters, :Limiters, :Sort, :PublicationId,
-                    :RelatedContent, :AutoSuggest, :Expanders
+                    :RelatedContent, :AutoSuggest, :Expanders, :AutoCorrect
 
       def initialize(options = {}, info)
 
@@ -171,6 +168,7 @@ module EBSCO
         @IncludeFacets = 'y'
         @Sort = 'relevance'
         @AutoSuggest = info.default_auto_suggest
+        @AutoCorrect = info.default_auto_correct
         _has_query = false
 
         @Expanders = info.default_expander_ids
@@ -275,20 +273,6 @@ module EBSCO
             when :facet_filters
               @FacetFilters = value
 
-            # # handle solr facets without causing the page to reset to 1 again?
-            # when 'f'
-            #
-            #   if value.has_key?('content_provider_facet')
-            #     f_filter = {'FilterId' => 1, 'FacetValues' => []}
-            #     flist = value['content_provider_facet']
-            #     flist.each do |item|
-            #       item = eds_sanitize item
-            #       f_filter['FacetValues'].push({'Id' => 'ContentProvider', 'Value' => item})
-            #     end
-            #     @FacetFilters.push f_filter
-            #     puts 'FACET FILTERS: ' + @FacetFilters.inspect
-            #   end
-
             # ====================================================================================
             # sort
             # ====================================================================================
@@ -313,8 +297,14 @@ module EBSCO
             when :publication_id
               @PublicationId = value
 
-            when :auto_suggest
+            # ====================================================================================
+            # auto suggest & correct
+            # ====================================================================================
+            when :auto_suggest, 'auto_suggest'
               @AutoSuggest = value ? 'y' : 'n'
+
+            when :auto_correct, 'auto_correct'
+              @AutoCorrect = value ? 'y' : 'n'
 
             # ====================================================================================
             # expanders
@@ -379,7 +369,6 @@ module EBSCO
               if value.has_key?('eds_language_facet')
                 lang_list = value['eds_language_facet']
                 lang_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Language', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -388,7 +377,6 @@ module EBSCO
               if value.has_key?('eds_subject_topic_facet')
                 subj_list = value['eds_subject_topic_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'SubjectEDS', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -397,7 +385,6 @@ module EBSCO
               if value.has_key?('eds_subjects_geographic_facet')
                 subj_list = value['eds_subjects_geographic_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'SubjectGeographic', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -406,7 +393,6 @@ module EBSCO
               if value.has_key?('eds_publisher_facet')
                 subj_list = value['eds_publisher_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Publisher', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -415,7 +401,6 @@ module EBSCO
               if value.has_key?('eds_journal_facet')
                 subj_list = value['eds_journal_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Journal', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -424,7 +409,6 @@ module EBSCO
               if value.has_key?('eds_category_facet')
                 subj_list = value['eds_category_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'Category', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -433,7 +417,6 @@ module EBSCO
               if value.has_key?('eds_library_location_facet')
                 subj_list = value['eds_library_location_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'LocationLibrary', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -442,7 +425,6 @@ module EBSCO
               if value.has_key?('eds_library_collection_facet')
                 subj_list = value['eds_library_collection_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'CollectionLibrary', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -451,7 +433,6 @@ module EBSCO
               if value.has_key?('eds_author_university_facet')
                 subj_list = value['eds_author_university_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'AuthorUniversity', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -471,7 +452,6 @@ module EBSCO
               if value.has_key?('eds_publication_type_facet')
                 f_list = value['eds_publication_type_facet']
                 f_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -480,7 +460,6 @@ module EBSCO
               if value.has_key?('eds_content_provider_facet')
                 subj_list = value['eds_content_provider_facet']
                 subj_list.each do |item|
-                  item = eds_sanitize item
                   @FacetFilters.push({'FilterId' => filter_id, 'FacetValues' => [{'Id' => 'ContentProvider', 'Value' => item}]})
                   filter_id += 1
                 end
@@ -549,12 +528,6 @@ module EBSCO
         # set solr limiters, if any
         @Limiters = _my_limiters
 
-      end
-
-      def eds_sanitize(str)
-        pattern = /([)(:,])/
-        str = str.gsub(pattern){ |match| '\\' + match }
-        str
       end
 
     end

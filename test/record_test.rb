@@ -4,7 +4,7 @@ class EdsApiTests < Minitest::Test
 
   # JOURNAL ARTICLE, SINGLE AUTHOR
   def test_retrieve_journal_article
-    VCR.use_cassette('test_retrieve_journal_article') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_journal_article') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '108974507'})
@@ -49,7 +49,7 @@ class EdsApiTests < Minitest::Test
 
   # JOURNAL, MULTIPLE ARTICLES
   def test_retrieve_journal_multiple_authors
-    VCR.use_cassette('test_retrieve_journal_multiple_authors') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_journal_multiple_authors') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '119572050'})
@@ -65,7 +65,7 @@ class EdsApiTests < Minitest::Test
 
   # EBOOK
   def test_retrieve_ebook
-    VCR.use_cassette('test_retrieve_ebook') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_ebook') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'e000xna'
         record = session.retrieve({dbid: 'e000xna', an: '553416'})
@@ -88,7 +88,7 @@ class EdsApiTests < Minitest::Test
 
   # CONFERENCE PROCEEDINGS
   def test_retrieve_conference
-    VCR.use_cassette('test_retrieve_conference') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_conference') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '118411536'})
@@ -104,7 +104,7 @@ class EdsApiTests < Minitest::Test
 
   # NEWS ARTICLE, FULLTEXT
   def test_retrieve_newspaper
-    VCR.use_cassette('test_retrieve_newspaper') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_newspaper') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '112761583'})
@@ -122,7 +122,7 @@ class EdsApiTests < Minitest::Test
 
   # SCORE
   def test_retrieve_score
-    VCR.use_cassette('test_retrieve_score') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_score') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'cat02060a'
         session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690112'})
@@ -135,7 +135,7 @@ class EdsApiTests < Minitest::Test
 
   # BOOK
   def test_retrieve_book
-    VCR.use_cassette('test_retrieve_book') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_book') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'cat02060a'
         record = session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690122'})
@@ -153,7 +153,7 @@ class EdsApiTests < Minitest::Test
 
   # EPUB
   def test_retrieve_epub_book
-    VCR.use_cassette('test_retrieve_epub_book') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_epub_book') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'e000xna'
         record = session.retrieve({dbid: 'e000xna', an: '719559', ebook: 'ebook-epub'})
@@ -169,7 +169,7 @@ class EdsApiTests < Minitest::Test
 
   # CATALOG LINK (Institutional Repository example)
   def test_retrieve_ir_article
-    VCR.use_cassette('test_retrieve_ir_article') do
+    VCR.use_cassette('record_test/profile_1/test_retrieve_ir_article') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'edshld'
         record = session.retrieve({dbid: 'edshld', an: 'edshld.1.3372911'})
@@ -184,7 +184,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_record_to_solr_with_fulltext
-    VCR.use_cassette('test_record_to_solr_with_fulltext') do
+    VCR.use_cassette('record_test/profile_1/test_record_to_solr_with_fulltext') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'ers'
         record = session.retrieve({dbid: 'ers', an: '100039113'})
@@ -197,7 +197,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_record_to_solr_with_doi
-    VCR.use_cassette('test_record_to_solr_with_doi') do
+    VCR.use_cassette('record_test/profile_1/test_record_to_solr_with_doi') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '121479599'})
@@ -211,7 +211,7 @@ class EdsApiTests < Minitest::Test
 
 
   def test_record_with_number_other_items
-    VCR.use_cassette('test_record_with_number_other_items') do
+    VCR.use_cassette('record_test/profile_2/test_record_with_number_other_items') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
       if session.dbid_in_profile 'edshtl'
         record = session.retrieve({dbid: 'edshtl', an: 'pur1.32754078701863'})
@@ -225,7 +225,7 @@ class EdsApiTests < Minitest::Test
 
   # accession number with dot: edsagr.US201600263208
   def test_retrieve_accession_number_with_dot
-    VCR.use_cassette('test_retrieve_accession_number_with_dot') do
+    VCR.use_cassette('record_test/profile_2/test_retrieve_accession_number_with_dot') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
       if session.dbid_in_profile 'edsagr'
         record = session.retrieve({dbid: 'edsagr', an: 'edsagr.US201600263208'})
@@ -239,7 +239,7 @@ class EdsApiTests < Minitest::Test
 
 
   def test_record_with_publication_status
-    VCR.use_cassette('test_record_with_publication_status') do
+    VCR.use_cassette('record_test/profile_2/test_record_with_publication_status') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
       if session.dbid_in_profile 'edsstc'
         record = session.retrieve({dbid: 'edsstc', an: '946928'})
@@ -252,7 +252,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_record_with_series_info
-    VCR.use_cassette('test_record_with_series_info') do
+    VCR.use_cassette('record_test/profile_2/test_record_with_series_info') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
       if session.dbid_in_profile 'edsbeb'
         record = session.retrieve({dbid: 'edsbeb', an: 'edsbeb.B9789004314924.s017'})
@@ -265,7 +265,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_record_with_subject_search_links
-    VCR.use_cassette('test_record_with_subject_search_links') do
+    VCR.use_cassette('record_test/profile_2/test_record_with_subject_search_links') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi', decode_sanitize_html: true})
       if session.dbid_in_profile 'bas'
         record = session.retrieve({dbid: 'bas', an: 'BAS899713'})
@@ -279,7 +279,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_records_with_different_geographic_subject_tags
-    VCR.use_cassette('test_records_with_different_geographic_subject_tags') do
+    VCR.use_cassette('record_test/profile_2/test_records_with_different_geographic_subject_tags') do
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi', decode_sanitize_html: true})
 
       # <Name>SubjectGeographic</Name>

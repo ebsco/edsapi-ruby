@@ -139,6 +139,10 @@ module EBSCO
         @available_search_criteria.fetch('AvailableDidYouMeanOptions',{}).find{|item| item['Id'] == 'AutoSuggest'}['DefaultOn']
       end
 
+      def default_auto_correct
+        @available_search_criteria.fetch('AvailableDidYouMeanOptions',{}).find{|item| item['Id'] == 'AutoCorrect'}['DefaultOn']
+      end
+
       # ====================================================================================
       # RESULTS VIEW SETTINGS
       # ====================================================================================

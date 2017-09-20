@@ -788,6 +788,9 @@ module EBSCO
                     if jump_payload.SearchCriteria.instance_variable_defined?(:@AutoSuggest)
                       jump_payload.SearchCriteria.remove_instance_variable(:@AutoSuggest)
                     end
+                    if jump_payload.SearchCriteria.instance_variable_defined?(:@AutoCorrect)
+                      jump_payload.SearchCriteria.remove_instance_variable(:@AutoCorrect)
+                    end
                     if jump_payload.SearchCriteria.instance_variable_defined?(:@Expanders)
                       jump_payload.SearchCriteria.remove_instance_variable(:@Expanders)
                     end
@@ -1039,7 +1042,8 @@ module EBSCO
                             'SearchMode'=>'',
                             'IncludeFacets'=>'y',
                             'Sort'=>'relevance',
-                            'AutoSuggest'=>'n'
+                            'AutoSuggest'=>'n',
+                            'AutoCorrect'=>'n'
                         },
                     'RetrievalCriteria'=>
                         {

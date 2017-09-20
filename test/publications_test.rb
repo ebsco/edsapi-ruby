@@ -7,7 +7,7 @@ class EdsApiTests < Minitest::Test
   # needs to be one that is configured for publication matching.
 
   def test_add_publication
-    VCR.use_cassette('test_add_publication') do
+    VCR.use_cassette('publications_test/profile_4/test_add_publication') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds_api'})
       if session.publication_match_in_profile
         results = session.search({query: 'earthquake', results_per_page: 1})
@@ -21,7 +21,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_publication
-    VCR.use_cassette('test_remove_publication') do
+    VCR.use_cassette('publications_test/profile_4/test_remove_publication') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds_api'})
       if session.publication_match_in_profile
         results = session.search({query: 'earthquake', results_per_page: 1})
@@ -37,7 +37,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_all_publications
-    VCR.use_cassette('test_remove_all_publications') do
+    VCR.use_cassette('publications_test/profile_4/test_remove_all_publications') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds_api'})
       if session.publication_match_in_profile
         session.search({query: 'earthquake', results_per_page: 1})
