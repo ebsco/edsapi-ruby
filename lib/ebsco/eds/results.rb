@@ -35,6 +35,15 @@ module EBSCO
         @limiters = additional_limiters
         @raw_options = options
 
+        # titleize facets?
+        (ENV.has_key? 'EDS_TITLEIZE_FACETS') ?
+            if %w(y Y yes Yes true True).include?(ENV['EDS_TITLEIZE_FACETS'])
+              @titleize_facets_on = true
+            else
+              @titleize_facets_on = false
+            end :
+            @titleize_facets_on = eds_config[:titleize_facets]
+
         # convert all results to a list of records
         @records = []
         if @results['SearchResult']['Data']['Records']
@@ -518,7 +527,7 @@ module EBSCO
             facet_values = []
             available_facet['AvailableFacetValues'].each do |available_facet_value|
               facet_value = available_facet_value['Value']
-              if @titleize_facets.include?(facet_id)
+              if @titleize_facets_on and @titleize_facets.include?(facet_id)
                 title = EBSCO::EDS::Titleize.new
                 facet_value = title.titleize(facet_value)
               end
@@ -547,7 +556,7 @@ module EBSCO
           if available_facet['Id'] == facet_provided_id || facet_provided_id == 'all'
             available_facet['AvailableFacetValues'].each do |available_facet_value|
               facet_value = available_facet_value['Value']
-              if @titleize_facets.include?(facet_provided_id)
+              if @titleize_facets_on and @titleize_facets.include?(facet_provided_id)
                 title = EBSCO::EDS::Titleize.new
                 facet_value = title.titleize(facet_value)
               end
