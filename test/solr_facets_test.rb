@@ -238,8 +238,22 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  def test_facet_titleize
-    VCR.use_cassette('solr_facets_test/profile_2/test_facet_titleize') do
+  def test_facet_titleize_on
+    VCR.use_cassette('solr_facets_test/profile_2/test_facet_titleize_on') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi', titleize_facets: true})
+      results = session.search({query: 'white nose syndrome', results_per_page: 1})
+      assert results.to_solr.to_json.include?('U.S. G.P.O.') # publisher
+      assert results.to_solr.to_json.include?('Albany (N.Y.)') # subjectGeographic
+      assert results.to_solr.to_json.include?('White-Nose Syndrome') # subjectEDS
+      assert results.to_solr.to_json.include?('Spanish; Castilian') # language
+      assert results.to_solr.to_json.include?('Earth Island Journal') # journal
+      session.end
+    end
+  end
+
+  def test_facet_titleize_on_using_env
+    VCR.use_cassette('solr_facets_test/profile_2/test_facet_titleize_on_using_env') do
+      ENV['EDS_TITLEIZE_FACETS'] = 'y'
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({query: 'white nose syndrome', results_per_page: 1})
       assert results.to_solr.to_json.include?('U.S. G.P.O.') # publisher
@@ -247,6 +261,20 @@ class EdsApiTests < Minitest::Test
       assert results.to_solr.to_json.include?('White-Nose Syndrome') # subjectEDS
       assert results.to_solr.to_json.include?('Spanish; Castilian') # language
       assert results.to_solr.to_json.include?('Earth Island Journal') # journal
+      session.end
+      ENV['EDS_TITLEIZE_FACETS'] = nil
+    end
+  end
+
+  def test_facet_titleize_off
+    VCR.use_cassette('solr_facets_test/profile_2/test_facet_titleize_off') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      results = session.search({query: 'white nose syndrome', results_per_page: 1})
+      assert results.to_solr.to_json.include?('u.s. g.p.o.') # publisher
+      assert results.to_solr.to_json.include?('albany (n.y.)') # subjectGeographic
+      assert results.to_solr.to_json.include?('white-nose syndrome') # subjectEDS
+      assert results.to_solr.to_json.include?('spanish; castilian') # language
+      assert results.to_solr.to_json.include?('earth island journal') # journal
       session.end
     end
   end
