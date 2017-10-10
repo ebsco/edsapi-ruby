@@ -29,7 +29,7 @@ module EBSCO
 
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
-      def initialize(search_results, eds_config = nil, additional_limiters = {}, options = {})
+      def initialize(search_results, eds_config = {}, additional_limiters = {}, options = {})
 
         @results = search_results
         @limiters = additional_limiters
