@@ -71,6 +71,7 @@ module EBSCO
           :eds_html_fulltext_available,
           :eds_html_fulltext,
           :eds_images,
+          :eds_quick_view_images,
           :eds_all_links,
           :eds_fulltext_links,
           :eds_non_fulltext_links,
@@ -166,6 +167,8 @@ module EBSCO
                         .fetch('BibRelationships', {})
                         .fetch('IsPartOfRelationships', {})[0]
 
+        @image_quick_view_items = @record.fetch('ImageQuickViewItems', {})
+
         # accessors:
         @eds_result_id = @record['ResultId']
         @eds_plink = @record['PLink']
@@ -229,6 +232,7 @@ module EBSCO
         @eds_html_fulltext_available = html_fulltext_available
         @eds_html_fulltext = html_fulltext
         @eds_images = images
+        @eds_quick_view_images = quick_view_images
         @eds_all_links = all_links
         # init fulltext available props, reset by fulltext_links method later
         @eds_pdf_fulltext_available = false
@@ -361,6 +365,23 @@ module EBSCO
             if size_requested == image['Size'] || size_requested == 'all'
               returned_images.push({size: image['Size'], src: image['Target']})
             end
+          end
+        end
+        returned_images
+      end
+
+      # List of image quick view
+      def quick_view_images
+        returned_images = []
+        images = @record.fetch('ImageQuickViewItems', {})
+        if images.count > 0
+          images.each do |quick_view_item|
+            image_id = quick_view_item['DbId']
+            image_accession = quick_view_item['An']
+            image_type = quick_view_item['Type']
+            # todo: change to https, large/small url?
+            image_url = quick_view_item['Url']
+            returned_images.push({url: image_url, id: image_id, accession_number: image_accession, type: image_type})
           end
         end
         returned_images
@@ -767,7 +788,8 @@ module EBSCO
               var != :@items &&
               var != :@bib_entity &&
               var != :@bib_part &&
-              var != :@bib_relationships
+              var != :@bib_relationships &&
+              var != :@image_quick_view_items
             hash[var.to_s.sub(/^@/, '')] = instance_variable_get(var)
           end
         end

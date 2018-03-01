@@ -1,5 +1,5 @@
 module EBSCO
   module EDS
-    VERSION = '0.3.18.pre'
+    VERSION = '0.3.19.pre'
   end
 end

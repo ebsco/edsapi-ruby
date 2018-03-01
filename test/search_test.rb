@@ -158,6 +158,16 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_quick_view_images
+    VCR.use_cassette('search_test/profile_4/test_quick_view_images') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds_api'})
+      results = session.search({query: 'Determination of Cerro Blanco volcano deformation', results_per_page: 1, include_image_quick_view: 'y'})
+      refute_nil results
+      assert results.records[0].quick_view_images.length > 0
+      session.end
+    end
+  end
+
   def test_setter_methods
     VCR.use_cassette('search_test/profile_1/test_setter_methods') do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
@@ -166,6 +176,7 @@ class EdsApiTests < Minitest::Test
       session.set_search_mode('any')
       session.set_view('title')
       session.set_highlight('n')
+      # session.set_include_image_quick_view('y')
       session.results_per_page(2)
       results = session.include_related_content('rs')
       refute_nil results

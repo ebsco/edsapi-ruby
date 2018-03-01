@@ -534,11 +534,12 @@ module EBSCO
 
     class RetrievalCriteria
       include JSONable
-      attr_accessor :View, :ResultsPerPage, :PageNumber, :Highlight
+      attr_accessor :View, :ResultsPerPage, :PageNumber, :Highlight, :IncludeImageQuickView
       def initialize(options = {}, info)
 
         # defaults
         @View = info.default_result_list_view
+        @IncludeImageQuickView = info.default_include_image_quick_view
         @ResultsPerPage = info.default_results_per_page
         @PageNumber = 1
 
@@ -587,6 +588,12 @@ module EBSCO
               else
                 @Highlight = 'y' # API bug: if set to 'n' you won't get research starter abstracts!
               end
+
+            # ====================================================================================
+            # image quick view
+            # ====================================================================================
+            when :include_image_quick_view, 'include_image_quick_view'
+              @IncludeImageQuickView = value ? 'y' : 'n'
 
             else
 
