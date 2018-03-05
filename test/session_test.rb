@@ -12,7 +12,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_with_using_all_env_vars
-    #VCR.use_cassette('test_create_session_with_using_all_env_vars') do
+    VCR.use_cassette('session_test/profile_none/test_create_session_with_using_all_env_vars') do
 
       session = EBSCO::EDS::Session.new({use_cache: false})
       refute_nil session
@@ -40,7 +40,7 @@ class EdsApiTests < Minitest::Test
       ENV['EDS_USE_CACHE'] = env_test_eds_use_cache
       ENV['EDS_GUEST'] = env_test_guest
 
-    #end
+    end
   end
 
   # def test_create_session_with_ip
