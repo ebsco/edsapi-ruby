@@ -265,7 +265,7 @@ module EBSCO
             end
             @search_results
           else
-            @search_results = EBSCO::EDS::Results.new(empty_results)
+            @search_results = EBSCO::EDS::Results.new(empty_results, @config)
           end
         end
       end

@@ -27,6 +27,13 @@ Or install it yourself as:
 
     $ gem install ebsco-eds
 
+## Feature Support
+
+- Research Starters are included in results response, when available
+- Configurable auto-suggest or 'Did you mean' support
+- Configurable auto-correct support
+- Quick-view images can be included in results, when available
+
 ## Documentation
 
 - [Configuration](https://github.com/ebsco/edsapi-ruby/wiki/Configuration)
