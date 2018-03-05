@@ -11,38 +11,6 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  def test_create_session_with_using_all_env_vars
-    #VCR.use_cassette('test_create_session_with_using_all_env_vars') do
-
-      session = EBSCO::EDS::Session.new({use_cache: false})
-      refute_nil session
-      session.end
-
-      env_test_eds_debug = ENV['EDS_DEBUG']
-      env_test_eds_use_cache = ENV['EDS_USE_CACHE']
-      env_test_guest = ENV['EDS_GUEST']
-
-      ENV['EDS_DEBUG'] = 'y'
-      ENV['EDS_USE_CACHE'] = 'n'
-      ENV['EDS_GUEST'] = 'n'
-      session = EBSCO::EDS::Session.new()
-      refute_nil session
-      session.end
-
-      ENV['EDS_DEBUG'] = 'y'
-      ENV['EDS_GUEST'] = 'true'
-      session = EBSCO::EDS::Session.new({caller: 'unit-tests', session_token: 'asdaljdfadfjalsdfkj'})
-      refute_nil session
-      session.end
-
-      # reset to .env.test values again
-      ENV['EDS_DEBUG'] = env_test_eds_debug
-      ENV['EDS_USE_CACHE'] = env_test_eds_use_cache
-      ENV['EDS_GUEST'] = env_test_guest
-
-    #end
-  end
-
   # def test_create_session_with_ip
   #   VCR.use_cassette('test_create_session_with_ip') do
   #           session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', user: nil, pass: nil, auth: 'ip'})
