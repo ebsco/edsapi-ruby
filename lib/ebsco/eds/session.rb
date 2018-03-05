@@ -501,6 +501,12 @@ module EBSCO
         add_actions "includerelatedcontent(#{val})"
       end
 
+      # Not available currently.
+      # TODO: ask for this to be added for consistency with other criteria
+      # def set_include_image_quick_view(val)
+      #   add_actions "includeimagequickview(#{val})"
+      # end
+
       # :category: Setter Methods
       # Specify to include facets in the results or not. Either 'y' or 'n'.
       # Returns search Results.
@@ -1049,7 +1055,8 @@ module EBSCO
                         {
                             'View'=>'brief',
                             'ResultsPerPage'=>20,
-                            'Highlight'=>'y'
+                            'Highlight'=>'y',
+                            'IncludeImageQuickView'=>'n'
                         },
                     'SearchCriteriaWithActions'=>
                         {
