@@ -32,7 +32,7 @@ Or install it yourself as:
 - Research Starters are included in results response, when available
 - Configurable auto-suggest or 'Did you mean' support
 - Configurable auto-correct support
-- Quick-view images can be included in results, when available
+- Quick-view images can be included in results, when available - [screencast](https://youtu.be/HxtWEq_Fhks)
 
 ## Documentation
 
