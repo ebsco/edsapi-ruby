@@ -923,11 +923,20 @@ module EBSCO
       def html_decode_and_sanitize(data, config = nil)
         default_config = Sanitize::Config.merge(Sanitize::Config::RELAXED,
                                                  :elements => Sanitize::Config::RELAXED[:elements] +
-                                                     %w[relatesto searchlink],
+                                                     %w[relatesto searchlink ephtml],
                                                  :attributes => Sanitize::Config::RELAXED[:attributes].merge(
                                                      'searchlink' => %w[fieldcode term]))
         sanitize_config = config.nil? ? default_config : config
-        Sanitize.fragment(CGI.unescapeHTML(data.to_s), sanitize_config)
+
+        html = CGI.unescapeHTML(data.to_s)
+        # need to double-unescape data with an ephtml section
+        if html =~ /<ephtml>/
+          html = CGI.unescapeHTML(html)
+          html = html.gsub!(/\\"/, '"')
+          html = html.gsub!(/\\n /, '')
+        end
+
+        Sanitize.fragment(html, sanitize_config)
       end
 
       # dynamically add item metadata as 'eds_extra_ItemNameOrLabel'
@@ -941,8 +950,8 @@ module EBSCO
         unless key.nil?
           key = "eds_extras_#{key}"
           unless value.nil?
-            class_eval { attr_accessor key }
-            instance_variable_set "@#{key}", CGI.unescapeHTML(value)
+            self.class.class_eval { attr_accessor key }
+            self.instance_variable_set "@#{key}", CGI.unescapeHTML(value)
           end
         end
       end
