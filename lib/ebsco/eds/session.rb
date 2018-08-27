@@ -306,8 +306,31 @@ module EBSCO
         #retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
         #retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
         record = EBSCO::EDS::Record.new(retrieve_response, @config)
+        # add citation ris to record if not in guest mode
+        if !@guest
+          record_ris = get_citation({dbid: dbid, an: an, format: 'ris'})
+          unless record_ris.nil?
+            record.set_citation_ris(record_ris.data)
+            puts 'RECORD CITATION: ' + record.eds_citation_ris
+          end
+        end
         # puts 'RECORD: ' + record.inspect
         record
+      end
+
+      # fetch the citation from the citation rest endpoint
+      def get_citation(dbid:, an:, format: 'ris')
+        # only available as non-guest otherwise 148 error
+        if !@guest
+          payload = { dbid: dbid, an: an, format: format }
+          citation_response = do_request(:get, path: @config[:citation_url], payload: payload)
+          # puts 'CITATION RESPONSE:' + citation_response.inspect
+          citation = EBSCO::EDS::Citation.new(citation_response, @config)
+          # puts 'CITATION DATA: ' + citation.data
+          citation
+        else
+          nil
+        end
       end
 
       # Create a result set with just the record before and after the current detailed record
@@ -718,7 +741,7 @@ module EBSCO
             case method
               when :get
                 unless payload.nil?
-                  qs = CGI.escape(payload.to_query_string)
+                  qs = CGI.unescape(payload.to_query(nil))
                   path << '?' + qs
                 end
                req.url path

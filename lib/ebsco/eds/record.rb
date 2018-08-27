@@ -80,7 +80,8 @@ module EBSCO
           # publication record attributes
           :eds_publication_id,
           :eds_publication_is_searchable,
-          :eds_publication_scope_note
+          :eds_publication_scope_note,
+          :eds_citation_ris
       ]
 
       KNOWN_ITEM_NAMES = %w(
@@ -954,6 +955,10 @@ module EBSCO
             self.instance_variable_set "@#{key}", CGI.unescapeHTML(value)
           end
         end
+      end
+
+      def set_citation_ris(val)
+        @eds_citation_ris = val
       end
 
     end # Class Record

@@ -1,0 +1,613 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/authservice/rest/uidauth
+    body:
+      encoding: UTF-8
+      string: '{"UserId":"<EDS_USER>","Password":"<EDS_PASS>","InterfaceId":"edsapi_ruby_gem"}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ''
+      x-authenticationToken:
+      - ''
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:43 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      content-length:
+      - '129'
+    body:
+      encoding: UTF-8
+      string: '{"AuthToken":"AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9","AuthTimeout":"1800"}'
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:45 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds_api
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ''
+      x-authenticationToken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:43 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      x-msg-correlid:
+      - 9be65387-3084-4653-b9e2-742f40400567
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '59589866'
+      x-sessiontoken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      content-length:
+      - '100'
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc="}'
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:45 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Info
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      x-authenticationToken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:44 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      x-msg-correlid:
+      - 566f16ea-d455-4e9b-ab1b-3eb57b998b96
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '59589866'
+      x-sessiontoken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      content-length:
+      - '4201'
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJBdmFpbGFibGVTZWFyY2hDcml0ZXJpYSI6eyJBdmFpbGFibGVTb3J0cyI6
+        W3siSWQiOiJkYXRlIiwiTGFiZWwiOiJEYXRlIE5ld2VzdCIsIkFkZEFjdGlv
+        biI6InNldHNvcnQoZGF0ZSkifSx7IklkIjoiZGF0ZTIiLCJMYWJlbCI6IkRh
+        dGUgT2xkZXN0IiwiQWRkQWN0aW9uIjoic2V0c29ydChkYXRlMikifSx7Iklk
+        IjoicmVsZXZhbmNlIiwiTGFiZWwiOiJSZWxldmFuY2UiLCJBZGRBY3Rpb24i
+        OiJzZXRzb3J0KHJlbGV2YW5jZSkifV0sIkF2YWlsYWJsZVNlYXJjaEZpZWxk
+        cyI6W3siRmllbGRDb2RlIjoiVFgiLCJMYWJlbCI6IkFsbCBUZXh0In0seyJG
+        aWVsZENvZGUiOiJBVSIsIkxhYmVsIjoiQXV0aG9yIn0seyJGaWVsZENvZGUi
+        OiJUSSIsIkxhYmVsIjoiVGl0bGUifSx7IkZpZWxkQ29kZSI6IlNVIiwiTGFi
+        ZWwiOiJTdWJqZWN0IFRlcm1zIn0seyJGaWVsZENvZGUiOiJTTyIsIkxhYmVs
+        IjoiU291cmNlIn0seyJGaWVsZENvZGUiOiJBQiIsIkxhYmVsIjoiQWJzdHJh
+        Y3QifSx7IkZpZWxkQ29kZSI6IklTIiwiTGFiZWwiOiJJU1NOIn0seyJGaWVs
+        ZENvZGUiOiJJQiIsIkxhYmVsIjoiSVNCTiJ9XSwiQXZhaWxhYmxlRXhwYW5k
+        ZXJzIjpbeyJJZCI6InJlbGF0ZWRzdWJqZWN0cyIsIkxhYmVsIjoiQXBwbHkg
+        ZXF1aXZhbGVudCBzdWJqZWN0cyIsIkFkZEFjdGlvbiI6ImFkZGV4cGFuZGVy
+        KHJlbGF0ZWRzdWJqZWN0cykiLCJEZWZhdWx0T24iOiJ5In0seyJJZCI6InRo
+        ZXNhdXJ1cyIsIkxhYmVsIjoiQXBwbHkgcmVsYXRlZCB3b3JkcyIsIkFkZEFj
+        dGlvbiI6ImFkZGV4cGFuZGVyKHRoZXNhdXJ1cykiLCJEZWZhdWx0T24iOiJu
+        In0seyJJZCI6ImZ1bGx0ZXh0IiwiTGFiZWwiOiJBbHNvIHNlYXJjaCB3aXRo
+        aW4gdGhlIGZ1bGwgdGV4dCBvZiB0aGUgYXJ0aWNsZXMiLCJBZGRBY3Rpb24i
+        OiJhZGRleHBhbmRlcihmdWxsdGV4dCkiLCJEZWZhdWx0T24iOiJ5In1dLCJB
+        dmFpbGFibGVMaW1pdGVycyI6W3siSWQiOiJGQyIsIkxhYmVsIjoiQ2F0YWxv
+        ZyBPbmx5IiwiVHlwZSI6InNlbGVjdCIsIkFkZEFjdGlvbiI6ImFkZGxpbWl0
+        ZXIoRkM6dmFsdWUpIiwiRGVmYXVsdE9uIjoibiIsIk9yZGVyIjoiMSJ9LHsi
+        SWQiOiJGVCIsIkxhYmVsIjoiTGlua2VkIEZ1bGwgVGV4dCIsIlR5cGUiOiJz
+        ZWxlY3QiLCJBZGRBY3Rpb24iOiJhZGRsaW1pdGVyKEZUOnZhbHVlKSIsIkRl
+        ZmF1bHRPbiI6Im4iLCJPcmRlciI6IjIifSx7IklkIjoiTEIiLCJMYWJlbCI6
+        IkxvY2F0aW9uIiwiVHlwZSI6Im11bHRpc2VsZWN0dmFsdWUiLCJMaW1pdGVy
+        VmFsdWVzIjpbeyJWYWx1ZSI6IkJhdG9uIFJvdWdlIENvbW11bml0eSBDb2xs
+        ZWdlIiwiQWRkQWN0aW9uIjoiYWRkbGltaXRlcihMQjpCYXRvbiBSb3VnZSBD
+        b21tdW5pdHkgQ29sbGVnZSkiLCJMaW1pdGVyVmFsdWVzIjpbeyJWYWx1ZSI6
+        IkFjYWRpYW4gQ2FtcHVzIExpYnJhcnkiLCJBZGRBY3Rpb24iOiJhZGRsaW1p
+        dGVyKExCOkJhdG9uIFJvdWdlIENvbW11bml0eSBDb2xsZWdlLUFjYWRpYW4g
+        Q2FtcHVzIExpYnJhcnkpIn0seyJWYWx1ZSI6IkJSQ0MgTWFnbm9saWEgTGli
+        cmFyeSIsIkFkZEFjdGlvbiI6ImFkZGxpbWl0ZXIoTEI6QmF0b24gUm91Z2Ug
+        Q29tbXVuaXR5IENvbGxlZ2UtQlJDQyBNYWdub2xpYSBMaWJyYXJ5KSJ9LHsi
+        VmFsdWUiOiJFbGVjdHJvbmljIFJlc291cmNlcyIsIkFkZEFjdGlvbiI6ImFk
+        ZGxpbWl0ZXIoTEI6QmF0b24gUm91Z2UgQ29tbXVuaXR5IENvbGxlZ2UtRWxl
+        Y3Ryb25pYyBSZXNvdXJjZXMpIn1dfSx7IlZhbHVlIjoiRURTIERlbW8gQ2F0
+        YWxvZyDigJMgVVMgLSBXaWxsaWFtc2J1cmcgUmVnaW9uYWwgTGlicmFyeSIs
+        IkFkZEFjdGlvbiI6ImFkZGxpbWl0ZXIoTEI6RURTIERlbW8gQ2F0YWxvZyDi
+        gJMgVVMgLSBXaWxsaWFtc2J1cmcgUmVnaW9uYWwgTGlicmFyeSkiLCJMaW1p
+        dGVyVmFsdWVzIjpbeyJWYWx1ZSI6IkphbWVzIENpdHkgQ291bnR5IExpYnJh
+        cnkiLCJBZGRBY3Rpb24iOiJhZGRsaW1pdGVyKExCOkVEUyBEZW1vIENhdGFs
+        b2cg4oCTIFVTIC0gV2lsbGlhbXNidXJnIFJlZ2lvbmFsIExpYnJhcnktSmFt
+        ZXMgQ2l0eSBDb3VudHkgTGlicmFyeSkifSx7IlZhbHVlIjoiTW9iaWxlIExp
+        YnJhcnkgU2VydmljZXMiLCJBZGRBY3Rpb24iOiJhZGRsaW1pdGVyKExCOkVE
+        UyBEZW1vIENhdGFsb2cg4oCTIFVTIC0gV2lsbGlhbXNidXJnIFJlZ2lvbmFs
+        IExpYnJhcnktTW9iaWxlIExpYnJhcnkgU2VydmljZXMpIn0seyJWYWx1ZSI6
+        IldpbGxpYW1zYnVyZyBMaWJyYXJ5IiwiQWRkQWN0aW9uIjoiYWRkbGltaXRl
+        cihMQjpFRFMgRGVtbyBDYXRhbG9nIOKAkyBVUyAtIFdpbGxpYW1zYnVyZyBS
+        ZWdpb25hbCBMaWJyYXJ5LVdpbGxpYW1zYnVyZyBMaWJyYXJ5KSJ9XX1dLCJE
+        ZWZhdWx0T24iOiJuIiwiT3JkZXIiOiIzIn0seyJJZCI6IlRJIiwiTGFiZWwi
+        OiJUaXRsZSIsIlR5cGUiOiJ0ZXh0IiwiQWRkQWN0aW9uIjoiYWRkbGltaXRl
+        cihUSTp2YWx1ZSkiLCJEZWZhdWx0T24iOiJuIiwiT3JkZXIiOiI0In0seyJJ
+        ZCI6IkFVIiwiTGFiZWwiOiJBdXRob3IiLCJUeXBlIjoidGV4dCIsIkFkZEFj
+        dGlvbiI6ImFkZGxpbWl0ZXIoQVU6dmFsdWUpIiwiRGVmYXVsdE9uIjoibiIs
+        Ik9yZGVyIjoiNSJ9LHsiSWQiOiJGVDEiLCJMYWJlbCI6IkF2YWlsYWJsZSBp
+        biBMaWJyYXJ5IENvbGxlY3Rpb24iLCJUeXBlIjoic2VsZWN0IiwiQWRkQWN0
+        aW9uIjoiYWRkbGltaXRlcihGVDE6dmFsdWUpIiwiRGVmYXVsdE9uIjoieSIs
+        Ik9yZGVyIjoiNiJ9LHsiSWQiOiJTTyIsIkxhYmVsIjoiU291cmNlIiwiVHlw
+        ZSI6InRleHQiLCJBZGRBY3Rpb24iOiJhZGRsaW1pdGVyKFNPOnZhbHVlKSIs
+        IkRlZmF1bHRPbiI6Im4iLCJPcmRlciI6IjcifSx7IklkIjoiRFQxIiwiTGFi
+        ZWwiOiJQdWJsaXNoZWQgRGF0ZSIsIlR5cGUiOiJ5bXJhbmdlIiwiQWRkQWN0
+        aW9uIjoiYWRkbGltaXRlcihEVDE6dmFsdWUpIiwiRGVmYXVsdE9uIjoibiIs
+        Ik9yZGVyIjoiOCJ9LHsiSWQiOiJSViIsIkxhYmVsIjoiUGVlciBSZXZpZXdl
+        ZCIsIlR5cGUiOiJzZWxlY3QiLCJBZGRBY3Rpb24iOiJhZGRsaW1pdGVyKFJW
+        OnZhbHVlKSIsIkRlZmF1bHRPbiI6Im4iLCJPcmRlciI6IjkifV0sIkF2YWls
+        YWJsZVNlYXJjaE1vZGVzIjpbeyJNb2RlIjoiYm9vbCIsIkxhYmVsIjoiQm9v
+        bGVhblwvUGhyYXNlIiwiRGVmYXVsdE9uIjoibiIsIkFkZEFjdGlvbiI6InNl
+        dHNlYXJjaG1vZGUoYm9vbCkifSx7Ik1vZGUiOiJhbGwiLCJMYWJlbCI6IkZp
+        bmQgYWxsIG15IHNlYXJjaCB0ZXJtcyIsIkRlZmF1bHRPbiI6InkiLCJBZGRB
+        Y3Rpb24iOiJzZXRzZWFyY2htb2RlKGFsbCkifSx7Ik1vZGUiOiJhbnkiLCJM
+        YWJlbCI6IkZpbmQgYW55IG9mIG15IHNlYXJjaCB0ZXJtcyIsIkRlZmF1bHRP
+        biI6Im4iLCJBZGRBY3Rpb24iOiJzZXRzZWFyY2htb2RlKGFueSkifSx7Ik1v
+        ZGUiOiJzbWFydCIsIkxhYmVsIjoiU21hcnRUZXh0IFNlYXJjaGluZyIsIkRl
+        ZmF1bHRPbiI6Im4iLCJBZGRBY3Rpb24iOiJzZXRzZWFyY2htb2RlKHNtYXJ0
+        KSJ9XSwiQXZhaWxhYmxlUmVsYXRlZENvbnRlbnQiOlt7IlR5cGUiOiJlbXAi
+        LCJMYWJlbCI6IkV4YWN0IE1hdGNoIFB1YmxpY2F0aW9uIiwiRGVmYXVsdE9u
+        IjoibiIsIkFkZEFjdGlvbiI6ImluY2x1ZGVyZWxhdGVkY29udGVudChlbXAp
+        In0seyJUeXBlIjoicnMiLCJMYWJlbCI6IlJlc2VhcmNoIFN0YXJ0ZXJzIiwi
+        RGVmYXVsdE9uIjoieSIsIkFkZEFjdGlvbiI6ImluY2x1ZGVyZWxhdGVkY29u
+        dGVudChycykifV0sIkF2YWlsYWJsZURpZFlvdU1lYW5PcHRpb25zIjpbeyJJ
+        ZCI6IkF1dG9TdWdnZXN0IiwiTGFiZWwiOiJEaWQgWW91IE1lYW4iLCJEZWZh
+        dWx0T24iOiJ5In0seyJJZCI6IkF1dG9Db3JyZWN0IiwiTGFiZWwiOiJBdXRv
+        IENvcnJlY3QiLCJEZWZhdWx0T24iOiJuIn1dfSwiVmlld1Jlc3VsdFNldHRp
+        bmdzIjp7IlJlc3VsdHNQZXJQYWdlIjoiMjAiLCJSZXN1bHRMaXN0VmlldyI6
+        ImJyaWVmIiwiSW5jbHVkZUltYWdlUXVpY2tWaWV3Ijp7IklkIjoiSW1hZ2VR
+        dWlja1ZpZXdSZXN1bHRzIiwiTGFiZWwiOiJJbWFnZSBRdWljayBWaWV3IFJl
+        c3VsdHMiLCJEZWZhdWx0T24iOiJuIn19LCJBcHBsaWNhdGlvblNldHRpbmdz
+        Ijp7IlNlc3Npb25UaW1lb3V0IjoiMzYwMCJ9LCJBcGlTZXR0aW5ncyI6eyJN
+        YXhSZWNvcmRKdW1wQWhlYWQiOiIyNTAifSwiRXhwb3J0Rm9ybWF0U2V0dGlu
+        Z3MiOnsiQXZhaWxhYmxlRm9ybWF0cyI6W3siSWQiOiJSSVMiLCJMYWJlbCI6
+        IlJJUyBGb3JtYXQifV19fQ==
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:45 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Search
+    body:
+      encoding: UTF-8
+      string: '{"SearchCriteria":{"Queries":[{"Term":"supercalifragilisticexpialidocious-supercalifragilisticexpialidocious"}],"SearchMode":"all","IncludeFacets":"n","FacetFilters":[],"Limiters":[],"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","fulltext"],"AutoCorrect":"n"},"RetrievalCriteria":{"View":"brief","ResultsPerPage":1,"PageNumber":1,"Highlight":null,"IncludeImageQuickView":false},"Actions":["GoToPage(1)"],"Comment":""}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      x-authenticationToken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:44 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      x-msg-correlid:
+      - cdeb99a9-fd61-437f-a45c-a1256f736bc1
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '59589866'
+      x-sessiontoken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      content-length:
+      - '2189'
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJTZWFyY2hSZXF1ZXN0Ijp7IlNlYXJjaENyaXRlcmlhIjp7IlF1ZXJpZXMi
+        Olt7IkJvb2xlYW5PcGVyYXRvciI6IkFORCIsIlRlcm0iOiJzdXBlcmNhbGlm
+        cmFnaWxpc3RpY2V4cGlhbGlkb2Npb3VzLXN1cGVyY2FsaWZyYWdpbGlzdGlj
+        ZXhwaWFsaWRvY2lvdXMifV0sIlNlYXJjaE1vZGUiOiJhbGwiLCJJbmNsdWRl
+        RmFjZXRzIjoibiIsIkV4cGFuZGVycyI6WyJmdWxsdGV4dCIsInJlbGF0ZWRz
+        dWJqZWN0cyJdLCJTb3J0IjoicmVsZXZhbmNlIiwiUmVsYXRlZENvbnRlbnQi
+        OlsicnMiXSwiQXV0b1N1Z2dlc3QiOiJuIiwiQXV0b0NvcnJlY3QiOiJuIn0s
+        IlJldHJpZXZhbENyaXRlcmlhIjp7IlZpZXciOiJicmllZiIsIlJlc3VsdHNQ
+        ZXJQYWdlIjoxLCJIaWdobGlnaHQiOiJ5IiwiSW5jbHVkZUltYWdlUXVpY2tW
+        aWV3IjoiZmFsc2UifSwiU2VhcmNoQ3JpdGVyaWFXaXRoQWN0aW9ucyI6eyJR
+        dWVyaWVzV2l0aEFjdGlvbiI6W3siUXVlcnkiOnsiQm9vbGVhbk9wZXJhdG9y
+        IjoiQU5EIiwiVGVybSI6InN1cGVyY2FsaWZyYWdpbGlzdGljZXhwaWFsaWRv
+        Y2lvdXMtc3VwZXJjYWxpZnJhZ2lsaXN0aWNleHBpYWxpZG9jaW91cyJ9LCJS
+        ZW1vdmVBY3Rpb24iOiJyZW1vdmVxdWVyeSgxKSJ9XSwiRXhwYW5kZXJzV2l0
+        aEFjdGlvbiI6W3siSWQiOiJmdWxsdGV4dCIsIlJlbW92ZUFjdGlvbiI6InJl
+        bW92ZWV4cGFuZGVyKGZ1bGx0ZXh0KSJ9LHsiSWQiOiJyZWxhdGVkc3ViamVj
+        dHMiLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcihyZWxhdGVkc3Vi
+        amVjdHMpIn1dfX0sIlNlYXJjaFJlc3VsdCI6eyJTdGF0aXN0aWNzIjp7IlRv
+        dGFsSGl0cyI6MCwiVG90YWxTZWFyY2hUaW1lIjoxMzQsIkRhdGFiYXNlcyI6
+        W3siSWQiOiJyemgiLCJMYWJlbCI6IkNJTkFITCBQbHVzIHdpdGggRnVsbCBU
+        ZXh0IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJidGgiLCJMYWJl
+        bCI6IkJ1c2luZXNzIFNvdXJjZSBDb21wbGV0ZSIsIlN0YXR1cyI6IjAiLCJI
+        aXRzIjowfSx7IklkIjoiYTloIiwiTGFiZWwiOiJBY2FkZW1pYyBTZWFyY2gg
+        Q29tcGxldGUiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6IjI3aCIs
+        IkxhYmVsIjoiQWJzdHJhY3RzIGluIFNvY2lhbCBHZXJvbnRvbG9neSIsIlN0
+        YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiY2F0MDAyNTRhIiwiTGFiZWwi
+        OiJCYXRvbiBSb3VnZSBDb21tdW5pdHkgQ29sbGVnZSIsIlN0YXR1cyI6IjAi
+        LCJIaXRzIjowfSx7IklkIjoiZWRzYXJ4IiwiTGFiZWwiOiJhclhpdiIsIlN0
+        YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzYXNwIiwiTGFiZWwiOiJB
+        bGV4YW5kZXIgU3RyZWV0IFByZXNzIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9
+        LHsiSWQiOiJlZHNlbGMiLCJMYWJlbCI6IlNjb3B1c8KuIiwiU3RhdHVzIjoi
+        MCIsIkhpdHMiOjB9LHsiSWQiOiJhc3UiLCJMYWJlbCI6IkFydCAmIEFyY2hp
+        dGVjdHVyZSBTb3VyY2UiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6
+        ImNhdDAyNTE2YSIsIkxhYmVsIjoiRURTIERlbW8gQ2F0YWxvZyDigJMgVVMg
+        LSBXaWxsaWFtc2J1cmcgUmVnaW9uYWwgTGlicmFyeSIsIlN0YXR1cyI6IjAi
+        LCJIaXRzIjowfSx7IklkIjoiZWRzZ2FvIiwiTGFiZWwiOiJBY2FkZW1pYyBP
+        bmVGaWxlIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlcnMiLCJM
+        YWJlbCI6IlJlc2VhcmNoIFN0YXJ0ZXJzIiwiU3RhdHVzIjoiMCIsIkhpdHMi
+        OjB9LHsiSWQiOiJlZHNjbHQiLCJMYWJlbCI6IkNsaW5pY2FsVHJpYWxzLmdv
+        diIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoicHN5aCIsIkxhYmVs
+        IjoiUHN5Y0lORk8iLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVk
+        c2d2ciIsIkxhYmVsIjoiR2FsZSBWaXJ0dWFsIFJlZmVyZW5jZSBMaWJyYXJ5
+        IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJhcGciLCJMYWJlbCI6
+        IkFzc29jaWF0ZWQgUHJlc3MgSW1hZ2VzIENvbGxlY3Rpb24iLCJTdGF0dXMi
+        OiIwIiwiSGl0cyI6MH0seyJJZCI6ImFwcyIsIkxhYmVsIjoiQXBwbGllZCBT
+        Y2llbmNlICYgVGVjaG5vbG9neSBTb3VyY2UgVWx0aW1hdGUiLCJTdGF0dXMi
+        OiIwIiwiSGl0cyI6MH0seyJJZCI6ImY1aCIsIkxhYmVsIjoiTWFzdGVyRklM
+        RSBQcmVtaWVyIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9XX0sIkRhdGEiOnsi
+        UmVjb3JkRm9ybWF0IjoiRVAgRGlzcGxheSJ9fX0=
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:45 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/Retrieve
+    body:
+      encoding: UTF-8
+      string: '{"DbId":"edsgao","An":"edsgcl.536108598","HighlightTerms":null,"EbookPreferredFormat":"ebook-pdf"}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      x-authenticationToken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:44 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      x-msg-correlid:
+      - d09ddb1f-ff0a-4f00-a6b8-13b9908d3e5a
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '59589866'
+      x-sessiontoken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      content-length:
+      - '8810'
+    body:
+      encoding: UTF-8
+      string: '{"Record":{"ResultId":1,"Header":{"DbId":"edsgao","DbLabel":"Academic
+        OneFile","An":"edsgcl.536108598","RelevancyScore":"1090","PubType":"Academic
+        Journal","PubTypeId":"academicJournal"},"PLink":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=edsgao&AN=edsgcl.536108598&authtype=uid&user=<EDS_USER>&<EDS_PASS>=<EDS_PASS>&profile=eds","CustomLinks":[{"Url":"http:\/\/illiad.fake.edu\/illiad\/?","Name":"ILL","Category":"ill","Text":"Interlibrary
+        Loan"}],"FullText":{"Text":{"Availability":"0"},"CustomLinks":[{"Url":"http:\/\/go.galegroup.com\/ps\/i.do?v=2.1&u=[LOCATIONID]&it=r&id=GALE|A536108598&p=AONE&sw=w","Name":"EDS
+        - Gale Cengage Learning (Academic OneFile, General OneFile, Gale Virtual Reference
+        Library)","Category":"fullText","Text":"Full Text from Gale","Icon":"http:\/\/gss.ebscohost.com\/efrierson\/img\/fulltext.png"}]},"Items":[{"Name":"Title","Label":"Title","Group":"Ti","Data":"Climate
+        change projections over China using regional climate models forced by two
+        CMIP5 global models. Part I: evaluation of historical simulations"},{"Name":"Author","Label":"Authors","Group":"Au","Data":"&lt;searchLink
+        fieldCode=&quot;AR&quot; term=&quot;%22Hui%2C+Pinhong%22&quot;&gt;Hui, Pinhong&lt;\/searchLink&gt;&lt;br
+        \/&gt;&lt;searchLink fieldCode=&quot;AR&quot; term=&quot;%22Tang%2C+Jianping%22&quot;&gt;Tang,
+        Jianping&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;AR&quot;
+        term=&quot;%22Wang%2C+Shuyu%22&quot;&gt;Wang, Shuyu&lt;\/searchLink&gt;&lt;br
+        \/&gt;&lt;searchLink fieldCode=&quot;AR&quot; term=&quot;%22Niu%2C+Xiaorui%22&quot;&gt;Niu,
+        Xiaorui&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;AR&quot;
+        term=&quot;%22Zong%2C+Peishu%22&quot;&gt;Zong, Peishu&lt;\/searchLink&gt;&lt;br
+        \/&gt;&lt;searchLink fieldCode=&quot;AR&quot; term=&quot;%22Dong%2C+Xinning%22&quot;&gt;Dong,
+        Xinning&lt;\/searchLink&gt;"},{"Name":"TitleSource","Label":"Source","Group":"Src","Data":"International
+        Journal of Climatology. April 2018, Vol. 38 Issue S1, e57, 21 p."},{"Name":"Publisher","Label":"Publisher
+        Information","Group":"PubInfo","Data":"Wiley Subscription Services, Inc."},{"Name":"DatePubCY","Label":"Publication
+        Year","Group":"Date","Data":"2018"},{"Name":"Subject","Label":"Subject Terms","Group":"Su","Data":"&lt;searchLink
+        fieldCode=&quot;DE&quot; term=&quot;%22Weather+--+Models%22&quot;&gt;Weather
+        -- Models&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Weather+--+Analysis%22&quot;&gt;Weather -- Analysis&lt;\/searchLink&gt;&lt;br
+        \/&gt;&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22Meteorological+research+--+Models%22&quot;&gt;Meteorological
+        research -- Models&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Meteorological+research+--+Analysis%22&quot;&gt;Meteorological
+        research -- Analysis&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Global+temperature+changes+--+Models%22&quot;&gt;Global temperature
+        changes -- Models&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Global+temperature+changes+--+Analysis%22&quot;&gt;Global temperature
+        changes -- Analysis&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Precipitation+%28Meteorology%29+--+Models%22&quot;&gt;Precipitation
+        (Meteorology) -- Models&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Precipitation+%28Meteorology%29+--+Analysis%22&quot;&gt;Precipitation
+        (Meteorology) -- Analysis&lt;\/searchLink&gt;&lt;br \/&gt;&lt;searchLink fieldCode=&quot;DE&quot;
+        term=&quot;%22Climate+models+--+Models%22&quot;&gt;Climate models -- Models&lt;\/searchLink&gt;&lt;br
+        \/&gt;&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22Climate+models+--+Analysis%22&quot;&gt;Climate
+        models -- Analysis&lt;\/searchLink&gt;"},{"Name":"Abstract","Label":"Description","Group":"Ab","Data":"To
+        purchase or authenticate to the full-text of this article, please visit this
+        link: http:\/\/onlinelibrary.wiley.com\/doi\/10.1002\/joc.5351\/abstract Byline:
+        Pinhong Hui,Jianping Tang, Shuyu Wang,Xiaorui Niu, Peishu Zong, Xinning Dong
+        Keywords: dynamical downscaling; climate in China; different RCMs; multi-driving
+        fields ABSTRACT Forced by two Coupled Model Intercomparison Project phase
+        5 (CMIP5) global models, EC-EARTH and IPSL-CM5A, both regional climate models
+        (RCMs) of Regional Climate Model system version 4 (RegCM4) and Weather Research
+        and Forecasting (WRF) are used to perform regional climate simulations over
+        China for 1980-2000. In general, the simulations in Institute Pierre Simon
+        Laplace-Climate Model version 5A (IPSL-CM5A) are improved by the downscaling
+        of many aspects of both precipitation and surface air temperature, with improvements
+        including the significant enhancement of the resolution and presentation of
+        regional processes in the RCMs. However, the improvement over EC-EARTH is
+        limited. In addition, the added values also depend on the seasons, geophysical
+        locations over the country and the variables presented. For the mean climates,
+        both RCMs are able to exhibit better annual and winter precipitation measurements
+        when downscaling IPSL-CM5A over most areas. The superiority of the RCMs over
+        IPSL-CM5A for the surface air temperature is only obtained in summer. Seasonal
+        cycles of both precipitation and surface air temperature are well simulated
+        by all the models. The RCMs succeed in improving the seasonal cycles of precipitation
+        over both GCMs in most sub-regions, but the seasonal cycles of temperature
+        are only improved over IPSL-CM5A. In addition, the downscaling demonstrates
+        more consistent probability distribution functions (PDFs) of precipitation
+        with those of the observations in most sub-regions. For extreme precipitation,
+        the RCMs provide outstanding convective wet days (CWD) with reduced biases
+        and enhanced presentations of spatial patterns. For the other three extreme
+        precipitation indices, the improvement of the RCMs is relatively weak, with
+        superior over the IPSL-CM5A in several areas. The extreme temperature indices
+        are better modelled by the RCMs, except for the minimum values of the daily
+        minimum temperatures (TNn), with greater added values over IPSL-CM5A than
+        those over EC-EARTH. Comparing two RCMs, WRF shows advantages in the downscaling
+        precipitation, while RegCM4 works better for the surface air temperature."},{"Name":"TypeDocument","Label":"Document
+        Type","Group":"TypDoc","Data":"Report"},{"Name":"Language","Label":"Language","Group":"Lang","Data":"English"},{"Name":"ISSN","Label":"ISSN","Group":"ISSN","Data":"0899-8418"},{"Name":"DOI","Label":"DOI","Group":"ID","Data":"10.1002\/joc.5351"},{"Name":"Copyright","Label":"Rights","Group":"Cpyrght","Data":"Copyright
+        2018 Gale, Cengage Learning.  All rights reserved.&lt;br \/&gt;COPYRIGHT 2018
+        Wiley Subscription Services, Inc."},{"Name":"AN","Label":"Accession Number","Group":"ID","Data":"edsgcl.536108598"}],"RecordInfo":{"BibRecord":{"BibEntity":{"Identifiers":[{"Type":"doi","Value":"10.1002\/joc.5351"}],"Languages":[{"Text":"English"}],"PhysicalDescription":{"Pagination":{"PageCount":"21","StartPage":"57"}},"Subjects":[{"SubjectFull":"Weather
+        -- Models","Type":"general"},{"SubjectFull":"Weather -- Analysis","Type":"general"},{"SubjectFull":"Meteorological
+        research -- Models","Type":"general"},{"SubjectFull":"Meteorological research
+        -- Analysis","Type":"general"},{"SubjectFull":"Global temperature changes
+        -- Models","Type":"general"},{"SubjectFull":"Global temperature changes --
+        Analysis","Type":"general"},{"SubjectFull":"Precipitation (Meteorology) --
+        Models","Type":"general"},{"SubjectFull":"Precipitation (Meteorology) -- Analysis","Type":"general"},{"SubjectFull":"Climate
+        models -- Models","Type":"general"},{"SubjectFull":"Climate models -- Analysis","Type":"general"}],"Titles":[{"TitleFull":"Climate
+        change projections over China using regional climate models forced by two
+        CMIP5 global models. Part I: evaluation of historical simulations","Type":"main"}]},"BibRelationships":{"HasContributorRelationships":[{"PersonEntity":{"Name":{"NameFull":"Hui,
+        Pinhong"}}},{"PersonEntity":{"Name":{"NameFull":"Tang, Jianping"}}},{"PersonEntity":{"Name":{"NameFull":"Wang,
+        Shuyu"}}},{"PersonEntity":{"Name":{"NameFull":"Niu, Xiaorui"}}},{"PersonEntity":{"Name":{"NameFull":"Zong,
+        Peishu"}}},{"PersonEntity":{"Name":{"NameFull":"Dong, Xinning"}}}],"IsPartOfRelationships":[{"BibEntity":{"Dates":[{"D":"01","M":"04","Type":"published","Y":"2018"}],"Identifiers":[{"Type":"issn-print","Value":"08998418"},{"Type":"issn-locals","Value":"edsgaoNFT"}],"Numbering":[{"Type":"volume","Value":"38"},{"Type":"issue","Value":"S1"}],"Titles":[{"TitleFull":"International
+        Journal of Climatology","Type":"main"}]}}]}}},"IllustrationInfo":{}}}'
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:46 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/ExportFormat?an=edsgcl.536108598&dbid=edsgao&format=ris
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      x-authenticationToken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:44 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '59589866'
+      x-sessiontoken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      content-length:
+      - '4281'
+    body:
+      encoding: UTF-8
+      string: '{"Format":"RIS","Label":"RIS Format","Data":"TY  - JOUR\u000d\u000aTI  -
+        Climate change projections over China using regional climate models forced
+        by two CMIP5 global models. Part I: evaluation of historical simulations\u000d\u000aID  -
+        Accession Number: edsgcl.536108598\u000d\u000aAU  - Hui, Pinhong\u000d\u000aAU  -
+        Tang, Jianping\u000d\u000aAU  - Wang, Shuyu\u000d\u000aAU  - Niu, Xiaorui\u000d\u000aAU  -
+        Zong, Peishu\u000d\u000aAU  - Dong, Xinning\u000d\u000aPY  - 2018\u000d\u000aY1  -
+        2018\/\/\/\u000d\u000aM3  - Report\u000d\u000aJO  - International Journal
+        of Climatology\u000d\u000aVO  - 38\u000d\u000aIS  - S1\u000d\u000aSP  - 57\u000d\u000aPB  -
+        Wiley Subscription Services, Inc.\u000d\u000aSN  - 0899-8418\u000d\u000aAB  -
+        To purchase or authenticate to the full-text of this article, please visit
+        this link: http:\/\/onlinelibrary.wiley.com\/doi\/10.1002\/joc.5351\/abstract
+        Byline: Pinhong Hui,Jianping Tang, Shuyu Wang,Xiaorui Niu, Peishu Zong, Xinning
+        Dong Keywords: dynamical downscaling; climate in China; different RCMs; multi-driving
+        fields ABSTRACT Forced by two Coupled Model Intercomparison Project phase
+        5 (CMIP5) global models, EC-EARTH and IPSL-CM5A, both regional climate models
+        (RCMs) of Regional Climate Model system version 4 (RegCM4) and Weather Research
+        and Forecasting (WRF) are used to perform regional climate simulations over
+        China for 1980-2000. In general, the simulations in Institute Pierre Simon
+        Laplace-Climate Model version 5A (IPSL-CM5A) are improved by the downscaling
+        of many aspects of both precipitation and surface air temperature, with improvements
+        including the significant enhancement of the resolution and presentation of
+        regional processes in the RCMs. However, the improvement over EC-EARTH is
+        limited. In addition, the added values also depend on the seasons, geophysical
+        locations over the country and the variables presented. For the mean climates,
+        both RCMs are able to exhibit better annual and winter precipitation measurements
+        when downscaling IPSL-CM5A over most areas. The superiority of the RCMs over
+        IPSL-CM5A for the surface air temperature is only obtained in summer. Seasonal
+        cycles of both precipitation and surface air temperature are well simulated
+        by all the models. The RCMs succeed in improving the seasonal cycles of precipitation
+        over both GCMs in most sub-regions, but the seasonal cycles of temperature
+        are only improved over IPSL-CM5A. In addition, the downscaling demonstrates
+        more consistent probability distribution functions (PDFs) of precipitation
+        with those of the observations in most sub-regions. For extreme precipitation,
+        the RCMs provide outstanding convective wet days (CWD) with reduced biases
+        and enhanced presentations of spatial patterns. For the other three extreme
+        precipitation indices, the improvement of the RCMs is relatively weak, with
+        superior over the IPSL-CM5A in several areas. The extreme temperature indices
+        are better modelled by the RCMs, except for the minimum values of the daily
+        minimum temperatures (TNn), with greater added values over IPSL-CM5A than
+        those over EC-EARTH. Comparing two RCMs, WRF shows advantages in the downscaling
+        precipitation, while RegCM4 works better for the surface air temperature.\u000d\u000aKW  -
+        Weather -- Models\u000d\u000aKW  - Weather -- Analysis\u000d\u000aKW  - Meteorological
+        research -- Models\u000d\u000aKW  - Meteorological research -- Analysis\u000d\u000aKW  -
+        Global temperature changes -- Models\u000d\u000aKW  - Global temperature changes
+        -- Analysis\u000d\u000aKW  - Precipitation (Meteorology) -- Models\u000d\u000aKW  -
+        Precipitation (Meteorology) -- Analysis\u000d\u000aKW  - Climate models --
+        Models\u000d\u000aKW  - Climate models -- Analysis\u000d\u000aDO  - 10.1002\/joc.5351\u000d\u000aN1  -
+        Item Citation: International Journal of Climatology. April 2018, Vol. 38 Issue
+        S1, e57, 21 p.\u000d\u000aN1  - Accession Number: edsgcl.536108598; Publication
+        Type: Academic Journal; Source: International Journal of Climatology; Language:
+        English; Publication Date: 20180401; Rights: Copyright 2018 Gale, Cengage
+        Learning. All rights reserved., COPYRIGHT 2018 Wiley Subscription Services,
+        Inc.; Imprint: Wiley Subscription Services, Inc.\u000d\u000aDP  - EBSCOhost\u000d\u000aDB  -
+        edsgao\u000d\u000aER  - \u000d\u000a"}'
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:46 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc="}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - ee39a8c9-a738-4c46-ade0-9bd16c14cf69.k23n8UipoerIjDe0oVzPEszwlXxfpcioxtDLsCS6Ahc=
+      x-authenticationToken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Jul 2018 22:05:44 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - AC7Z-vuKVM1GV3sD3rpdO940XIXGIFtY-0F7IkN1c3RvbWVySWQiOiJlcmljZnJpZXIiLCJHcm91cElkIjoibWFpbiJ9
+      x-msg-correlid:
+      - cc1f959b-33f2-45d7-9b8d-cc69c7e27c20
+      x-powered-by:
+      - ASP.NET
+      content-length:
+      - '20'
+    body:
+      encoding: UTF-8
+      string: '{"IsSuccessful":"y"}'
+    http_version: 
+  recorded_at: Wed, 25 Jul 2018 22:05:46 GMT
+recorded_with: VCR 3.0.3

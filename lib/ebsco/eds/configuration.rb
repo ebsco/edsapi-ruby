@@ -25,6 +25,7 @@ module EBSCO
             :info_url => '/edsapi/rest/Info',
             :search_url => '/edsapi/rest/Search',
             :retrieve_url => '/edsapi/rest/Retrieve',
+            :citation_url => '/edsapi/rest/ExportFormat',
             :user_agent => 'EBSCO EDS GEM v0.0.1',
             :interface_id => 'edsapi_ruby_gem',
             :log => 'faraday.log',
