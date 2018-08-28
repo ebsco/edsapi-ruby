@@ -320,4 +320,19 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  # def test_record_with_no_searchlinks
+  #   VCR.use_cassette('record_test/profile_2/test_record_with_no_searchlinks') do
+  #     session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+  #     if session.dbid_in_profile 'edswss'
+  #       record = session.retrieve({dbid: 'edswss', an: '000306525900003'})
+  #       puts 'RECORD: ' +  record.inspect
+  #       puts 'SUBJECTS: ' + record.eds_subjects.to_s
+  #       assert record.eds_subjects.include?('&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22DISTANCE-DECAY%22&quot;&gt;DISTANCE-DECAY&lt;/searchLink&gt;')
+  #     else
+  #       puts "WARNING: skipping test_record_with_no_searchlinks, edswss db isn't in the profile."
+  #     end
+  #     session.end
+  #   end
+  # end
+
 end

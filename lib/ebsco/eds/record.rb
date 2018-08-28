@@ -191,6 +191,7 @@ module EBSCO
             get_item_data({name: 'Subject', label: 'Subject Terms', group: 'Su'}) ||
             get_item_data({name: 'Subject', label: 'Subject Indexing', group: 'Su'}) ||
             get_item_data({name: 'Subject', label: 'Subject Category', group: 'Su'}) ||
+            get_item_data({name: 'Subject', label: 'KeyWords Plus', group: 'Su'}) ||
             bib_subjects
         @eds_subjects_geographic =
             get_item_data({name: 'SubjectGeographic', label: 'Geographic Terms', group: 'Su'}) ||
@@ -898,6 +899,7 @@ module EBSCO
           if item['Group']
             group = item['Group']
             if group == 'Su'
+              data = add_subject_searchlinks(data)
               # translate searchLink field codes to DE?
               if @all_subjects_search_links
                 data = data.gsub(/(searchLink fieldCode=&quot;)([A-Z]+)/, '\1DE')
@@ -959,6 +961,17 @@ module EBSCO
 
       def set_citation_ris(val)
         @eds_citation_ris = val
+      end
+
+      # add searchlinks when they don't exist
+      def add_subject_searchlinks(data)
+        subjects = data
+        unless data.include? 'searchLink'
+          subjects = subjects.split('&lt;br /&gt;').map do |su|
+            '&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22' + su + '%22&quot;&gt;' + su + '&lt;/searchLink&gt;'
+          end.join('&lt;br /&gt;')
+        end
+        subjects
       end
 
     end # Class Record

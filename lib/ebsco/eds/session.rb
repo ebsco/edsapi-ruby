@@ -311,7 +311,7 @@ module EBSCO
           record_ris = get_citation({dbid: dbid, an: an, format: 'ris'})
           unless record_ris.nil?
             record.set_citation_ris(record_ris.data)
-            puts 'RECORD CITATION: ' + record.eds_citation_ris
+            # puts 'RECORD CITATION: ' + record.eds_citation_ris
           end
         end
         # puts 'RECORD: ' + record.inspect
