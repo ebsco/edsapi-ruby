@@ -4,7 +4,6 @@ A Ruby interface to the EBSCO Discovery Services API.
 
 [![Build Status](https://travis-ci.org/ebsco/edsapi-ruby.svg)](https://travis-ci.org/ebsco/edsapi-ruby)
 [![codecov](https://codecov.io/gh/ebsco/edsapi-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/ebsco/edsapi-ruby/branch/master)
-[![Dependency Status](https://gemnasium.com/badges/github.com/ebsco/edsapi-ruby.svg)](https://gemnasium.com/github.com/ebsco/edsapi-ruby)
 [![Gem Version](https://img.shields.io/gem/v/ebsco-eds.svg?style=flat)](http://rubygems.org/gems/ebsco-eds)
 
 ## Dependencies
@@ -33,13 +32,13 @@ Or install it yourself as:
 - Configurable auto-suggest or 'Did you mean' support
 - Configurable auto-correct support
 - Quick-view images can be included in results, when available - [screencast](https://youtu.be/HxtWEq_Fhks)
+- RIS citations are now included in the record response
 
 ## Documentation
 
 - [Configuration](https://github.com/ebsco/edsapi-ruby/wiki/Configuration)
 - [Quick Start](https://github.com/ebsco/edsapi-ruby/wiki/Quick-Start)
 - [Blacklight Support](https://github.com/ebsco/edsapi-ruby/wiki/Solr-and-Blacklight-Support)
-- [Citation Formats (Experimental)](https://github.com/ebsco/edsapi-ruby/wiki/Citation-Formats-(Experimental))
 
 ### Models
 
