@@ -5,7 +5,7 @@ http_interactions:
     uri: https://eds-api.ebscohost.com/authservice/rest/uidauth
     body:
       encoding: UTF-8
-      string: '{"UserId":"<EDS_USER>","Password":"<EDS_PASS>","InterfaceId":"edsapi_ruby_gem"}'
+      string: '{"UserId":"<EDS_USER>","Password":"<EDS_USER>","InterfaceId":"edsapi_ruby_gem"}'
     headers:
       Content-Type:
       - application/json;charset=UTF-8
@@ -27,7 +27,7 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:52 GMT
+      - Tue, 18 Sep 2018 20:05:01 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
@@ -38,9 +38,9 @@ http_interactions:
       - '131'
     body:
       encoding: UTF-8
-      string: '{"AuthToken":"ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
+      string: '{"AuthToken":"ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:53 GMT
+  recorded_at: Tue, 18 Sep 2018 20:05:02 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
@@ -55,7 +55,7 @@ http_interactions:
       x-sessionToken:
       - ''
       x-authenticationToken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -68,28 +68,28 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:52 GMT
+      - Tue, 18 Sep 2018 20:05:01 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 22b5def1-4230-4ba5-b7c2-e31e15303c1a
+      - 8f95395e-6d50-4e25-a7e5-751f50b31bd3
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - "-1802653346"
+      - "-610181521"
       x-sessiontoken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       content-length:
-      - '102'
+      - '100'
     body:
       encoding: UTF-8
-      string: '{"SessionToken":"486daa64-9276-4699-a145-93149f85dc37.ujzUG\/aL5ODFM\/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ="}'
+      string: '{"SessionToken":"78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4="}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:53 GMT
+  recorded_at: Tue, 18 Sep 2018 20:05:02 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/Info
@@ -102,9 +102,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       x-authenticationToken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -117,23 +117,23 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:53 GMT
+      - Tue, 18 Sep 2018 20:05:01 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 75844837-46b4-4612-a59c-e63c15264c79
+      - eb4b9559-1d44-499a-b93b-bc5d6e05cb0b
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - "-1802653346"
+      - "-610181521"
       x-sessiontoken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       content-length:
-      - '5138'
+      - '24481'
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -665,26 +665,40 @@ http_interactions:
         ZWwiOiJEaWQgWW91IE1lYW4iLCJEZWZhdWx0T24iOiJ5In0seyJJZCI6IkF1
         dG9Db3JyZWN0IiwiTGFiZWwiOiJBdXRvIENvcnJlY3QiLCJEZWZhdWx0T24i
         OiJ5In1dfSwiVmlld1Jlc3VsdFNldHRpbmdzIjp7IlJlc3VsdHNQZXJQYWdl
-        IjoiMjAiLCJSZXN1bHRMaXN0VmlldyI6ImJyaWVmIn0sIkFwcGxpY2F0aW9u
-        U2V0dGluZ3MiOnsiU2Vzc2lvblRpbWVvdXQiOiIyODgwMCJ9LCJBcGlTZXR0
-        aW5ncyI6eyJNYXhSZWNvcmRKdW1wQWhlYWQiOiIyNTAifX0=
+        IjoiMjAiLCJSZXN1bHRMaXN0VmlldyI6ImJyaWVmIiwiSW5jbHVkZUltYWdl
+        UXVpY2tWaWV3Ijp7IklkIjoiSW1hZ2VRdWlja1ZpZXdSZXN1bHRzIiwiTGFi
+        ZWwiOiJJbWFnZSBRdWljayBWaWV3IFJlc3VsdHMiLCJEZWZhdWx0T24iOiJu
+        In19LCJBcHBsaWNhdGlvblNldHRpbmdzIjp7IlNlc3Npb25UaW1lb3V0Ijoi
+        Mjg4MDAifSwiQXBpU2V0dGluZ3MiOnsiTWF4UmVjb3JkSnVtcEFoZWFkIjoi
+        MjUwIn0sIkV4cG9ydEZvcm1hdFNldHRpbmdzIjp7IkF2YWlsYWJsZUZvcm1h
+        dHMiOlt7IklkIjoiUklTIiwiTGFiZWwiOiJSSVMgRm9ybWF0In1dfSwiQ2l0
+        YXRpb25TdHlsZVNldHRpbmdzIjp7IkF2YWlsYWJsZVN0eWxlcyI6W3siSWQi
+        OiJhYm50IiwiTGFiZWwiOiJBQk5UIn0seyJJZCI6ImFtYSIsIkxhYmVsIjoi
+        QU1BIn0seyJJZCI6ImFwYSIsIkxhYmVsIjoiQVBBIn0seyJJZCI6ImNoaWNh
+        Z28iLCJMYWJlbCI6IkNoaWNhZ29cL1R1cmFiaWFuOiBBdXRob3ItRGF0ZSJ9
+        LHsiSWQiOiJoYXJ2YXJkIiwiTGFiZWwiOiJIYXJ2YXJkIn0seyJJZCI6Imhh
+        cnZhcmRhdXN0cmFsaWFuIiwiTGFiZWwiOiJIYXJ2YXJkOiBBdXN0cmFsaWFu
+        In0seyJJZCI6Im1sYSIsIkxhYmVsIjoiTUxBIn0seyJJZCI6InR1cmFiaWFu
+        IiwiTGFiZWwiOiJDaGljYWdvXC9UdXJhYmlhbjogSHVtYW5pdGllcyJ9LHsi
+        SWQiOiJ2YW5jb3V2ZXIiLCJMYWJlbCI6IlZhbmNvdXZlclwvSUNNSkUifV19
+        fQ==
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:53 GMT
+  recorded_at: Tue, 18 Sep 2018 20:05:02 GMT
 - request:
     method: post
     uri: https://eds-api.ebscohost.com/edsapi/rest/Search
     body:
       encoding: UTF-8
-      string: '{"SearchCriteria":{"Queries":[{"Term":"supercalifragilisticexpialidocious-supercalifragilisticexpialidocious"}],"SearchMode":"all","IncludeFacets":"n","FacetFilters":[],"Limiters":[],"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"],"AutoCorrect":"y"},"RetrievalCriteria":{"View":"brief","ResultsPerPage":1,"PageNumber":1,"Highlight":null},"Actions":["GoToPage(1)"],"Comment":""}'
+      string: '{"SearchCriteria":{"Queries":[{"Term":"supercalifragilisticexpialidocious-supercalifragilisticexpialidocious"}],"SearchMode":"all","IncludeFacets":"n","FacetFilters":[],"Limiters":[],"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"],"AutoCorrect":"y"},"RetrievalCriteria":{"View":"brief","ResultsPerPage":1,"PageNumber":1,"Highlight":null,"IncludeImageQuickView":false},"Actions":["GoToPage(1)"],"Comment":""}'
     headers:
       Content-Type:
       - application/json;charset=UTF-8
       Accept:
       - application/json
       x-sessionToken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       x-authenticationToken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -697,23 +711,23 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:53 GMT
+      - Tue, 18 Sep 2018 20:05:00 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - aedfb7c2-e929-42b9-b202-65ccd1e3cc2b
+      - ef1b8c66-3461-4c2f-9aa7-3e29c27da89f
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - "-1802653346"
+      - "-610181521"
       x-sessiontoken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       content-length:
-      - '837'
+      - '2051'
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -725,45 +739,46 @@ http_interactions:
         cyIsInJlbGF0ZWRzdWJqZWN0cyJdLCJTb3J0IjoicmVsZXZhbmNlIiwiUmVs
         YXRlZENvbnRlbnQiOlsicnMiXSwiQXV0b1N1Z2dlc3QiOiJuIiwiQXV0b0Nv
         cnJlY3QiOiJuIn0sIlJldHJpZXZhbENyaXRlcmlhIjp7IlZpZXciOiJicmll
-        ZiIsIlJlc3VsdHNQZXJQYWdlIjoxLCJIaWdobGlnaHQiOiJ5In0sIlNlYXJj
-        aENyaXRlcmlhV2l0aEFjdGlvbnMiOnsiUXVlcmllc1dpdGhBY3Rpb24iOlt7
-        IlF1ZXJ5Ijp7IkJvb2xlYW5PcGVyYXRvciI6IkFORCIsIlRlcm0iOiJzdXBl
-        cmNhbGlmcmFnaWxpc3RpY2V4cGlhbGlkb2Npb3VzLXN1cGVyY2FsaWZyYWdp
-        bGlzdGljZXhwaWFsaWRvY2lvdXMifSwiUmVtb3ZlQWN0aW9uIjoicmVtb3Zl
-        cXVlcnkoMSkifV0sIkV4cGFuZGVyc1dpdGhBY3Rpb24iOlt7IklkIjoiZnVs
-        bHRleHQiLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcihmdWxsdGV4
-        dCkifSx7IklkIjoidGhlc2F1cnVzIiwiUmVtb3ZlQWN0aW9uIjoicmVtb3Zl
-        ZXhwYW5kZXIodGhlc2F1cnVzKSJ9LHsiSWQiOiJyZWxhdGVkc3ViamVjdHMi
-        LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcihyZWxhdGVkc3ViamVj
-        dHMpIn1dfX0sIlNlYXJjaFJlc3VsdCI6eyJTdGF0aXN0aWNzIjp7IlRvdGFs
-        SGl0cyI6MCwiVG90YWxTZWFyY2hUaW1lIjo4OCwiRGF0YWJhc2VzIjpbeyJJ
-        ZCI6Im5sZWJrIiwiTGFiZWwiOiJlQm9vayBDb2xsZWN0aW9uIChFQlNDT2hv
-        c3QpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlMDAweG5hIiwi
-        TGFiZWwiOiJlQm9vayBBY2FkZW1pYyBDb2xsZWN0aW9uIChFQlNDT2hvc3Qp
-        IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNhcnQiLCJMYWJl
-        bCI6IkFSVHN0b3IgRGlnaXRhbCBMaWJyYXJ5IiwiU3RhdHVzIjoiMCIsIkhp
-        dHMiOjB9LHsiSWQiOiJlNzAweG5hIiwiTGFiZWwiOiJlQm9vayBQdWJsaWMg
-        TGlicmFyeSBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoiMCIs
-        IkhpdHMiOjB9LHsiSWQiOiJjYXQwMjA2MGEiLCJMYWJlbCI6IkVEUyBEZW1v
-        IENhdGFsb2cg4oCTIFVTIC0gVSBvZiBHZW9yZ2lhIiwiU3RhdHVzIjoiMCIs
-        IkhpdHMiOjB9LHsiSWQiOiJlcnMiLCJMYWJlbCI6IlJlc2VhcmNoIFN0YXJ0
-        ZXJzIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJhc24iLCJMYWJl
-        bCI6IkFjYWRlbWljIFNlYXJjaCBVbHRpbWF0ZSIsIlN0YXR1cyI6IjAiLCJI
-        aXRzIjowfSx7IklkIjoiZWRzcGRoIiwiTGFiZWwiOiJQc3ljQVJUSUNMRVMi
-        LCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6InBzeWgiLCJMYWJlbCI6
-        IlBzeWNJTkZPIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwZGgi
-        LCJMYWJlbCI6IlBzeWNBUlRJQ0xFUyIsIlN0YXR1cyI6IjAiLCJIaXRzIjow
-        fSx7IklkIjoiZWRzbm1qIiwiTGFiZWwiOiJOYXhvcyBNdXNpYyBMaWJyYXJ5
-        IEphenoiLCJTdGF0dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVkc2NyYyIs
-        IkxhYmVsIjoiQ3JlZG8gUmVmZXJlbmNlIiwiU3RhdHVzIjoiMCIsIkhpdHMi
-        OjB9LHsiSWQiOiJlZHNobGQiLCJMYWJlbCI6IkRpZ2l0YWwgQWNjZXNzIHRv
-        IFNjaG9sYXJzaGlwIGF0IEhhcnZhcmQgKERBU0gpIiwiU3RhdHVzIjoiMCIs
-        IkhpdHMiOjB9LHsiSWQiOiJlZHNiYXMiLCJMYWJlbCI6IkJBU0UiLCJTdGF0
-        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6InBpeCIsIkxhYmVsIjoiUGxheSBJ
-        bmRleCAoSC5XLiBXaWxzb24pIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9XX0s
-        IkRhdGEiOnsiUmVjb3JkRm9ybWF0IjoiRVAgRGlzcGxheSJ9fX0=
+        ZiIsIlJlc3VsdHNQZXJQYWdlIjoxLCJIaWdobGlnaHQiOiJ5IiwiSW5jbHVk
+        ZUltYWdlUXVpY2tWaWV3IjoiZmFsc2UifSwiU2VhcmNoQ3JpdGVyaWFXaXRo
+        QWN0aW9ucyI6eyJRdWVyaWVzV2l0aEFjdGlvbiI6W3siUXVlcnkiOnsiQm9v
+        bGVhbk9wZXJhdG9yIjoiQU5EIiwiVGVybSI6InN1cGVyY2FsaWZyYWdpbGlz
+        dGljZXhwaWFsaWRvY2lvdXMtc3VwZXJjYWxpZnJhZ2lsaXN0aWNleHBpYWxp
+        ZG9jaW91cyJ9LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVxdWVyeSgxKSJ9XSwi
+        RXhwYW5kZXJzV2l0aEFjdGlvbiI6W3siSWQiOiJmdWxsdGV4dCIsIlJlbW92
+        ZUFjdGlvbiI6InJlbW92ZWV4cGFuZGVyKGZ1bGx0ZXh0KSJ9LHsiSWQiOiJ0
+        aGVzYXVydXMiLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcih0aGVz
+        YXVydXMpIn0seyJJZCI6InJlbGF0ZWRzdWJqZWN0cyIsIlJlbW92ZUFjdGlv
+        biI6InJlbW92ZWV4cGFuZGVyKHJlbGF0ZWRzdWJqZWN0cykifV19fSwiU2Vh
+        cmNoUmVzdWx0Ijp7IlN0YXRpc3RpY3MiOnsiVG90YWxIaXRzIjowLCJUb3Rh
+        bFNlYXJjaFRpbWUiOjEzOSwiRGF0YWJhc2VzIjpbeyJJZCI6Im5sZWJrIiwi
+        TGFiZWwiOiJlQm9vayBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVz
+        IjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlMDAweG5hIiwiTGFiZWwiOiJlQm9v
+        ayBBY2FkZW1pYyBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoi
+        MCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNhcnQiLCJMYWJlbCI6IkFSVHN0b3Ig
+        RGlnaXRhbCBMaWJyYXJ5IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQi
+        OiJlNzAweG5hIiwiTGFiZWwiOiJlQm9vayBQdWJsaWMgTGlicmFyeSBDb2xs
+        ZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
+        SWQiOiJjYXQwMjA2MGEiLCJMYWJlbCI6IkVEUyBEZW1vIENhdGFsb2cg4oCT
+        IFVTIC0gVSBvZiBHZW9yZ2lhIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
+        SWQiOiJlcnMiLCJMYWJlbCI6IlJlc2VhcmNoIFN0YXJ0ZXJzIiwiU3RhdHVz
+        IjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJhc24iLCJMYWJlbCI6IkFjYWRlbWlj
+        IFNlYXJjaCBVbHRpbWF0ZSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7Iklk
+        IjoiZWRzcGRoIiwiTGFiZWwiOiJQc3ljQVJUSUNMRVMiLCJTdGF0dXMiOiIw
+        IiwiSGl0cyI6MH0seyJJZCI6InBzeWgiLCJMYWJlbCI6IlBzeWNJTkZPIiwi
+        U3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwZGgiLCJMYWJlbCI6IlBz
+        eWNBUlRJQ0xFUyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRz
+        bm1qIiwiTGFiZWwiOiJOYXhvcyBNdXNpYyBMaWJyYXJ5IEphenoiLCJTdGF0
+        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVkc2NyYyIsIkxhYmVsIjoiQ3Jl
+        ZG8gUmVmZXJlbmNlIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJl
+        ZHNobGQiLCJMYWJlbCI6IkRpZ2l0YWwgQWNjZXNzIHRvIFNjaG9sYXJzaGlw
+        IGF0IEhhcnZhcmQgKERBU0gpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
+        SWQiOiJlZHNiYXMiLCJMYWJlbCI6IkJBU0UiLCJTdGF0dXMiOiIwIiwiSGl0
+        cyI6MH0seyJJZCI6InBpeCIsIkxhYmVsIjoiUGxheSBJbmRleCAoSC5XLiBX
+        aWxzb24pIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9XX0sIkRhdGEiOnsiUmVj
+        b3JkRm9ybWF0IjoiRVAgRGlzcGxheSJ9fX0=
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:53 GMT
+  recorded_at: Tue, 18 Sep 2018 20:05:03 GMT
 - request:
     method: post
     uri: https://eds-api.ebscohost.com/edsapi/rest/Retrieve
@@ -776,9 +791,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       x-authenticationToken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -791,27 +806,29 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:53 GMT
+      - Tue, 18 Sep 2018 20:05:02 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - e491a7df-43b3-4539-985d-6dfddfe23941
+      - 34900661-ba46-437f-a09b-16154b287965
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - "-1802653346"
+      - "-610181521"
       x-sessiontoken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       content-length:
-      - '3466'
+      - '8378'
     body:
-      encoding: ASCII-8BIT
+      encoding: UTF-8
       string: '{"Record":{"ResultId":1,"Header":{"DbId":"asn","DbLabel":"Academic
-        Search Ultimate","An":"118411536","PubType":"Conference","PubTypeId":"conference"},"PLink":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536","FullText":{"Links":[{"Type":"pdflink","Url":"http:\/\/content.ebscohost.com\/ContentServer.asp?EbscoContent=dGJyMNXb4kSeqK440dvuOLCmr0%2Bep65Ssa24TbGWxWXS&ContentCustomer=dGJyMODf6oTr2emB7OS5hd%2Ff7FPj2vFF3%2Bbn&T=P&P=AN&S=R&D=asn&K=118411536"}],"Text":{"Availability":"0"}},"Items":[{"Name":"Title","Label":"Title","Group":"Ti","Data":"ELECTRICAL
+        Search Ultimate","An":"118411536","PubType":"Conference","PubTypeId":"conference"},"PLink":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536","CustomLinks":[{"Url":"http:\/\/gss.ebscohost.com\/dpodboy\/widgets\/noodle\/index.php?language=en&op=file&issn=1314-2704&isbn=&journal=Proceedings%20of%20the%20International%20Multidisciplinary%20Scientific%20GeoConference%20SGEM&volume=3&issue=&date=2016-07-01&year=2016&AN=118411536&doctype=Article&pmid=&title=ELECTRICAL%20SIGNATURES%20OF%20MUD%20VOLCANOES%20CASE%20STUDIES%20FROM%20ROMANIA.&book=&author=Chitea%2C%20Florina&authors=Chitea%2C%20Florina&starpage=467&pages=467-474&pagect=8&sici=1314-2704%2820160701%293%3A%3C467%3APOTIMS118411536%3E2.0.TX%3B2-2&dbcode=asn&database=Academic%20Search%20Ultimate&doi=&pubtype=Conference%20Proceeding&dissertation=&division=&institute=&conference=&doi=&urlip=","Name":"RIS
+        Export","Category":"other","Text":"Export to RIS","MouseOverText":"Export
+        to RIS"}],"FullText":{"Links":[{"Type":"pdflink","Url":"http:\/\/content.ebscohost.com\/ContentServer.asp?EbscoContent=dGJyMNLr40Sep7Y40dvuOLCmr1Cep7RSrqu4SLCWxWXS&ContentCustomer=dGJyMODf6oTr2emB7OS5hd%2Ff7FPj2vFF3%2Bbn&T=P&P=AN&S=R&D=asn&K=118411536"}],"Text":{"Availability":"0"}},"Items":[{"Name":"Title","Label":"Title","Group":"Ti","Data":"ELECTRICAL
         SIGNATURES OF MUD VOLCANOES CASE STUDIES FROM ROMANIA."},{"Name":"Author","Label":"Authors","Group":"Au","Data":"&lt;searchLink
         fieldCode=&quot;AR&quot; term=&quot;%22Chitea%2C+Florina%22&quot;&gt;Chitea,
         Florina&lt;\/searchLink&gt;&lt;relatesTo&gt;1,2&lt;\/relatesTo&gt;"},{"Name":"TitleSource","Label":"Source","Group":"Src","Data":"&lt;searchLink
@@ -882,24 +899,24 @@ http_interactions:
         of viscosity","Type":"general"},{"SubjectFull":"EUROPE","Type":"general"}],"Titles":[{"TitleFull":"ELECTRICAL
         SIGNATURES OF MUD VOLCANOES CASE STUDIES FROM ROMANIA.","Type":"main"}]},"BibRelationships":{"HasContributorRelationships":[{"PersonEntity":{"Name":{"NameFull":"Chitea,
         Florina"}}}],"IsPartOfRelationships":[{"BibEntity":{"Dates":[{"D":"01","M":"07","Text":"2016","Type":"published","Y":"2016"}],"Identifiers":[{"Type":"issn-print","Value":"13142704"}],"Numbering":[{"Type":"volume","Value":"3"}],"Titles":[{"TitleFull":"Proceedings
-        of the International Multidisciplinary Scientific GeoConference SGEM","Type":"main"}]}}]}}}}}'
+        of the International Multidisciplinary Scientific GeoConference SGEM","Type":"main"}]}}]}}},"IllustrationInfo":{}}}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:53 GMT
+  recorded_at: Tue, 18 Sep 2018 20:05:03 GMT
 - request:
-    method: post
-    uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/ExportFormat?an=118411536&dbid=asn&format=ris
     body:
-      encoding: UTF-8
-      string: '{"SessionToken":"486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ="}'
+      encoding: US-ASCII
+      string: ''
     headers:
       Content-Type:
       - application/json;charset=UTF-8
       Accept:
       - application/json
       x-sessionToken:
-      - 486daa64-9276-4699-a145-93149f85dc37.ujzUG/aL5ODFM/9zQpUUlq0xv0uH8nveYU5ZqMojFNQ=
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
       x-authenticationToken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -912,15 +929,125 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:53 GMT
+      - Tue, 18 Sep 2018 20:05:02 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZhkAJfvt0OJxMIkQvnqmXcNBzWflnChEl7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 71ebd08c-fcbd-49e6-9ce9-fa76166521cd
+      - 2712ec66-d3ec-42ea-abe4-a5c3e7a1d828
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - "-610181521"
+      x-sessiontoken:
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
+      content-length:
+      - '4823'
+    body:
+      encoding: UTF-8
+      string: '{"Format":"RIS","Label":"RIS Format","Data":"TY  - JOUR\u000d\u000aAU  -
+        Chitea, Florina\u000d\u000aT1  - ELECTRICAL SIGNATURES OF MUD VOLCANOES CASE
+        STUDIES FROM ROMANIA.\u000d\u000aJO  - Proceedings of the International Multidisciplinary
+        Scientific GeoConference SGEM\u000d\u000aJF  - Proceedings of the International
+        Multidisciplinary Scientific GeoConference SGEM\u000d\u000aY1  - 2016\/07\/\/\u000d\u000aVL  -
+        3\u000d\u000aM3  - Article\u000d\u000aSP  - 467\u000d\u000aEP  - 474\u000d\u000aPB  -
+        STEF92 Technology Ltd.\u000d\u000aSN  - 13142704\u000d\u000aAB  - Historical
+        records and recent research works have documented in Romania the existence
+        of over 90 locations with mud volcanoes occurrences. Different geomorphological
+        forms are encountered, being mainly determined by the viscosity of the extruded
+        material (a mixture of water and fine-grained material of deep origin) and
+        of the gas emission rates. Despite this, only few locations are notorious,
+        mainly due to the spectacular landscape created by the ejected material: Paclele
+        Mari and Paclele Mici. These two sites are placed in the area of the Berca-Arbanasi
+        anticline (Carpathian Foreedep), being part of a lineament of approx. 15 km
+        length, along which these natural phenomena can be observed and even traced
+        on satellite images. In other locations, this natural hazard has a lower intensity
+        in terms of ejected slurry amounts, yet strong gas emissions can be sometimes
+        encountered. Of special interest in terms of gas discharges are the Homorod
+        Mud Volcanoes (Transylvanian Depression). While for most mud volcanoes it
+        is very common to release important amounts of methane and carbon dioxide,
+        in the case of the Homorod Mud Volcano measurements have revealed that N2
+        was the dominant gas component. Differences between the mud volcanoes of Berca
+        and Homorod were also noticed in terms of the expelled liquid properties (the
+        Homorod water outflow being less mineralized) and ejected material viscosity
+        (generally higher for the mud volcanoes of the Berca-Arbanasi lineament).
+        For other mud volcanism occurrences in Romania, the database on the extruded
+        slurry physical properties is scarce and for most locations there is a lack
+        of geophysical data, their deep structure being unknown. Recently, geoelectrical
+        measurements (consisting of vertical electrical soundings -VES, and electrical
+        resistivity tomography -ERT) were performed for the first time in the area
+        of the Homorod mud volcano occurrence, aiming to evaluate the extruded material
+        electrical signature and the possibility of a non-invasive evaluation of the
+        near surface mud chambers, as well as to track the feeder channel. The VES
+        and ERT measurements have outlined that within the first 50 m below the ground
+        surface, no shallow-depth accumulation chambers occurred. The eruption triggered
+        by gas accumulation seems to be branched in the near-surface region, in one
+        location the upward migration path having an almost vertical direction, while
+        in others it appears to be slant. [ABSTRACT FROM AUTHOR]\u000d\u000aAB  -
+        Copyright of Proceedings of the International Multidisciplinary Scientific
+        GeoConference SGEM is the property of STEF92 Technology Ltd. and its content
+        may not be copied or emailed to multiple sites or posted to a listserv without
+        the copyright holder''s express written permission. However, users may print,
+        download, or email articles for individual use. This abstract may be abridged.
+        No warranty is given about the accuracy of the copy. Users should refer to
+        the original published version of the material for the full abstract. (Copyright
+        applies to all Abstracts.)\u000d\u000aKW  - GEOMORPHOLOGICAL research\u000d\u000aKW  -
+        VOLCANOES\u000d\u000aKW  - GASES from plants\u000d\u000aKW  - PRESERVATION
+        of historic records\u000d\u000aKW  - MEASUREMENT of viscosity\u000d\u000aKW  -
+        EUROPE\u000d\u000aKW  - Berca-Arbanasi mud volcanoes\u000d\u000aKW  - geophysical
+        measurements for mud volcano\u000d\u000aKW  - Homorod mud volcano\u000d\u000aKW  -
+        mud volcano occurrences\u000d\u000aN1  - Accession Number: 118411536; Chitea,
+        Florina 1,2; Affiliation:  1: Faculty of Geology and Geophysics, University
+        of Bucharest, Romania  2: Institute of Geodynamics of Romanian Academy, Romania;
+        Source Info: 2016, Vol. 3, p467; Subject Term: GEOMORPHOLOGICAL research;
+        Subject Term: VOLCANOES; Subject Term: GASES from plants; Subject Term: PRESERVATION
+        of historic records; Subject Term: MEASUREMENT of viscosity; Subject Term:
+        EUROPE; Author-Supplied Keyword: Berca-Arbanasi mud volcanoes; Author-Supplied
+        Keyword: geophysical measurements for mud volcano; Author-Supplied Keyword:
+        Homorod mud volcano; Author-Supplied Keyword: mud volcano occurrences; Number
+        of Pages: 8p; Document Type: Article\u000d\u000aDP  - EBSCOhost\u000d\u000aDB  -
+        asn\u000d\u000aER  - \u000d\u000a"}'
+    http_version: 
+  recorded_at: Tue, 18 Sep 2018 20:05:03 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4="}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 78dc3469-05e9-422c-bcab-aeb4563898c4.Wdkc+nWOZUlFP1KVoOq8aVGT2z9S4A3ZOizVQmV5gb4=
+      x-authenticationToken:
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 Sep 2018 20:05:01 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ADAjMLI4xdVOxTmxw-qBg7ELBVRCj1uhYXZ7IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - 8baf8f37-8066-4530-935a-acb25aba3633
       x-powered-by:
       - ASP.NET
       content-length:
@@ -929,5 +1056,5 @@ http_interactions:
       encoding: UTF-8
       string: '{"IsSuccessful":"y"}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:53 GMT
-recorded_with: VCR 3.0.3
+  recorded_at: Tue, 18 Sep 2018 20:05:03 GMT
+recorded_with: VCR 2.9.3
