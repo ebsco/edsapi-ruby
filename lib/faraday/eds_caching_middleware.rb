@@ -19,7 +19,7 @@ module Faraday
 
       initialize_store
 
-      @cacheable_paths = %w(/edsapi/rest/Info /authservice/rest/uidauth /authservice/rest/uidauth /edsapi/rest/Retrieve? /edsapi/rest/Search?)
+      @cacheable_paths = %w(/edsapi/rest/Info /authservice/rest/uidauth /authservice/rest/uidauth /edsapi/rest/Retrieve? /edsapi/rest/Search? /edsapi/rest/ExportFormat /edsapi/rest/CitationStyles)
 
     end
 
@@ -67,6 +67,16 @@ module Faraday
 
       if uri.request_uri.include?('/edsapi/rest/Retrieve?')
         custom_expires_in = 1800 # 30 minutes
+        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+      end
+
+      if uri.request_uri.include?('/edsapi/rest/ExportFormat')
+        custom_expires_in = 86400 # 24 hours
+        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+      end
+
+      if uri.request_uri.include?('/edsapi/rest/CitationStyles')
+        custom_expires_in = 86400 # 24 hours
         info "#{uri} - Setting custom expires: #{custom_expires_in}"
       end
 

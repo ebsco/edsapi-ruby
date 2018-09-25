@@ -23,7 +23,8 @@ class EdsApiTests < Minitest::Test
       refute_nil session.info.did_you_mean('AutoSuggest')
       refute_nil session.info.default_auto_correct
       refute_nil session.info.did_you_mean('AutoCorrect')
-
+      refute_nil session.info.available_citation_styles
+      refute_nil session.info.available_citation_exports
       assert session.research_starters_match_in_profile
       assert !session.publication_match_in_profile
 

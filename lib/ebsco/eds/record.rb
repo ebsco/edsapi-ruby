@@ -81,7 +81,8 @@ module EBSCO
           :eds_publication_id,
           :eds_publication_is_searchable,
           :eds_publication_scope_note,
-          :eds_citation_ris
+          :eds_citation_exports,
+          :eds_citation_styles
       ]
 
       KNOWN_ITEM_NAMES = %w(
@@ -791,13 +792,24 @@ module EBSCO
               var != :@bib_entity &&
               var != :@bib_part &&
               var != :@bib_relationships &&
-              var != :@image_quick_view_items
+              var != :@image_quick_view_items &&
+              var != :@eds_citation_exports &&
+              var != :@eds_citation_styles
             hash[var.to_s.sub(/^@/, '')] = instance_variable_get(var)
           end
         end
+
         if all_links
           hash['eds_fulltext_link'] = { 'id' => @eds_database_id + '__' + @eds_accession_number,
                                         'links' => all_links }
+        end
+
+        # add citation styles and exports
+        unless @eds_citation_exports.nil?
+          hash['eds_citation_exports'] = @eds_citation_exports.items
+        end
+        unless @eds_citation_styles.nil?
+          hash['eds_citation_styles'] = @eds_citation_styles.items
         end
 
         hash
@@ -959,8 +971,12 @@ module EBSCO
         end
       end
 
-      def set_citation_ris(val)
-        @eds_citation_ris = val
+      def set_citation_exports(val)
+        @eds_citation_exports = val
+      end
+
+      def set_citation_styles(val)
+        @eds_citation_styles = val
       end
 
       # add searchlinks when they don't exist

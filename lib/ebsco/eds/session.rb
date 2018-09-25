@@ -303,34 +303,77 @@ module EBSCO
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
         payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
         retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
-        #retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
-        #retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
-        record = EBSCO::EDS::Record.new(retrieve_response, @config)
-        # add citation ris to record if not in guest mode
+       record = EBSCO::EDS::Record.new(retrieve_response, @config)
+        # add citation exports to record if not in guest mode
         if !@guest
-          record_ris = get_citation({dbid: dbid, an: an, format: 'ris'})
-          unless record_ris.nil?
-            record.set_citation_ris(record_ris.data)
-            # puts 'RECORD CITATION: ' + record.eds_citation_ris
+          record_citation_exports = get_citation_exports({dbid: dbid, an: an, format: @config[:citation_exports_formats]})
+          unless record_citation_exports.nil?
+            record.set_citation_exports(record_citation_exports)
+          end
+          record_citation_styles = get_citation_styles({dbid: dbid, an: an, format: @config[:citation_styles_formats]})
+          unless record_citation_styles.nil?
+            record.set_citation_styles(record_citation_styles)
           end
         end
-        # puts 'RECORD: ' + record.inspect
         record
       end
 
       # fetch the citation from the citation rest endpoint
-      def get_citation(dbid:, an:, format: 'ris')
+      def get_citation_exports(dbid:, an:, format: 'all')
         # only available as non-guest otherwise 148 error
         if !@guest
-          payload = { dbid: dbid, an: an, format: format }
-          citation_response = do_request(:get, path: @config[:citation_url], payload: payload)
-          # puts 'CITATION RESPONSE:' + citation_response.inspect
-          citation = EBSCO::EDS::Citation.new(citation_response, @config)
-          # puts 'CITATION DATA: ' + citation.data
-          citation
+          begin
+            citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
+            citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
+          rescue EBSCO::EDS::BadRequest
+            nil
+          end
         else
           nil
         end
+      end
+
+      # fetch the citation from the citation rest endpoint
+      def get_citation_styles(dbid:, an:, format: 'all')
+        # only available as non-guest otherwise 148 error
+        if !@guest
+          begin
+            citation_styles_params = "?an=#{an}&dbid=#{dbid}&styles=#{format}"
+            citation_styles_response = do_request(:get, path: @config[:citation_styles_url] + citation_styles_params)
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_styles_response, eds_config: @config)
+          rescue EBSCO::EDS::BadRequest
+            nil
+          end
+        else
+          nil
+        end
+      end
+
+      # get citation styles for a list of result ids
+      def get_citation_styles_list(id_list: [], format: 'all')
+        citations = []
+        if id_list.any?
+          id_list.each { |id|
+            dbid = id.split('__',2).first
+            accession = id.split('__',2).last
+            citations.push get_citation_styles(dbid: dbid, an: accession, format: format)
+          }
+        end
+        citations
+      end
+
+      # get citation exports for a list of result ids
+      def get_citation_exports_list(id_list: [], format: 'all')
+        citations = []
+        if id_list.any?
+          id_list.each { |id|
+            dbid = id.split('__',2).first
+            accession = id.split('__',2).last
+            citations.push get_citation_exports(dbid: dbid, an: accession, format: format)
+          }
+        end
+        citations
       end
 
       # Create a result set with just the record before and after the current detailed record
