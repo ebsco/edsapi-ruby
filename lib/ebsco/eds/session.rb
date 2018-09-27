@@ -320,34 +320,60 @@ module EBSCO
 
       # fetch the citation from the citation rest endpoint
       def get_citation_exports(dbid:, an:, format: 'all')
-        # only available as non-guest otherwise 148 error
-        if !@guest
-          begin
-            citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
-            citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
-            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
-          rescue EBSCO::EDS::BadRequest
-            nil
+       begin
+         # only available as non-guest otherwise 148 error
+          if !@guest
+            create_session_token_non_guest
           end
-        else
-          nil
+          citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
+          citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
+          if !@guest
+            create_session_token_non_guest
+          end
+          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
+        rescue EBSCO::EDS::BadRequest => e
+          custom_error_message = JSON.parse e.message.gsub('=>', ':')
+          # ErrorNumber 112 - Invalid Argument Value
+          # ErrorNumber 132 - Record not found
+          if custom_error_message['ErrorNumber'] == '112'
+            unknown_export_format = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Invalid citation export format"}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_export_format, eds_config: @config)
+          elsif custom_error_message['ErrorNumber'] == '132'
+            record_not_found = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Record not found"}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: record_not_found, eds_config: @config)
+          else
+            unknown_error = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
+          end
         end
+        # else
+        #   requires_non_guest_mode = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Citations not available in guest mode"}
+        #   EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: requires_non_guest_mode, eds_config: @config)
+        # end
       end
 
       # fetch the citation from the citation rest endpoint
       def get_citation_styles(dbid:, an:, format: 'all')
-        # only available as non-guest otherwise 148 error
-        if !@guest
-          begin
-            citation_styles_params = "?an=#{an}&dbid=#{dbid}&styles=#{format}"
-            citation_styles_response = do_request(:get, path: @config[:citation_styles_url] + citation_styles_params)
-            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_styles_response, eds_config: @config)
-          rescue EBSCO::EDS::BadRequest
-            nil
+        begin
+          # only available as non-guest otherwise 148 error
+          if !@guest
+            create_session_token_non_guest
           end
-        else
-          nil
+          citation_styles_params = "?an=#{an}&dbid=#{dbid}&styles=#{format}"
+          citation_styles_response = do_request(:get, path: @config[:citation_styles_url] + citation_styles_params)
+          if !@guest
+            create_session_token_non_guest
+          end
+          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_styles_response, eds_config: @config)
+        rescue EBSCO::EDS::BadRequest => e
+          custom_error_message = JSON.parse e.message.gsub('=>', ':')
+          unknown_error = {"Id"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
+          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
         end
+        # else
+        #   requires_non_guest_mode = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Citations not available in guest mode"}
+        #   EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: requires_non_guest_mode, eds_config: @config)
+        # end
       end
 
       # get citation styles for a list of result ids
@@ -1095,6 +1121,12 @@ module EBSCO
         resp = do_request(:get, path: @config[:create_session_url] +
             '?profile=' + @profile + '&guest=' + guest_string +
             '&displaydatabasename=y')
+        @session_token = resp['SessionToken']
+      end
+
+      def create_session_token_non_guest
+        resp = do_request(:get, path: @config[:create_session_url] +
+            '?profile=' + @profile + '&guest=n&displaydatabasename=y')
         @session_token = resp['SessionToken']
       end
 

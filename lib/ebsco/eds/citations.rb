@@ -65,6 +65,10 @@ module EBSCO
             item['data'] = JSON.parse(citation_result['Data'].to_json)
           end
 
+          if citation_result.key? 'Error'
+            item['error'] = JSON.parse(citation_result['Error'].to_json)
+          end
+
           @items.push item
 
         end

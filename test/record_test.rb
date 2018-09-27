@@ -315,7 +315,7 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'eds_api', decode_sanitize_html: true})
       if session.dbid_in_profile 'edsgao'
         record = session.retrieve({dbid: 'edsgao', an: 'edsgcl.536108598'})
-        assert record.eds_citation_ris.include?('AU  - Hui, Pinhong')
+        assert record.eds_citation_exports.items.first['data'].include?('AU  - Hui, Pinhong')
       else
         puts "WARNING: skipping test_record_with_citation_ris, edsgao db isn't in the profile."
       end
