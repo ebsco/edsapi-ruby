@@ -322,15 +322,16 @@ module EBSCO
       def get_citation_exports(dbid:, an:, format: 'all')
        begin
          # only available as non-guest otherwise 148 error
-          if !@guest
-            create_session_token_non_guest
-          end
-          citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
-          citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
-          if !@guest
-            create_session_token_non_guest
-          end
-          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
+         do_toggle = @guest
+         if do_toggle
+           toggle_guest
+         end
+         citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
+         citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
+         if do_toggle
+           toggle_guest
+         end
+         EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
         rescue EBSCO::EDS::BadRequest => e
           custom_error_message = JSON.parse e.message.gsub('=>', ':')
           # ErrorNumber 112 - Invalid Argument Value
@@ -346,23 +347,21 @@ module EBSCO
             EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
           end
         end
-        # else
-        #   requires_non_guest_mode = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Citations not available in guest mode"}
-        #   EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: requires_non_guest_mode, eds_config: @config)
-        # end
       end
 
       # fetch the citation from the citation rest endpoint
       def get_citation_styles(dbid:, an:, format: 'all')
         begin
           # only available as non-guest otherwise 148 error
-          if !@guest
-            create_session_token_non_guest
+          do_toggle = @guest
+          if do_toggle
+            toggle_guest
           end
           citation_styles_params = "?an=#{an}&dbid=#{dbid}&styles=#{format}"
           citation_styles_response = do_request(:get, path: @config[:citation_styles_url] + citation_styles_params)
-          if !@guest
-            create_session_token_non_guest
+          do_toggle = @guest
+          if do_toggle
+            toggle_guest
           end
           EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_styles_response, eds_config: @config)
         rescue EBSCO::EDS::BadRequest => e
@@ -370,11 +369,7 @@ module EBSCO
           unknown_error = {"Id"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
           EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
         end
-        # else
-        #   requires_non_guest_mode = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Citations not available in guest mode"}
-        #   EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: requires_non_guest_mode, eds_config: @config)
-        # end
-      end
+     end
 
       # get citation styles for a list of result ids
       def get_citation_styles_list(id_list: [], format: 'all')
@@ -1124,10 +1119,9 @@ module EBSCO
         @session_token = resp['SessionToken']
       end
 
-      def create_session_token_non_guest
-        resp = do_request(:get, path: @config[:create_session_url] +
-            '?profile=' + @profile + '&guest=n&displaydatabasename=y')
-        @session_token = resp['SessionToken']
+      def toggle_guest
+        @guest = @guest ? false : true
+        create_session_token
       end
 
       # helper methods
