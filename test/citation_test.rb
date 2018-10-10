@@ -213,5 +213,14 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_citation_as_guest
+    VCR.use_cassette('citation_test/profile_1/test_citation_as_guest') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: true, profile: 'eds-api'})
+      puts session.inspect
+      # citation_list = session.get_citation_exports_list(id_list: ['asn__108974507', 'cat02060a__d.uga.3690122'])
+      # assert citation_list.count == 2
+      session.end
+    end
+  end
 
 end

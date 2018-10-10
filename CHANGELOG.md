@@ -13,11 +13,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 ### Security
 
-## [1.0.1] - 2018-08-24
+## [1.0.1] - 2018-10-10
 ### Added
 - Citation styles/exports are added to Records
 - Retrieve citation styles/exports for a Record ID or list of Record IDs
 - Retrieve a list of available citation styles/exports from Info
+- Citation styles/exports available in guest mode
 ### Fixed
 - Double-unescapes data with an ephtml section (sul-dlss/SearchWorks #1504)
 - Adds searchlinks to subject items when they don't exist #80 (sul-dlss/SearchWorks #1791)
