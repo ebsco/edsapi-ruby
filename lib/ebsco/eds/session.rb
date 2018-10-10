@@ -28,6 +28,7 @@ module EBSCO
       attr_accessor :auth_token # :nodoc:
       # The session token. This is passed along in the x-sessionToken HTTP header.
       attr_accessor :session_token # :nodoc:
+      attr_accessor :citation_token # :nodoc:
       # The session configuration.
       attr_reader :config
 
@@ -67,6 +68,7 @@ module EBSCO
       def initialize(options = {})
 
         @session_token = ''
+        @citation_token = ''
         @auth_token = ''
         @config = {}
         @guest = true
@@ -161,17 +163,25 @@ module EBSCO
         else
           @session_token = create_session_token
         end
+
+        if options.key? :citation_token
+          @citation_token = options[:citation_token]
+        else
+          @citation_token = create_citation_token
+        end
+
         @info = EBSCO::EDS::Info.new(do_request(:get, path: @config[:info_url]), @config)
         @current_page = 0
         @search_options = nil
 
         if @debug
           if options.key? :caller
-            puts 'CREATE SESSION CALLER: ' + options[:caller].inspect
-            puts 'CALLER OPTIONS: ' + options.inspect
+            puts '*** CREATE SESSION CALLER: ' + options[:caller].inspect
+            puts '*** CALLER OPTIONS: ' + options.inspect
           end
-          puts 'AUTH TOKEN: ' + @auth_token.inspect
-          puts 'SESSION TOKEN: ' + @session_token.inspect
+          puts '*** AUTH TOKEN: ' + @auth_token.inspect
+          puts '*** SESSION TOKEN: ' + @session_token.inspect
+          puts '*** CITATION TOKEN: ' + @citation_token.inspect
         end
 
       end
@@ -303,34 +313,79 @@ module EBSCO
       def retrieve(dbid:, an:, highlight: nil, ebook: 'ebook-pdf')
         payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
         retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
-        #retrieve_params = "?an=#{an}&dbid=#{dbid}&ebookpreferredformat=#{ebook}"
-        #retrieve_response = do_request(:get, path: @config[:retrieve_url] + retrieve_params)
         record = EBSCO::EDS::Record.new(retrieve_response, @config)
-        # add citation ris to record if not in guest mode
-        if !@guest
-          record_ris = get_citation({dbid: dbid, an: an, format: 'ris'})
-          unless record_ris.nil?
-            record.set_citation_ris(record_ris.data)
-            puts 'RECORD CITATION: ' + record.eds_citation_ris
-          end
+        record_citation_exports = get_citation_exports({dbid: dbid, an: an, format: @config[:citation_exports_formats]})
+        unless record_citation_exports.nil?
+          record.set_citation_exports(record_citation_exports)
         end
-        # puts 'RECORD: ' + record.inspect
+        record_citation_styles = get_citation_styles({dbid: dbid, an: an, format: @config[:citation_styles_formats]})
+        unless record_citation_styles.nil?
+          record.set_citation_styles(record_citation_styles)
+        end
         record
       end
 
       # fetch the citation from the citation rest endpoint
-      def get_citation(dbid:, an:, format: 'ris')
-        # only available as non-guest otherwise 148 error
-        if !@guest
-          payload = { dbid: dbid, an: an, format: format }
-          citation_response = do_request(:get, path: @config[:citation_url], payload: payload)
-          # puts 'CITATION RESPONSE:' + citation_response.inspect
-          citation = EBSCO::EDS::Citation.new(citation_response, @config)
-          # puts 'CITATION DATA: ' + citation.data
-          citation
-        else
-          nil
+      def get_citation_exports(dbid:, an:, format: 'all')
+       begin
+         # only available as non-guest otherwise 148 error
+         citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
+         citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
+         EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
+        rescue EBSCO::EDS::BadRequest => e
+          custom_error_message = JSON.parse e.message.gsub('=>', ':')
+          # ErrorNumber 112 - Invalid Argument Value
+          # ErrorNumber 132 - Record not found
+          if custom_error_message['ErrorNumber'] == '112'
+            unknown_export_format = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Invalid citation export format"}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_export_format, eds_config: @config)
+          elsif custom_error_message['ErrorNumber'] == '132'
+            record_not_found = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Record not found"}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: record_not_found, eds_config: @config)
+          else
+            unknown_error = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
+          end
         end
+      end
+
+      # fetch the citation from the citation rest endpoint
+      def get_citation_styles(dbid:, an:, format: 'all')
+        begin
+          citation_styles_params = "?an=#{an}&dbid=#{dbid}&styles=#{format}"
+          citation_styles_response = do_request(:get, path: @config[:citation_styles_url] + citation_styles_params)
+          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_styles_response, eds_config: @config)
+        rescue EBSCO::EDS::BadRequest => e
+          custom_error_message = JSON.parse e.message.gsub('=>', ':')
+          unknown_error = {"Id"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
+          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
+        end
+     end
+
+      # get citation styles for a list of result ids
+      def get_citation_styles_list(id_list: [], format: 'all')
+        citations = []
+        if id_list.any?
+          id_list.each { |id|
+            dbid = id.split('__',2).first
+            accession = id.split('__',2).last
+            citations.push get_citation_styles(dbid: dbid, an: accession, format: format)
+          }
+        end
+        citations
+      end
+
+      # get citation exports for a list of result ids
+      def get_citation_exports_list(id_list: [], format: 'all')
+        citations = []
+        if id_list.any?
+          id_list.each { |id|
+            dbid = id.split('__',2).first
+            accession = id.split('__',2).last
+            citations.push get_citation_exports(dbid: dbid, an: accession, format: format)
+          }
+        end
+        citations
       end
 
       # Create a result set with just the record before and after the current detailed record
@@ -737,7 +792,15 @@ module EBSCO
           raise EBSCO::EDS::ApiError, 'EBSCO API error: Multiple attempts to perform request failed.'
         end
         begin
-           resp = connection.send(method) do |req|
+
+          conn = connection
+
+          # use a citation api connection?
+          if path.include?(@config[:citation_exports_url]) || path.include?(@config[:citation_styles_url])
+            conn = citation_connection
+          end
+
+          resp = conn.send(method) do |req|
             case method
               when :get
                 unless payload.nil?
@@ -1032,6 +1095,26 @@ module EBSCO
         end
       end
 
+      def citation_connection
+        logger = Logger.new(@config[:log])
+        logger.level = Logger.const_get(@log_level)
+        Faraday.new(url: 'https://' + @api_hosts_list[@api_host_index]) do |conn|
+          conn.headers['Content-Type'] = 'application/json;charset=UTF-8'
+          conn.headers['Accept'] = 'application/json'
+          conn.headers['x-sessionToken'] = @citation_token ? @citation_token : ''
+          conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
+          conn.headers['User-Agent'] = @config[:user_agent]
+          conn.request :url_encoded
+          conn.use :eds_caching_middleware, store: @cache_store, logger: @debug ? logger : nil if @use_cache
+          conn.use :eds_exception_middleware
+          conn.response :json, content_type: /\bjson$/
+          conn.response :detailed_logger, logger if @debug
+          conn.options[:open_timeout] = @config[:open_timeout]
+          conn.options[:timeout] = @config[:timeout]
+          conn.adapter :net_http_persistent
+        end
+      end
+
       def create_auth_token
         if blank?(@auth_token)
           # ip auth
@@ -1053,6 +1136,12 @@ module EBSCO
             '?profile=' + @profile + '&guest=' + guest_string +
             '&displaydatabasename=y')
         @session_token = resp['SessionToken']
+      end
+
+      def create_citation_token
+        resp = do_request(:get, path: @config[:create_session_url] +
+            '?profile=' + @profile + '&guest=n&displaydatabasename=y')
+        @citation_token = resp['SessionToken']
       end
 
       # helper methods

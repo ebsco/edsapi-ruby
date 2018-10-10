@@ -5,7 +5,7 @@ module EBSCO
   module EDS
     class Info
 
-      attr_accessor :available_search_criteria, :view_result_settings, :application_settings, :api_settings
+      attr_accessor :available_search_criteria, :view_result_settings, :application_settings, :api_settings, :citation_style_settings, :export_format_settings
 
       def initialize(info, config = {})
         @results_per_page = config[:max_results_per_page] ? config[:max_results_per_page] : 100
@@ -13,6 +13,8 @@ module EBSCO
         @view_result_settings = info['ViewResultSettings']
         @application_settings = info['ApplicationSettings']
         @api_settings = info['ApiSettings']
+        @citation_style_settings = info['CitationStyleSettings']
+        @export_format_settings = info['ExportFormatSettings']
       end
 
       # ====================================================================================
@@ -141,6 +143,18 @@ module EBSCO
 
       def default_auto_correct
         @available_search_criteria.fetch('AvailableDidYouMeanOptions',{}).find{|item| item['Id'] == 'AutoCorrect'}['DefaultOn']
+      end
+
+      # ====================================================================================
+      # CITATION STYLES AND EXPORT FORMATS
+      # ====================================================================================
+
+      def available_citation_styles (id = 'all')
+        @citation_style_settings.fetch('AvailableStyles',{}).select{|item| item['Id'] == id || id == 'all'}
+      end
+
+      def available_citation_exports (id = 'all')
+        @export_format_settings.fetch('AvailableFormats',{}).select{|item| item['Id'] == id || id == 'all'}
       end
 
       # ====================================================================================

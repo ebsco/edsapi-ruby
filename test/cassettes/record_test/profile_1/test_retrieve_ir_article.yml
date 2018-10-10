@@ -5,7 +5,7 @@ http_interactions:
     uri: https://eds-api.ebscohost.com/authservice/rest/uidauth
     body:
       encoding: UTF-8
-      string: '{"UserId":"<EDS_USER>","Password":"<EDS_PASS>","InterfaceId":"edsapi_ruby_gem"}'
+      string: '{"UserId":"<EDS_USER>","Password":"<EDS_USER>","InterfaceId":"edsapi_ruby_gem"}'
     headers:
       Content-Type:
       - application/json;charset=UTF-8
@@ -27,7 +27,7 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:57 GMT
+      - Tue, 25 Sep 2018 22:42:12 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
@@ -38,9 +38,9 @@ http_interactions:
       - '131'
     body:
       encoding: UTF-8
-      string: '{"AuthToken":"ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
+      string: '{"AuthToken":"ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ","AuthTimeout":"1800"}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:58 GMT
+  recorded_at: Tue, 25 Sep 2018 22:42:14 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
@@ -55,7 +55,7 @@ http_interactions:
       x-sessionToken:
       - ''
       x-authenticationToken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -68,28 +68,28 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:57 GMT
+      - Tue, 25 Sep 2018 22:42:12 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 101122c0-951c-433a-a812-44d40500d3aa
+      - 74f64ec6-2324-4903-b345-595b52a6e8a3
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - '1576111509'
+      - "-670746224"
       x-sessiontoken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       content-length:
-      - '100'
+      - '101'
     body:
       encoding: UTF-8
-      string: '{"SessionToken":"a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg="}'
+      string: '{"SessionToken":"cf469e35-d347-4ecc-b8fe-567c4296de3a.9\/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ="}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:58 GMT
+  recorded_at: Tue, 25 Sep 2018 22:42:14 GMT
 - request:
     method: get
     uri: https://eds-api.ebscohost.com/edsapi/rest/Info
@@ -102,9 +102,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       x-authenticationToken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -117,23 +117,23 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:57 GMT
+      - Tue, 25 Sep 2018 22:42:13 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 56bc3192-af72-417b-8a5f-c99d0635c1af
+      - be0f5f66-0977-4c17-a87d-7127fc29adbc
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - '1576111509'
+      - "-670746224"
       x-sessiontoken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       content-length:
-      - '5139'
+      - '24481'
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -664,27 +664,41 @@ http_interactions:
         ZURpZFlvdU1lYW5PcHRpb25zIjpbeyJJZCI6IkF1dG9TdWdnZXN0IiwiTGFi
         ZWwiOiJEaWQgWW91IE1lYW4iLCJEZWZhdWx0T24iOiJ5In0seyJJZCI6IkF1
         dG9Db3JyZWN0IiwiTGFiZWwiOiJBdXRvIENvcnJlY3QiLCJEZWZhdWx0T24i
-        OiJuIn1dfSwiVmlld1Jlc3VsdFNldHRpbmdzIjp7IlJlc3VsdHNQZXJQYWdl
-        IjoiMjAiLCJSZXN1bHRMaXN0VmlldyI6ImJyaWVmIn0sIkFwcGxpY2F0aW9u
-        U2V0dGluZ3MiOnsiU2Vzc2lvblRpbWVvdXQiOiIyODgwMCJ9LCJBcGlTZXR0
-        aW5ncyI6eyJNYXhSZWNvcmRKdW1wQWhlYWQiOiIyNTAifX0=
+        OiJ5In1dfSwiVmlld1Jlc3VsdFNldHRpbmdzIjp7IlJlc3VsdHNQZXJQYWdl
+        IjoiMjAiLCJSZXN1bHRMaXN0VmlldyI6ImJyaWVmIiwiSW5jbHVkZUltYWdl
+        UXVpY2tWaWV3Ijp7IklkIjoiSW1hZ2VRdWlja1ZpZXdSZXN1bHRzIiwiTGFi
+        ZWwiOiJJbWFnZSBRdWljayBWaWV3IFJlc3VsdHMiLCJEZWZhdWx0T24iOiJu
+        In19LCJBcHBsaWNhdGlvblNldHRpbmdzIjp7IlNlc3Npb25UaW1lb3V0Ijoi
+        Mjg4MDAifSwiQXBpU2V0dGluZ3MiOnsiTWF4UmVjb3JkSnVtcEFoZWFkIjoi
+        MjUwIn0sIkV4cG9ydEZvcm1hdFNldHRpbmdzIjp7IkF2YWlsYWJsZUZvcm1h
+        dHMiOlt7IklkIjoiUklTIiwiTGFiZWwiOiJSSVMgRm9ybWF0In1dfSwiQ2l0
+        YXRpb25TdHlsZVNldHRpbmdzIjp7IkF2YWlsYWJsZVN0eWxlcyI6W3siSWQi
+        OiJhYm50IiwiTGFiZWwiOiJBQk5UIn0seyJJZCI6ImFtYSIsIkxhYmVsIjoi
+        QU1BIn0seyJJZCI6ImFwYSIsIkxhYmVsIjoiQVBBIn0seyJJZCI6ImNoaWNh
+        Z28iLCJMYWJlbCI6IkNoaWNhZ29cL1R1cmFiaWFuOiBBdXRob3ItRGF0ZSJ9
+        LHsiSWQiOiJoYXJ2YXJkIiwiTGFiZWwiOiJIYXJ2YXJkIn0seyJJZCI6Imhh
+        cnZhcmRhdXN0cmFsaWFuIiwiTGFiZWwiOiJIYXJ2YXJkOiBBdXN0cmFsaWFu
+        In0seyJJZCI6Im1sYSIsIkxhYmVsIjoiTUxBIn0seyJJZCI6InR1cmFiaWFu
+        IiwiTGFiZWwiOiJDaGljYWdvXC9UdXJhYmlhbjogSHVtYW5pdGllcyJ9LHsi
+        SWQiOiJ2YW5jb3V2ZXIiLCJMYWJlbCI6IlZhbmNvdXZlclwvSUNNSkUifV19
+        fQ==
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:58 GMT
+  recorded_at: Tue, 25 Sep 2018 22:42:14 GMT
 - request:
     method: post
     uri: https://eds-api.ebscohost.com/edsapi/rest/Search
     body:
       encoding: UTF-8
-      string: '{"SearchCriteria":{"Queries":[{"Term":"supercalifragilisticexpialidocious-supercalifragilisticexpialidocious"}],"SearchMode":"all","IncludeFacets":"n","FacetFilters":[],"Limiters":[],"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"],"AutoCorrect":"n"},"RetrievalCriteria":{"View":"brief","ResultsPerPage":1,"PageNumber":1,"Highlight":null},"Actions":["GoToPage(1)"],"Comment":""}'
+      string: '{"SearchCriteria":{"Queries":[{"Term":"supercalifragilisticexpialidocious-supercalifragilisticexpialidocious"}],"SearchMode":"all","IncludeFacets":"n","FacetFilters":[],"Limiters":[],"Sort":"relevance","PublicationId":null,"RelatedContent":["rs"],"AutoSuggest":"y","Expanders":["relatedsubjects","thesaurus","fulltext"],"AutoCorrect":"y"},"RetrievalCriteria":{"View":"brief","ResultsPerPage":1,"PageNumber":1,"Highlight":null,"IncludeImageQuickView":false},"Actions":["GoToPage(1)"],"Comment":""}'
     headers:
       Content-Type:
       - application/json;charset=UTF-8
       Accept:
       - application/json
       x-sessionToken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       x-authenticationToken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -697,23 +711,23 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:58 GMT
+      - Tue, 25 Sep 2018 22:42:14 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 39fad2d3-242d-4be1-a89f-216396cd0e00
+      - 0cc49288-93a4-45ec-ba97-8ce98d786c5b
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - '1576111509'
+      - "-670746224"
       x-sessiontoken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       content-length:
-      - '838'
+      - '2051'
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -725,45 +739,46 @@ http_interactions:
         cyIsInJlbGF0ZWRzdWJqZWN0cyJdLCJTb3J0IjoicmVsZXZhbmNlIiwiUmVs
         YXRlZENvbnRlbnQiOlsicnMiXSwiQXV0b1N1Z2dlc3QiOiJuIiwiQXV0b0Nv
         cnJlY3QiOiJuIn0sIlJldHJpZXZhbENyaXRlcmlhIjp7IlZpZXciOiJicmll
-        ZiIsIlJlc3VsdHNQZXJQYWdlIjoxLCJIaWdobGlnaHQiOiJ5In0sIlNlYXJj
-        aENyaXRlcmlhV2l0aEFjdGlvbnMiOnsiUXVlcmllc1dpdGhBY3Rpb24iOlt7
-        IlF1ZXJ5Ijp7IkJvb2xlYW5PcGVyYXRvciI6IkFORCIsIlRlcm0iOiJzdXBl
-        cmNhbGlmcmFnaWxpc3RpY2V4cGlhbGlkb2Npb3VzLXN1cGVyY2FsaWZyYWdp
-        bGlzdGljZXhwaWFsaWRvY2lvdXMifSwiUmVtb3ZlQWN0aW9uIjoicmVtb3Zl
-        cXVlcnkoMSkifV0sIkV4cGFuZGVyc1dpdGhBY3Rpb24iOlt7IklkIjoiZnVs
-        bHRleHQiLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcihmdWxsdGV4
-        dCkifSx7IklkIjoidGhlc2F1cnVzIiwiUmVtb3ZlQWN0aW9uIjoicmVtb3Zl
-        ZXhwYW5kZXIodGhlc2F1cnVzKSJ9LHsiSWQiOiJyZWxhdGVkc3ViamVjdHMi
-        LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcihyZWxhdGVkc3ViamVj
-        dHMpIn1dfX0sIlNlYXJjaFJlc3VsdCI6eyJTdGF0aXN0aWNzIjp7IlRvdGFs
-        SGl0cyI6MCwiVG90YWxTZWFyY2hUaW1lIjoyNDQsIkRhdGFiYXNlcyI6W3si
-        SWQiOiJubGViayIsIkxhYmVsIjoiZUJvb2sgQ29sbGVjdGlvbiAoRUJTQ09o
-        b3N0KSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZTAwMHhuYSIs
-        IkxhYmVsIjoiZUJvb2sgQWNhZGVtaWMgQ29sbGVjdGlvbiAoRUJTQ09ob3N0
-        KSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRzYXJ0IiwiTGFi
-        ZWwiOiJBUlRzdG9yIERpZ2l0YWwgTGlicmFyeSIsIlN0YXR1cyI6IjAiLCJI
-        aXRzIjowfSx7IklkIjoiZTcwMHhuYSIsIkxhYmVsIjoiZUJvb2sgUHVibGlj
-        IExpYnJhcnkgQ29sbGVjdGlvbiAoRUJTQ09ob3N0KSIsIlN0YXR1cyI6IjAi
-        LCJIaXRzIjowfSx7IklkIjoiY2F0MDIwNjBhIiwiTGFiZWwiOiJFRFMgRGVt
-        byBDYXRhbG9nIOKAkyBVUyAtIFUgb2YgR2VvcmdpYSIsIlN0YXR1cyI6IjAi
-        LCJIaXRzIjowfSx7IklkIjoiZXJzIiwiTGFiZWwiOiJSZXNlYXJjaCBTdGFy
-        dGVycyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiYXNuIiwiTGFi
-        ZWwiOiJBY2FkZW1pYyBTZWFyY2ggVWx0aW1hdGUiLCJTdGF0dXMiOiIwIiwi
-        SGl0cyI6MH0seyJJZCI6ImVkc3BkaCIsIkxhYmVsIjoiUHN5Y0FSVElDTEVT
-        IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwc3loIiwiTGFiZWwi
-        OiJQc3ljSU5GTyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoicGRo
-        IiwiTGFiZWwiOiJQc3ljQVJUSUNMRVMiLCJTdGF0dXMiOiIwIiwiSGl0cyI6
-        MH0seyJJZCI6ImVkc25taiIsIkxhYmVsIjoiTmF4b3MgTXVzaWMgTGlicmFy
-        eSBKYXp6IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNjcmMi
-        LCJMYWJlbCI6IkNyZWRvIFJlZmVyZW5jZSIsIlN0YXR1cyI6IjAiLCJIaXRz
-        IjowfSx7IklkIjoiZWRzaGxkIiwiTGFiZWwiOiJEaWdpdGFsIEFjY2VzcyB0
-        byBTY2hvbGFyc2hpcCBhdCBIYXJ2YXJkIChEQVNIKSIsIlN0YXR1cyI6IjAi
-        LCJIaXRzIjowfSx7IklkIjoiZWRzYmFzIiwiTGFiZWwiOiJCQVNFIiwiU3Rh
-        dHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwaXgiLCJMYWJlbCI6IlBsYXkg
-        SW5kZXggKEguVy4gV2lsc29uKSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfV19
-        LCJEYXRhIjp7IlJlY29yZEZvcm1hdCI6IkVQIERpc3BsYXkifX19
+        ZiIsIlJlc3VsdHNQZXJQYWdlIjoxLCJIaWdobGlnaHQiOiJ5IiwiSW5jbHVk
+        ZUltYWdlUXVpY2tWaWV3IjoiZmFsc2UifSwiU2VhcmNoQ3JpdGVyaWFXaXRo
+        QWN0aW9ucyI6eyJRdWVyaWVzV2l0aEFjdGlvbiI6W3siUXVlcnkiOnsiQm9v
+        bGVhbk9wZXJhdG9yIjoiQU5EIiwiVGVybSI6InN1cGVyY2FsaWZyYWdpbGlz
+        dGljZXhwaWFsaWRvY2lvdXMtc3VwZXJjYWxpZnJhZ2lsaXN0aWNleHBpYWxp
+        ZG9jaW91cyJ9LCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVxdWVyeSgxKSJ9XSwi
+        RXhwYW5kZXJzV2l0aEFjdGlvbiI6W3siSWQiOiJmdWxsdGV4dCIsIlJlbW92
+        ZUFjdGlvbiI6InJlbW92ZWV4cGFuZGVyKGZ1bGx0ZXh0KSJ9LHsiSWQiOiJ0
+        aGVzYXVydXMiLCJSZW1vdmVBY3Rpb24iOiJyZW1vdmVleHBhbmRlcih0aGVz
+        YXVydXMpIn0seyJJZCI6InJlbGF0ZWRzdWJqZWN0cyIsIlJlbW92ZUFjdGlv
+        biI6InJlbW92ZWV4cGFuZGVyKHJlbGF0ZWRzdWJqZWN0cykifV19fSwiU2Vh
+        cmNoUmVzdWx0Ijp7IlN0YXRpc3RpY3MiOnsiVG90YWxIaXRzIjowLCJUb3Rh
+        bFNlYXJjaFRpbWUiOjUwOSwiRGF0YWJhc2VzIjpbeyJJZCI6Im5sZWJrIiwi
+        TGFiZWwiOiJlQm9vayBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVz
+        IjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJlMDAweG5hIiwiTGFiZWwiOiJlQm9v
+        ayBBY2FkZW1pYyBDb2xsZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoi
+        MCIsIkhpdHMiOjB9LHsiSWQiOiJlZHNhcnQiLCJMYWJlbCI6IkFSVHN0b3Ig
+        RGlnaXRhbCBMaWJyYXJ5IiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQi
+        OiJlNzAweG5hIiwiTGFiZWwiOiJlQm9vayBQdWJsaWMgTGlicmFyeSBDb2xs
+        ZWN0aW9uIChFQlNDT2hvc3QpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
+        SWQiOiJjYXQwMjA2MGEiLCJMYWJlbCI6IkVEUyBEZW1vIENhdGFsb2cg4oCT
+        IFVTIC0gVSBvZiBHZW9yZ2lhIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
+        SWQiOiJlcnMiLCJMYWJlbCI6IlJlc2VhcmNoIFN0YXJ0ZXJzIiwiU3RhdHVz
+        IjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJhc24iLCJMYWJlbCI6IkFjYWRlbWlj
+        IFNlYXJjaCBVbHRpbWF0ZSIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7Iklk
+        IjoiZWRzcGRoIiwiTGFiZWwiOiJQc3ljQVJUSUNMRVMiLCJTdGF0dXMiOiIw
+        IiwiSGl0cyI6MH0seyJJZCI6InBzeWgiLCJMYWJlbCI6IlBzeWNJTkZPIiwi
+        U3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJwZGgiLCJMYWJlbCI6IlBz
+        eWNBUlRJQ0xFUyIsIlN0YXR1cyI6IjAiLCJIaXRzIjowfSx7IklkIjoiZWRz
+        bm1qIiwiTGFiZWwiOiJOYXhvcyBNdXNpYyBMaWJyYXJ5IEphenoiLCJTdGF0
+        dXMiOiIwIiwiSGl0cyI6MH0seyJJZCI6ImVkc2NyYyIsIkxhYmVsIjoiQ3Jl
+        ZG8gUmVmZXJlbmNlIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsiSWQiOiJl
+        ZHNobGQiLCJMYWJlbCI6IkRpZ2l0YWwgQWNjZXNzIHRvIFNjaG9sYXJzaGlw
+        IGF0IEhhcnZhcmQgKERBU0gpIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9LHsi
+        SWQiOiJlZHNiYXMiLCJMYWJlbCI6IkJBU0UiLCJTdGF0dXMiOiIwIiwiSGl0
+        cyI6MH0seyJJZCI6InBpeCIsIkxhYmVsIjoiUGxheSBJbmRleCAoSC5XLiBX
+        aWxzb24pIiwiU3RhdHVzIjoiMCIsIkhpdHMiOjB9XX0sIkRhdGEiOnsiUmVj
+        b3JkRm9ybWF0IjoiRVAgRGlzcGxheSJ9fX0=
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:58 GMT
+  recorded_at: Tue, 25 Sep 2018 22:42:15 GMT
 - request:
     method: post
     uri: https://eds-api.ebscohost.com/edsapi/rest/Retrieve
@@ -776,9 +791,9 @@ http_interactions:
       Accept:
       - application/json
       x-sessionToken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       x-authenticationToken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -791,61 +806,64 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:58 GMT
+      - Tue, 25 Sep 2018 22:42:13 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - 26985ee1-68f3-49c8-b7b7-186244d703f1
+      - c9ce0869-52c4-44a2-b7c6-84b42492f67d
       x-powered-by:
       - ASP.NET
       x-sessionno:
-      - '1576111509'
+      - "-670746224"
       x-sessiontoken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       content-length:
-      - '1111'
+      - '3379'
     body:
-      encoding: ASCII-8BIT
+      encoding: UTF-8
       string: '{"Record":{"ResultId":1,"Header":{"DbId":"edshld","DbLabel":"Digital
         Access to Scholarship at Harvard (DASH)","An":"edshld.1.3372911","RelevancyScore":"664","PubType":"Academic
-        Journal","PubTypeId":"academicJournal"},"PLink":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=edshld&AN=edshld.1.3372911","FullText":{"Text":{"Availability":"0"}},"Items":[{"Name":"Title","Label":"Title","Group":"Ti","Data":"Racism
+        Journal","PubTypeId":"academicJournal"},"PLink":"http:\/\/search.ebscohost.com\/login.aspx?direct=true&site=eds-live&db=edshld&AN=edshld.1.3372911","CustomLinks":[{"Url":"http:\/\/gss.ebscohost.com\/dpodboy\/widgets\/noodle\/index.php?language=en&op=file&issn=0093-0334&isbn=&journal=&volume=&issue=&date=1978-01-01&year=1978&AN=edshld.1.3372911&doctype=Journal%20Article&pmid=&title=Racism%20and%20Research%3A%20The%20Case%20of%20the%20Tuskegee%20Syphilis%20Study&book=&author=Brandt%2C%20Allan%20M.&authors=Brandt%2C%20Allan%20M.&starpage=&pages=&pagect=&sici=&dbcode=edshld&database=Digital%20Access%20to%20Scholarship%20at%20Harvard%20%28DASH%29&doi=&pubtype=Academic%20Journal&dissertation=&division=&institute=&conference=&doi=&urlip=http%3A%2F%2Fnrs.harvard.edu%2Furn-3%3AHUL.InstRepos%3A3372911","Name":"RIS
+        Export","Category":"other","Text":"Export to RIS","MouseOverText":"Export
+        to RIS"}],"FullText":{"Text":{"Availability":"0"}},"Items":[{"Name":"Title","Label":"Title","Group":"Ti","Data":"Racism
         and Research: The Case of the Tuskegee Syphilis Study"},{"Name":"Author","Label":"Authors","Group":"Au","Data":"&lt;searchLink
         fieldCode=&quot;AR&quot; term=&quot;%22Brandt%2C+Allan+M%2E%22&quot;&gt;Brandt,
-        Allan M.&lt;\/searchLink&gt;"},{"Name":"TitleSource","Label":"Source","Group":"Src","Data":"Allan
-        M. Brandt. 1978. Racism and research: The case of the Tuskegee Syphilis study.
-        The Hastings Center Report 8(6): 21-29."},{"Name":"Publisher","Label":"Publisher
-        Information","Group":"PubInfo","Data":"The Hastings Center"},{"Name":"DatePubCY","Label":"Publication
+        Allan M.&lt;\/searchLink&gt;"},{"Name":"TitleSource","Label":"Source","Group":"Src","Data":"Brandt,
+        Allan M. 1978. &quot;Racism and research: The case of the Tuskegee Syphilis
+        study.&quot; The Hastings Center Report 8(6): 21-29."},{"Name":"Publisher","Label":"Publisher
+        Information","Group":"PubInfo","Data":"The Hastings Center, 1978."},{"Name":"DatePubCY","Label":"Publication
         Year","Group":"Date","Data":"1978"},{"Name":"Subset","Label":"Collection","Group":"HoldingsInfo","Data":"FAS
         Scholarly Articles"},{"Name":"Abstract","Label":"Description","Group":"Ab","Data":"History
         of Science"},{"Name":"TypeDocument","Label":"Document Type","Group":"TypDoc","Data":"Journal
-        Article"},{"Name":"Language","Label":"Language","Group":"Lang","Data":"English"},{"Name":"ISSN","Label":"ISSN","Group":"ISSN","Data":"0093-0334"},{"Name":"URL","Label":"Access
-        URL","Group":"URL","Data":"&lt;link linkTarget=&quot;URL&quot; linkTerm=&quot;http:\/\/nrs.harvard.edu\/urn-3:HUL.InstRepos:3372911&quot;
-        linkWindow=&quot;_blank&quot;&gt;http:\/\/nrs.harvard.edu\/urn-3:HUL.InstRepos:3372911&lt;\/link&gt;"},{"Name":"AN","Label":"Accession
+        Article"},{"Name":"Language","Label":"Language","Group":"Lang","Data":"English"},{"Name":"ISSN","Label":"ISSN","Group":"ISSN","Data":"0093-0334"},{"Name":"NoteTitleSource","Label":"Relation","Group":"SrcInfo","Data":"http:\/\/www.jstor.org\/stable\/3561468;
+        The Hastings Center Report"},{"Name":"URL","Label":"Access URL","Group":"URL","Data":"&lt;link
+        linkTarget=&quot;URL&quot; linkTerm=&quot;http:\/\/nrs.harvard.edu\/urn-3:HUL.InstRepos:3372911&quot;
+        linkWindow=&quot;_blank&quot;&gt;http:\/\/nrs.harvard.edu\/urn-3:HUL.InstRepos:3372911&lt;\/link&gt;"},{"Name":"Copyright","Label":"Rights","Group":"Cpyrght","Data":"open&lt;br
+        \/&gt;URL: http:\/\/nrs.harvard.edu\/urn-3:HUL.InstRepos:dash.current.terms-of-use#LAA"},{"Name":"AN","Label":"Accession
         Number","Group":"ID","Data":"edshld.1.3372911"}],"RecordInfo":{"BibRecord":{"BibEntity":{"Languages":[{"Text":"English"}],"Titles":[{"TitleFull":"Racism
         and Research: The Case of the Tuskegee Syphilis Study","Type":"main"}]},"BibRelationships":{"HasContributorRelationships":[{"PersonEntity":{"Name":{"NameFull":"Brandt,
-        Allan M."}}}],"IsPartOfRelationships":[{"BibEntity":{"Dates":[{"D":"01","M":"01","Type":"published","Y":"1978"}],"Identifiers":[{"Type":"issn-print","Value":"00930334"},{"Type":"issn-locals","Value":"edshld.hdl_1_2"}],"Titles":[{"TitleFull":"The
-        Hastings Center Report","Type":"main"}]}}]}}}}}'
+        Allan M."}}}],"IsPartOfRelationships":[{"BibEntity":{"Dates":[{"D":"01","M":"01","Type":"published","Y":"1978"}],"Identifiers":[{"Type":"issn-print","Value":"00930334"},{"Type":"issn-locals","Value":"edshld"}]}}]}}},"IllustrationInfo":{}}}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:59 GMT
+  recorded_at: Tue, 25 Sep 2018 22:42:15 GMT
 - request:
-    method: post
-    uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
     body:
-      encoding: UTF-8
-      string: '{"SessionToken":"a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg="}'
+      encoding: US-ASCII
+      string: ''
     headers:
       Content-Type:
       - application/json;charset=UTF-8
       Accept:
       - application/json
       x-sessionToken:
-      - a803c8bf-2ce4-4923-9617-88a9c24e6c30.s5Th1el4p9EkeMTnMeMVx3fcaG+WDtTTJynoW0Xjavg=
+      - cf469e35-d347-4ecc-b8fe-567c4296de3a.9/0P5v95vFJRU10qm1hODAaX5YWtNL0DKTZx7nuGdSQ=
       x-authenticationToken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       User-Agent:
       - EBSCO EDS GEM v0.0.1
   response:
@@ -858,15 +876,377 @@ http_interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Sep 2017 14:37:58 GMT
+      - Tue, 25 Sep 2018 22:42:12 GMT
       server:
       - Microsoft-IIS/8.5
       x-aspnet-version:
       - 4.0.30319
       x-authenticationtoken:
-      - ACZPYXpZw-oLISFKXMNXaEGDPtDomVnChE57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
       x-msg-correlid:
-      - d31d75fa-c692-402a-a167-d78373e1e7fa
+      - 6893138d-c734-4ed2-9d09-40d93fab3818
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '1974698626'
+      x-sessiontoken:
+      - 16d06b50-08eb-48b3-b9bb-c2f54f20fb8f.DbzXDA5vMyIgWvqMZMqwnAXjC+VBxa5YPfTvXyJ+b+M=
+      content-length:
+      - '100'
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"16d06b50-08eb-48b3-b9bb-c2f54f20fb8f.DbzXDA5vMyIgWvqMZMqwnAXjC+VBxa5YPfTvXyJ+b+M="}'
+    http_version: 
+  recorded_at: Tue, 25 Sep 2018 22:42:15 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/ExportFormat?an=edshld.1.3372911&dbid=edshld&format=all
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 16d06b50-08eb-48b3-b9bb-c2f54f20fb8f.DbzXDA5vMyIgWvqMZMqwnAXjC+VBxa5YPfTvXyJ+b+M=
+      x-authenticationToken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Sep 2018 22:42:13 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - '0188f7e8-67b0-4080-a80c-0436a4e8b89c'
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '1974698626'
+      x-sessiontoken:
+      - 16d06b50-08eb-48b3-b9bb-c2f54f20fb8f.DbzXDA5vMyIgWvqMZMqwnAXjC+VBxa5YPfTvXyJ+b+M=
+      content-length:
+      - '1046'
+    body:
+      encoding: UTF-8
+      string: '{"Format":"RIS","Label":"RIS Format","Data":"TY  - JOUR\u000d\u000aTI  -
+        Racism and Research: The Case of the Tuskegee Syphilis Study\u000d\u000aID  -
+        Accession Number: edshld.1.3372911\u000d\u000aAU  - Brandt, Allan M.\u000d\u000aPY  -
+        1978\u000d\u000aY1  - 1978\/\/\/\u000d\u000aM3  - Journal Article\u000d\u000aPB  -
+        The Hastings Center\u000d\u000aSN  - 0093-0334\u000d\u000aAB  - History of
+        Science\u000d\u000aN1  - Item Citation: Brandt, Allan M. 1978. \"Racism and
+        research: The case of the Tuskegee Syphilis study.\" The Hastings Center Report
+        8(6): 21-29.\u000d\u000aN1  - Related Material: http:\/\/www.jstor.org\/stable\/3561468\u000d\u000aN1  -
+        Related Material: The Hastings Center Report\u000d\u000aN1  - Accession Number:
+        edshld.1.3372911; Publication Type: Academic Journal; Language: English; Publication
+        Date: 19780101; Rights: open, http:\/\/nrs.harvard.edu\/urn-3:HUL.InstRepos:dash.current.terms-of-use#LAA;
+        Imprint: The Hastings Center, 1978.\u000d\u000aDP  - EBSCOhost\u000d\u000aDB  -
+        edshld\u000d\u000aER  - \u000d\u000a"}'
+    http_version: 
+  recorded_at: Tue, 25 Sep 2018 22:42:15 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 16d06b50-08eb-48b3-b9bb-c2f54f20fb8f.DbzXDA5vMyIgWvqMZMqwnAXjC+VBxa5YPfTvXyJ+b+M=
+      x-authenticationToken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Sep 2018 22:42:14 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - 4f6984d5-7194-4561-9fc4-362f172b23ac
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '763651729'
+      x-sessiontoken:
+      - 65a730c9-9ddc-44b9-978a-fffdf2a2b4b2.wyHXbv2hxY+ADwVmpEpViWTlQV+HWq+fumnVwRS9i4w=
+      content-length:
+      - '100'
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"65a730c9-9ddc-44b9-978a-fffdf2a2b4b2.wyHXbv2hxY+ADwVmpEpViWTlQV+HWq+fumnVwRS9i4w="}'
+    http_version: 
+  recorded_at: Tue, 25 Sep 2018 22:42:15 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - 65a730c9-9ddc-44b9-978a-fffdf2a2b4b2.wyHXbv2hxY+ADwVmpEpViWTlQV+HWq+fumnVwRS9i4w=
+      x-authenticationToken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Sep 2018 22:42:14 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - 2170ce67-b63a-4acb-992a-22c07702087c
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - "-1479046604"
+      x-sessiontoken:
+      - b9b630c5-ab19-4f86-8d51-e1da1531bb05./ZYb3zt0/8PJV1pnBjPemuYifwLwWqxDTDODCGBxZhc=
+      content-length:
+      - '102'
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"b9b630c5-ab19-4f86-8d51-e1da1531bb05.\/ZYb3zt0\/8PJV1pnBjPemuYifwLwWqxDTDODCGBxZhc="}'
+    http_version: 
+  recorded_at: Tue, 25 Sep 2018 22:42:15 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CitationStyles?an=edshld.1.3372911&dbid=edshld&styles=all
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - b9b630c5-ab19-4f86-8d51-e1da1531bb05./ZYb3zt0/8PJV1pnBjPemuYifwLwWqxDTDODCGBxZhc=
+      x-authenticationToken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Sep 2018 22:42:13 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-msg-correlid:
+      - 9a79c232-b49e-4736-9960-018ed9642677
+      x-powered-by:
+      - ASP.NET
+      content-length:
+      - '2789'
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJDaXRhdGlvbnMiOlt7IklkIjoiYWJudCIsIkxhYmVsIjoiQUJOVCIsIlNl
+        Y3Rpb25MYWJlbCI6IlJlZmVyZW5jZXMiLCJEYXRhIjoiQlJBTkRULCBBLiBN
+        LiBSYWNpc20gYW5kIFJlc2VhcmNoOiBUaGUgQ2FzZSBvZiB0aGUgVHVza2Vn
+        ZWUgU3lwaGlsaXMgU3R1ZHkuIDE5NzguIERpc3BvbsOtdmVsIGVtOiA8aHR0
+        cDpcL1wvc2VhcmNoLmVic2NvaG9zdC5jb21cL2xvZ2luLmFzcHg/ZGlyZWN0
+        PXRydWUmc2l0ZT1lZHMtbGl2ZSZkYj1lZHNobGQmQU49ZWRzaGxkLjEuMzM3
+        MjkxMT4uIEFjZXNzbyBlbTogMjUgc2V0LiAyMDE4LiAiLCJDYXB0aW9uIjoi
+        QnJhemlsaWFuIE5hdGlvbmFsIFN0YW5kYXJkcyJ9LHsiSWQiOiJhbWEiLCJM
+        YWJlbCI6IkFNQSIsIlNlY3Rpb25MYWJlbCI6IlJlZmVyZW5jZSBMaXN0Iiwi
+        RGF0YSI6IkJyYW5kdCBBTS4gUmFjaXNtIGFuZCBSZXNlYXJjaDogVGhlIENh
+        c2Ugb2YgdGhlIFR1c2tlZ2VlIFN5cGhpbGlzIFN0dWR5LiAxOTc4LiBodHRw
+        OlwvXC9zZWFyY2guZWJzY29ob3N0LmNvbVwvbG9naW4uYXNweD9kaXJlY3Q9
+        dHJ1ZSZzaXRlPWVkcy1saXZlJmRiPWVkc2hsZCZBTj1lZHNobGQuMS4zMzcy
+        OTExLiBBY2Nlc3NlZCBTZXB0ZW1iZXIgMjUsIDIwMTguIiwiQ2FwdGlvbiI6
+        IkFtZXJpY2FuIE1lZGljYWwgQXNzb2MuIn0seyJJZCI6ImFwYSIsIkxhYmVs
+        IjoiQVBBIiwiU2VjdGlvbkxhYmVsIjoiUmVmZXJlbmNlcyIsIkRhdGEiOiJC
+        cmFuZHQsIEEuIE0uICgxOTc4KS4gUmFjaXNtIGFuZCBSZXNlYXJjaDogVGhl
+        IENhc2Ugb2YgdGhlIFR1c2tlZ2VlIFN5cGhpbGlzIFN0dWR5LiBSZXRyaWV2
+        ZWQgZnJvbSBodHRwOlwvXC9zZWFyY2guZWJzY29ob3N0LmNvbVwvbG9naW4u
+        YXNweD9kaXJlY3Q9dHJ1ZSZzaXRlPWVkcy1saXZlJmRiPWVkc2hsZCZBTj1l
+        ZHNobGQuMS4zMzcyOTExIiwiQ2FwdGlvbiI6IkFtZXJpY2FuIFBzeWNob2xv
+        Z2ljYWwgQXNzb2MuIiwiSW5kZW50IjoxfSx7IklkIjoiY2hpY2FnbyIsIkxh
+        YmVsIjoiQ2hpY2Fnb1wvVHVyYWJpYW46IEF1dGhvci1EYXRlIiwiU2VjdGlv
+        bkxhYmVsIjoiUmVmZXJlbmNlIExpc3QiLCJEYXRhIjoiQnJhbmR0LCBBbGxh
+        biBNLiAxOTc4LiDigJxSYWNpc20gYW5kIFJlc2VhcmNoOiBUaGUgQ2FzZSBv
+        ZiB0aGUgVHVza2VnZWUgU3lwaGlsaXMgU3R1ZHku4oCdIGh0dHA6XC9cL3Nl
+        YXJjaC5lYnNjb2hvc3QuY29tXC9sb2dpbi5hc3B4P2RpcmVjdD10cnVlJnNp
+        dGU9ZWRzLWxpdmUmZGI9ZWRzaGxkJkFOPWVkc2hsZC4xLjMzNzI5MTEuIiwi
+        SW5kZW50IjoxfSx7IklkIjoiaGFydmFyZCIsIkxhYmVsIjoiSGFydmFyZCIs
+        IlNlY3Rpb25MYWJlbCI6IlJlZmVyZW5jZXMiLCJEYXRhIjoiQnJhbmR0LCBB
+        LiBNLiAoMTk3OCkg4oCYUmFjaXNtIGFuZCBSZXNlYXJjaDogVGhlIENhc2Ug
+        b2YgdGhlIFR1c2tlZ2VlIFN5cGhpbGlzIFN0dWR54oCZLiBBdmFpbGFibGUg
+        YXQ6IGh0dHA6XC9cL3NlYXJjaC5lYnNjb2hvc3QuY29tXC9sb2dpbi5hc3B4
+        P2RpcmVjdD10cnVlJnNpdGU9ZWRzLWxpdmUmZGI9ZWRzaGxkJkFOPWVkc2hs
+        ZC4xLjMzNzI5MTEgKEFjY2Vzc2VkOiAyNSBTZXB0ZW1iZXIgMjAxOCkuIn0s
+        eyJJZCI6ImhhcnZhcmRhdXN0cmFsaWFuIiwiTGFiZWwiOiJIYXJ2YXJkOiBB
+        dXN0cmFsaWFuIiwiU2VjdGlvbkxhYmVsIjoiUmVmZXJlbmNlcyIsIkRhdGEi
+        OiJCcmFuZHQsIEFNIDE5NzgsIOKAmFJhY2lzbSBhbmQgUmVzZWFyY2g6IFRo
+        ZSBDYXNlIG9mIHRoZSBUdXNrZWdlZSBTeXBoaWxpcyBTdHVkeeKAmSwgdmll
+        d2VkIDI1IFNlcHRlbWJlciAyMDE4LCA8aHR0cDpcL1wvc2VhcmNoLmVic2Nv
+        aG9zdC5jb21cL2xvZ2luLmFzcHg/ZGlyZWN0PXRydWUmc2l0ZT1lZHMtbGl2
+        ZSZkYj1lZHNobGQmQU49ZWRzaGxkLjEuMzM3MjkxMT4uIn0seyJJZCI6Im1s
+        YSIsIkxhYmVsIjoiTUxBIiwiU2VjdGlvbkxhYmVsIjoiV29ya3MgQ2l0ZWQi
+        LCJEYXRhIjoiQnJhbmR0LCBBbGxhbiBNLiA8aT5SYWNpc20gYW5kIFJlc2Vh
+        cmNoOiBUaGUgQ2FzZSBvZiB0aGUgVHVza2VnZWUgU3lwaGlsaXMgU3R1ZHk8
+        XC9pPi4gMTk3OC4gPGk+RUJTQ09ob3N0PFwvaT4sIHNlYXJjaC5lYnNjb2hv
+        c3QuY29tXC9sb2dpbi5hc3B4P2RpcmVjdD10cnVlJnNpdGU9ZWRzLWxpdmUm
+        ZGI9ZWRzaGxkJkFOPWVkc2hsZC4xLjMzNzI5MTEuIiwiQ2FwdGlvbiI6Ik1v
+        ZGVybiBMYW5ndWFnZSBBc3NvYy4iLCJJbmRlbnQiOjF9LHsiSWQiOiJ0dXJh
+        YmlhbiIsIkxhYmVsIjoiQ2hpY2Fnb1wvVHVyYWJpYW46IEh1bWFuaXRpZXMi
+        LCJTZWN0aW9uTGFiZWwiOiJCaWJsaW9ncmFwaHkiLCJEYXRhIjoiQnJhbmR0
+        LCBBbGxhbiBNLiDigJxSYWNpc20gYW5kIFJlc2VhcmNoOiBUaGUgQ2FzZSBv
+        ZiB0aGUgVHVza2VnZWUgU3lwaGlsaXMgU3R1ZHks4oCdIDE5NzguIGh0dHA6
+        XC9cL3NlYXJjaC5lYnNjb2hvc3QuY29tXC9sb2dpbi5hc3B4P2RpcmVjdD10
+        cnVlJnNpdGU9ZWRzLWxpdmUmZGI9ZWRzaGxkJkFOPWVkc2hsZC4xLjMzNzI5
+        MTEuIiwiSW5kZW50IjoxfSx7IklkIjoidmFuY291dmVyIiwiTGFiZWwiOiJW
+        YW5jb3V2ZXJcL0lDTUpFIiwiU2VjdGlvbkxhYmVsIjoiUmVmZXJlbmNlcyIs
+        IkRhdGEiOiJCcmFuZHQgQU0uIFJhY2lzbSBhbmQgUmVzZWFyY2g6IFRoZSBD
+        YXNlIG9mIHRoZSBUdXNrZWdlZSBTeXBoaWxpcyBTdHVkeS4gMTk3OCBbY2l0
+        ZWQgMjAxOCBTZXAgMjVdOyBBdmFpbGFibGUgZnJvbTogaHR0cDpcL1wvc2Vh
+        cmNoLmVic2NvaG9zdC5jb21cL2xvZ2luLmFzcHg/ZGlyZWN0PXRydWUmc2l0
+        ZT1lZHMtbGl2ZSZkYj1lZHNobGQmQU49ZWRzaGxkLjEuMzM3MjkxMSJ9XX0=
+    http_version: 
+  recorded_at: Tue, 25 Sep 2018 22:42:16 GMT
+- request:
+    method: get
+    uri: https://eds-api.ebscohost.com/edsapi/rest/CreateSession?displaydatabasename=y&guest=n&profile=eds-api
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - b9b630c5-ab19-4f86-8d51-e1da1531bb05./ZYb3zt0/8PJV1pnBjPemuYifwLwWqxDTDODCGBxZhc=
+      x-authenticationToken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Sep 2018 22:42:15 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - c261d83f-8b1d-4a0a-b385-60ce5f982651
+      x-powered-by:
+      - ASP.NET
+      x-sessionno:
+      - '1007820543'
+      x-sessiontoken:
+      - d181bb25-62d4-49e9-ba78-baabb4b6b23e.ftr1eSVSoX1WooXaZ1A+CurroP0ygUyIFGDTsWdQDdQ=
+      content-length:
+      - '100'
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"d181bb25-62d4-49e9-ba78-baabb4b6b23e.ftr1eSVSoX1WooXaZ1A+CurroP0ygUyIFGDTsWdQDdQ="}'
+    http_version: 
+  recorded_at: Tue, 25 Sep 2018 22:42:16 GMT
+- request:
+    method: post
+    uri: https://eds-api.ebscohost.com/edsapi/rest/EndSession
+    body:
+      encoding: UTF-8
+      string: '{"SessionToken":"d181bb25-62d4-49e9-ba78-baabb4b6b23e.ftr1eSVSoX1WooXaZ1A+CurroP0ygUyIFGDTsWdQDdQ="}'
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - application/json
+      x-sessionToken:
+      - d181bb25-62d4-49e9-ba78-baabb4b6b23e.ftr1eSVSoX1WooXaZ1A+CurroP0ygUyIFGDTsWdQDdQ=
+      x-authenticationToken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      User-Agent:
+      - EBSCO EDS GEM v0.0.1
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Sep 2018 22:42:14 GMT
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-authenticationtoken:
+      - ADCkbxHppmfld2hhCkgh3qRUbg4QdVuqwM57IkN1c3RvbWVySWQiOiJiaWxsbWNraW5uIiwiR3JvdXBJZCI6Im1haW4ifQ
+      x-msg-correlid:
+      - c726f7fe-bcc5-4631-814e-e8f4edea3eb6
       x-powered-by:
       - ASP.NET
       content-length:
@@ -875,5 +1255,5 @@ http_interactions:
       encoding: UTF-8
       string: '{"IsSuccessful":"y"}'
     http_version: 
-  recorded_at: Wed, 20 Sep 2017 14:37:59 GMT
-recorded_with: VCR 3.0.3
+  recorded_at: Tue, 25 Sep 2018 22:42:16 GMT
+recorded_with: VCR 2.9.3

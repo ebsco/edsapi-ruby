@@ -81,7 +81,8 @@ module EBSCO
           :eds_publication_id,
           :eds_publication_is_searchable,
           :eds_publication_scope_note,
-          :eds_citation_ris
+          :eds_citation_exports,
+          :eds_citation_styles
       ]
 
       KNOWN_ITEM_NAMES = %w(
@@ -191,6 +192,7 @@ module EBSCO
             get_item_data({name: 'Subject', label: 'Subject Terms', group: 'Su'}) ||
             get_item_data({name: 'Subject', label: 'Subject Indexing', group: 'Su'}) ||
             get_item_data({name: 'Subject', label: 'Subject Category', group: 'Su'}) ||
+            get_item_data({name: 'Subject', label: 'KeyWords Plus', group: 'Su'}) ||
             bib_subjects
         @eds_subjects_geographic =
             get_item_data({name: 'SubjectGeographic', label: 'Geographic Terms', group: 'Su'}) ||
@@ -790,13 +792,24 @@ module EBSCO
               var != :@bib_entity &&
               var != :@bib_part &&
               var != :@bib_relationships &&
-              var != :@image_quick_view_items
+              var != :@image_quick_view_items &&
+              var != :@eds_citation_exports &&
+              var != :@eds_citation_styles
             hash[var.to_s.sub(/^@/, '')] = instance_variable_get(var)
           end
         end
+
         if all_links
           hash['eds_fulltext_link'] = { 'id' => @eds_database_id + '__' + @eds_accession_number,
                                         'links' => all_links }
+        end
+
+        # add citation styles and exports
+        unless @eds_citation_exports.nil?
+          hash['eds_citation_exports'] = @eds_citation_exports.items
+        end
+        unless @eds_citation_styles.nil?
+          hash['eds_citation_styles'] = @eds_citation_styles.items
         end
 
         hash
@@ -898,6 +911,7 @@ module EBSCO
           if item['Group']
             group = item['Group']
             if group == 'Su'
+              data = add_subject_searchlinks(data)
               # translate searchLink field codes to DE?
               if @all_subjects_search_links
                 data = data.gsub(/(searchLink fieldCode=&quot;)([A-Z]+)/, '\1DE')
@@ -957,8 +971,23 @@ module EBSCO
         end
       end
 
-      def set_citation_ris(val)
-        @eds_citation_ris = val
+      def set_citation_exports(val)
+        @eds_citation_exports = val
+      end
+
+      def set_citation_styles(val)
+        @eds_citation_styles = val
+      end
+
+      # add searchlinks when they don't exist
+      def add_subject_searchlinks(data)
+        subjects = data
+        unless data.include? 'searchLink'
+          subjects = subjects.split('&lt;br /&gt;').map do |su|
+            '&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22' + su + '%22&quot;&gt;' + su + '&lt;/searchLink&gt;'
+          end.join('&lt;br /&gt;')
+        end
+        subjects
       end
 
     end # Class Record
