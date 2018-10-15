@@ -9,6 +9,15 @@ module EBSCO
 
       def initialize(dbid:, an:, citation_result:, eds_config: nil)
 
+        # remove links?
+        (ENV.has_key? 'EDS_REMOVE_CITATION_LINKS') ?
+            if %w(y Y yes Yes true True).include?(ENV['EDS_REMOVE_CITATION_LINKS'])
+              @remove_links = true
+            else
+              @remove_links = false
+            end :
+            @remove_links = eds_config[:remove_citation_links]
+
         @eds_database_id = dbid
         @eds_accession_number = an
         @eds_record_id = @eds_database_id + '__' + @eds_accession_number
@@ -30,7 +39,11 @@ module EBSCO
             end
 
             if style.key? 'Data'
-              item['data'] = JSON.parse(style['Data'].to_json)
+              data = JSON.parse(style['Data'].to_json)
+              if @remove_links
+                data = removeLinksFromStyles(data)
+              end
+              item['data'] = data
             end
 
             if style.key? 'Caption'
@@ -62,7 +75,11 @@ module EBSCO
           end
 
           if citation_result.key? 'Data'
-            item['data'] = JSON.parse(citation_result['Data'].to_json)
+            data = JSON.parse(citation_result['Data'].to_json)
+            if @remove_links
+              data = removeLinksFromExports(data)
+            end
+            item['data'] = data
           end
 
           if citation_result.key? 'Error'
@@ -72,6 +89,61 @@ module EBSCO
           @items.push item
 
         end
+
+      end
+
+
+      def removeLinksFromStyles(citation)
+
+        # 1. abnt
+        #
+        # CHITEA, F. Electrical Signatures of Mud Volcanoes Case Studies from Romania. <b>Proceedings of the International Multidisciplinary Scientific GeoConference SGEM</b>, jul. 2016. v. 3, p. 467–474. Disponível em: <http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536>. Acesso em: 15 out. 2018.
+        #
+        # 2. ama
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt;. Germany, Europe: Massachusetts Medical Society; 2016. http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780. Accessed October 12, 2018.
+        #
+        # 3. apa
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt;. (2016). Germany, Europe: Massachusetts Medical Society. Retrieved from http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780
+        #
+        # 4. chicago
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt;. 2016. Germany, Europe: Massachusetts Medical Society. http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780.
+        #
+        # 5. harvard
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt; (2016). Germany, Europe: Massachusetts Medical Society. Available at: http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780 (Accessed: 12 October 2018).
+        #
+        # 6. harvardaustralian
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt; 2016, Massachusetts Medical Society, Germany, Europe, viewed 12 October 2018, &lt;http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780&gt;.
+        #
+        # 7. mla
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt;. Massachusetts Medical Society, 2016. &lt;i&gt;EBSCOhost&lt;/i&gt;, search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780.
+        #
+        # 8. turbanian
+        # &lt;i&gt;Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura&lt;/i&gt;. Germany, Europe: Massachusetts Medical Society, 2016. http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780.
+        #
+        # 9. vancouver
+        # Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura [Internet]. Germany, Europe: Massachusetts Medical Society; 2016 [cited 2018 Oct 12]. Available from: http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780
+        #
+        #
+        #
+        #
+        if citation
+          citation.gsub!(/[.,]\s+(&lt;i&gt;EBSCOhost|viewed|Available|Retrieved from|http:\/\/search.ebscohost.com|Disponível em).+$/, '.')
+        end
+        citation
+
+      end
+
+      def removeLinksFromExports(citation)
+
+        # 1. RIS
+        # UR  - http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;db=edsbas&amp;AN=edsbas.AA261780
+        # DP  - EBSCOhost
+        #
+        if citation
+          citation.gsub!(/UR\s+-\s+http:\/\/search\.ebscohost\.com.+\s+/,'')
+          citation.gsub!(/DP\s+-\s+EBSCOhost\s+/, '')
+        end
+        citation
 
       end
 

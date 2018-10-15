@@ -213,12 +213,83 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  def test_citation_as_guest
-    VCR.use_cassette('citation_test/profile_1/test_citation_as_guest') do
-      session = EBSCO::EDS::Session.new({use_cache: false, guest: true, profile: 'eds-api'})
-      puts session.inspect
-      # citation_list = session.get_citation_exports_list(id_list: ['asn__108974507', 'cat02060a__d.uga.3690122'])
-      # assert citation_list.count == 2
+  # def test_citation_as_guest
+  #   VCR.use_cassette('citation_test/profile_1/test_citation_as_guest') do
+  #     session = EBSCO::EDS::Session.new({use_cache: false, guest: true, profile: 'eds-api'})
+  #     # puts session.inspect
+  #     citation_list = session.get_citation_exports_list(id_list: ['asn__108974507', 'cat02060a__d.uga.3690122'])
+  #     assert citation_list.count == 2
+  #     session.end
+  #   end
+  # end
+
+
+  def test_citations_include_plinks
+    VCR.use_cassette('citation_test/profile_1/test_citations_include_plinks') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', remove_citation_links: false})
+      if session.dbid_in_profile 'asn'
+        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        citation_exports = record.eds_citation_exports
+        citation_styles = record.eds_citation_styles
+        assert citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536')
+        style_items = citation_styles.items
+        assert style_items.count >= 9
+        apa_style = style_items.select { |item| item['id'] == 'apa' }
+        assert apa_style.first['data'].include?(" Retrieved from http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536")
+      else
+        puts 'WARNING: skipping test_citations_include_plinks since asn db not in profile.'
+      end
+      session.end
+    end
+  end
+
+  def test_citations_exclude_plinks
+    VCR.use_cassette('citation_test/profile_1/test_citations_exclude_plinks') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', remove_citation_links: true})
+      if session.dbid_in_profile 'asn'
+        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        citation_exports = record.eds_citation_exports
+        citation_styles = record.eds_citation_styles
+        assert(!citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536'))
+        style_items = citation_styles.items
+        assert style_items.count >= 9
+        apa_style = style_items.select { |item| item['id'] == 'apa' }
+        assert(!apa_style.first['data'].include?(" Retrieved from http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536"))
+      else
+        puts 'WARNING: skipping test_citations_exclude_plinks since asn db not in profile.'
+      end
+      session.end
+    end
+  end
+
+  def test_citations_exclude_plinks_abnt
+    VCR.use_cassette('citation_test/profile_1/test_citations_exclude_plinks_abnt') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', remove_citation_links: true})
+      if session.dbid_in_profile 'asn'
+        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        citation_styles = record.eds_citation_styles
+        abnt_style = citation_styles.items.select { |item| item['id'] == 'abnt' }
+        assert(!abnt_style.first['data'].include?('search.ebscohost.com'))
+     else
+        puts 'WARNING: skipping test_citations_exclude_plinks_abnt since asn db not in profile.'
+      end
+      session.end
+    end
+  end
+
+  def test_citations_include_doi
+    VCR.use_cassette('citation_test/profile_1/test_citations_include_doi') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
+      if session.dbid_in_profile 'asn'
+        record = session.retrieve({dbid: 'asn', an: '108974507'})
+        citation_styles = record.eds_citation_styles
+        style_items = citation_styles.items
+        assert style_items.count >= 9
+        apa_style = style_items.select { |item| item['id'] == 'apa' }
+        assert apa_style.first['data'].include?("Weissman, K. J. (2015). The structural biology of biosynthetic megaenzymes. <i>Nature Chemical Biology</i>, <i>11</i>(9), 660–670. https://doi.org/10.1038/nchembio.1883")
+      else
+        puts 'WARNING: skipping test_citations_include_doi since asn db not in profile.'
+      end
       session.end
     end
   end
