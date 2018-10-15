@@ -67,5 +67,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Adds KW (keywords) and SH (subject heading) to solr search fields
 
-[1.0.2]: https://github.com/ebsco/edsapi-ruby/compare/release/1.0.1...1.0.2
-[1.0.1]: https://github.com/ebsco/edsapi-ruby/compare/release/1.0.0...1.0.1
+[1.0.2]: https://github.com/ebsco/edsapi-ruby/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/ebsco/edsapi-ruby/compare/1.0.0...1.0.1
