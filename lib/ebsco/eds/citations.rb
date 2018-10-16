@@ -1,4 +1,5 @@
 require 'ebsco/eds/jsonable'
+require 'erb'
 
 module EBSCO
   module EDS
@@ -9,6 +10,15 @@ module EBSCO
 
       def initialize(dbid:, an:, citation_result:, eds_config: nil)
 
+
+        (ENV.has_key? 'EDS_DEBUG') ?
+            if %w(y Y yes Yes true True).include?(ENV['EDS_DEBUG'])
+              @debug = true
+            else
+              @debug = false
+            end :
+            @debug = eds_config[:debug]
+
         # remove links?
         (ENV.has_key? 'EDS_REMOVE_CITATION_LINKS') ?
             if %w(y Y yes Yes true True).include?(ENV['EDS_REMOVE_CITATION_LINKS'])
@@ -17,6 +27,19 @@ module EBSCO
               @remove_links = false
             end :
             @remove_links = eds_config[:remove_citation_links]
+
+        # use links template?
+        (ENV.has_key? 'EDS_CITATION_LINKS_TEMPLATE') ?
+            if ENV['EDS_CITATION_LINKS_TEMPLATE'].empty?
+              @links_template = ""
+            else
+              @links_template = ENV['EDS_CITATION_LINKS_TEMPLATE']
+            end :
+            @links_template = eds_config[:citation_links_template]
+
+        if @debug
+          puts 'LINKS TEMPLATE: ' + @links_template.inspect
+        end
 
         @eds_database_id = dbid
         @eds_accession_number = an
@@ -42,6 +65,10 @@ module EBSCO
               data = JSON.parse(style['Data'].to_json)
               if @remove_links
                 data = removeLinksFromStyles(data)
+              else
+                unless @links_template == ""
+                  data = applyLinksTemplate(data, dbid, an)
+                end
               end
               item['data'] = data
             end
@@ -144,6 +171,28 @@ module EBSCO
           citation.gsub!(/DP\s+-\s+EBSCOhost\s+/, '')
         end
         citation
+
+      end
+
+      def applyLinksTemplate(data, dbid, an)
+
+        if data
+          renderer = ERB.new(@links_template)
+          new_link = renderer.result(binding)
+          unless new_link.empty?
+            if @debug
+              puts 'doing links template...'
+              puts 'BEFORE:'
+              puts data.inspect
+            end
+            data.gsub!(/(http:\/\/)?search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=#{dbid}&AN=#{an}/, new_link)
+            if @debug
+              puts 'AFTER:'
+              puts data.inspect
+            end
+          end
+        end
+        data
 
       end
 

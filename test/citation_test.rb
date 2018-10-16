@@ -294,4 +294,27 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+
+  def test_citations_links_template
+    #VCR.use_cassette('citation_test/profile_1/test_citations_include_doi') do
+      session = EBSCO::EDS::Session.new({use_cache: false,
+                                         guest: false,
+                                         debug: true,
+                                         profile: 'eds-api',
+                                         remove_citation_links: false,
+                                         citation_links_template: "https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>"})
+      if session.dbid_in_profile 'asn'
+        record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
+        citation_styles = record.eds_citation_styles
+        style_items = citation_styles.items
+        assert style_items.count >= 9
+        apa_style = style_items.select { |item| item['id'] == 'apa' }
+        # puts apa_style.first['data'].inspect
+        assert apa_style.first['data'].include?("<i>Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura</i>. (2016). Germany, Europe: Massachusetts Medical Society. Retrieved from https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780")
+      else
+        puts 'WARNING: skipping test_citations_include_doi since asn db not in profile.'
+      end
+      session.end
+    #end
+  end
 end
