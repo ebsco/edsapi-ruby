@@ -294,27 +294,53 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-
-  def test_citations_links_template
-    #VCR.use_cassette('citation_test/profile_1/test_citations_include_doi') do
+  def test_citations_links_and_db_templates_in_styles
+    VCR.use_cassette('citation_test/profile_1/test_citations_links_and_db_templates_in_styles') do
       session = EBSCO::EDS::Session.new({use_cache: false,
                                          guest: false,
-                                         debug: true,
+                                         debug: false,
                                          profile: 'eds-api',
                                          remove_citation_links: false,
-                                         citation_links_template: "https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>"})
+                                         citation_links_template: "https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>",
+                                         citation_db_template: "SearchWorks"})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
         citation_styles = record.eds_citation_styles
         style_items = citation_styles.items
         assert style_items.count >= 9
         apa_style = style_items.select { |item| item['id'] == 'apa' }
-        # puts apa_style.first['data'].inspect
+        mla_style = style_items.select { |item| item['id'] == 'mla' }
+        # puts 'APA TEST: ' + apa_style.first['data'].inspect
         assert apa_style.first['data'].include?("<i>Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura</i>. (2016). Germany, Europe: Massachusetts Medical Society. Retrieved from https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780")
+        # puts 'MLA TEST: ' + mla_style.first['data'].inspect
+        assert mla_style.first['data'].include?("<i>Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura</i>. Massachusetts Medical Society, 2016. <i>SearchWorks</i>, https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780.")
       else
-        puts 'WARNING: skipping test_citations_include_doi since asn db not in profile.'
+        puts 'WARNING: skipping test_citations_links_and_db_templates_in_styles since asn db not in profile.'
       end
       session.end
-    #end
+    end
   end
+
+  def test_citations_links_and_db_templates_in_exports
+    VCR.use_cassette('citation_test/profile_1/test_citations_links_and_db_templates_in_exports') do
+      session = EBSCO::EDS::Session.new({use_cache: false,
+                                         guest: false,
+                                         debug: false,
+                                         profile: 'eds-api',
+                                         remove_citation_links: false,
+                                         citation_links_template: "https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>",
+                                         citation_db_template: "SearchWorks"})
+      if session.dbid_in_profile 'asn'
+        record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
+        citation_exports = record.eds_citation_exports
+        # puts citation_exports.items.first['data'].inspect
+        assert citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=edsbas&AN=edsbas.AA261780')
+        assert citation_exports.items.first['data'].include?('DP  - SearchWorks')
+      else
+        puts 'WARNING: skipping test_citations_links_and_db_templates_in_exports since asn db not in profile.'
+      end
+      session.end
+    end
+  end
+
 end

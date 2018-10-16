@@ -41,6 +41,19 @@ module EBSCO
           puts 'LINKS TEMPLATE: ' + @links_template.inspect
         end
 
+        # use db template?
+        (ENV.has_key? 'EDS_CITATION_DB_TEMPLATE') ?
+            if ENV['EDS_CITATION_DB_TEMPLATE'].empty?
+              @db_template = ""
+            else
+              @db_template = ENV['EDS_CITATION_DB_TEMPLATE']
+            end :
+            @db_template = eds_config[:citation_db_template]
+
+        if @debug
+          puts 'DB TEMPLATE: ' + @db_template.inspect
+        end
+
         @eds_database_id = dbid
         @eds_accession_number = an
         @eds_record_id = @eds_database_id + '__' + @eds_accession_number
@@ -67,7 +80,10 @@ module EBSCO
                 data = removeLinksFromStyles(data)
               else
                 unless @links_template == ""
-                  data = applyLinksTemplate(data, dbid, an)
+                  data = applyLinksTemplateToStyles(data, dbid, an)
+                end
+                unless @db_template == ""
+                  data = applyDbTemplateToStyles(data)
                 end
               end
               item['data'] = data
@@ -105,6 +121,13 @@ module EBSCO
             data = JSON.parse(citation_result['Data'].to_json)
             if @remove_links
               data = removeLinksFromExports(data)
+            else
+              unless @links_template == ""
+                data = applyLinksTemplateToExports(data, dbid, an)
+              end
+              unless @db_template == ""
+                data = applyDbTemplateToExports(data)
+              end
             end
             item['data'] = data
           end
@@ -171,11 +194,49 @@ module EBSCO
           citation.gsub!(/DP\s+-\s+EBSCOhost\s+/, '')
         end
         citation
-
       end
 
-      def applyLinksTemplate(data, dbid, an)
+      def applyLinksTemplateToExports(data, dbid, an)
+        if data
+          renderer = ERB.new(@links_template)
+          new_link = renderer.result(binding)
+          unless new_link.empty?
+            if @debug
+              puts 'doing links template...'
+              puts 'BEFORE:'
+              puts data.inspect
+            end
+            data.gsub!(/UR\s+--\s+http:\/\/search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=#{dbid}&AN=#{an}/, 'UR  - ' + new_link)
+            if @debug
+              puts 'AFTER:'
+              puts data.inspect
+            end
+          end
+        end
+        data
+      end
 
+      def applyDbTemplateToExports(data)
+        if data
+          renderer = ERB.new(@db_template)
+          new_db = renderer.result(binding)
+          unless new_db.empty?
+            if @debug
+              puts 'doing db template...'
+              puts 'BEFORE:'
+              puts data.inspect
+            end
+            data.gsub!(/DP\s+-\s+EBSCOhost/, 'DP  - ' + new_db)
+            if @debug
+              puts 'AFTER:'
+              puts data.inspect
+            end
+          end
+        end
+        data
+      end
+
+      def applyLinksTemplateToStyles(data, dbid, an)
         if data
           renderer = ERB.new(@links_template)
           new_link = renderer.result(binding)
@@ -193,7 +254,26 @@ module EBSCO
           end
         end
         data
+      end
 
+      def applyDbTemplateToStyles(data)
+        if data
+          renderer = ERB.new(@db_template)
+          new_db = renderer.result(binding)
+          unless new_db.empty?
+            if @debug
+              puts 'doing db template...'
+              puts 'BEFORE:'
+              puts data.inspect
+            end
+            data.gsub!(/<i>EBSCOhost<\/i>/, '<i>' + new_db + '</i>')
+            if @debug
+              puts 'AFTER:'
+              puts data.inspect
+            end
+          end
+        end
+        data
       end
 
     end

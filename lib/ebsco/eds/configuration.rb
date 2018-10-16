@@ -47,7 +47,9 @@ module EBSCO
             :decode_sanitize_html => false,
             :titleize_facets => false,
             :remove_citation_links => true,
-            :citation_links_template => ""
+            :citation_links_template => "",
+            :citation_db_template => ""
+
         }
         @valid_config_keys = @config.keys
       end
