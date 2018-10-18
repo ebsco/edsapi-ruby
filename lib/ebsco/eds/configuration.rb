@@ -46,10 +46,14 @@ module EBSCO
             :all_subjects_search_links => false,
             :decode_sanitize_html => false,
             :titleize_facets => false,
-            :remove_citation_links => true,
-            :citation_links_template => "",
-            :citation_db_template => ""
-
+            :citation_link_find => '[.,]\s+(&lt;i&gt;EBSCOhost|viewed|Available|Retrieved from|http:\/\/search.ebscohost.com|Disponível em).+$',
+            :citation_link_replace => '.',
+            :citation_db_find => '',
+            :citation_db_replace => '',
+            :ris_link_find => '',
+            :ris_link_replace => '',
+            :ris_db_find => '',
+            :ris_db_replace => ''
         }
         @valid_config_keys = @config.keys
       end

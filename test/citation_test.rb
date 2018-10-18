@@ -222,11 +222,10 @@ class EdsApiTests < Minitest::Test
   #     session.end
   #   end
   # end
-
-
-  def test_citations_include_plinks
-    VCR.use_cassette('citation_test/profile_1/test_citations_include_plinks') do
-      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', remove_citation_links: false})
+  
+  def test_citations_keep_links
+    VCR.use_cassette('citation_test/profile_1/test_citations_keep_links') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', citation_link_find: ''})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '118411536'})
         citation_exports = record.eds_citation_exports
@@ -237,41 +236,43 @@ class EdsApiTests < Minitest::Test
         apa_style = style_items.select { |item| item['id'] == 'apa' }
         assert apa_style.first['data'].include?(" Retrieved from http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536")
       else
-        puts 'WARNING: skipping test_citations_include_plinks since asn db not in profile.'
+        puts 'WARNING: skipping test_citations_keep_links since asn db not in profile.'
       end
       session.end
     end
   end
 
-  def test_citations_exclude_plinks
-    VCR.use_cassette('citation_test/profile_1/test_citations_exclude_plinks') do
-      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', remove_citation_links: true})
+  def test_citations_remove_links
+    VCR.use_cassette('citation_test/profile_1/test_citations_remove_links') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api',
+                                         citation_link_find: '[.,]\s+(&lt;i&gt;EBSCOhost|viewed|Available|Retrieved from|http:\/\/search.ebscohost.com|Disponível em).+$'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '118411536'})
         citation_exports = record.eds_citation_exports
         citation_styles = record.eds_citation_styles
-        assert(!citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536'))
+        # assert(!citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536'))
         style_items = citation_styles.items
         assert style_items.count >= 9
         apa_style = style_items.select { |item| item['id'] == 'apa' }
         assert(!apa_style.first['data'].include?(" Retrieved from http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536"))
       else
-        puts 'WARNING: skipping test_citations_exclude_plinks since asn db not in profile.'
+        puts 'WARNING: skipping test_citations_remove_links since asn db not in profile.'
       end
       session.end
     end
   end
 
-  def test_citations_exclude_plinks_abnt
-    VCR.use_cassette('citation_test/profile_1/test_citations_exclude_plinks_abnt') do
-      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', remove_citation_links: true})
+  def test_citations_remove_links_abnt
+    VCR.use_cassette('citation_test/profile_1/test_citations_remove_links_abnt') do
+      session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api',
+                                         citation_link_find: '[.,]\s+(&lt;i&gt;EBSCOhost|viewed|Available|Retrieved from|http:\/\/search.ebscohost.com|Disponível em).+$'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'asn', an: '118411536'})
         citation_styles = record.eds_citation_styles
         abnt_style = citation_styles.items.select { |item| item['id'] == 'abnt' }
         assert(!abnt_style.first['data'].include?('search.ebscohost.com'))
      else
-        puts 'WARNING: skipping test_citations_exclude_plinks_abnt since asn db not in profile.'
+        puts 'WARNING: skipping test_citations_remove_links_abnt since asn db not in profile.'
       end
       session.end
     end
@@ -294,15 +295,16 @@ class EdsApiTests < Minitest::Test
     end
   end
 
-  def test_citations_links_and_db_templates_in_styles
-    VCR.use_cassette('citation_test/profile_1/test_citations_links_and_db_templates_in_styles') do
+  def test_citations_links_replace_links_in_styles
+    VCR.use_cassette('citation_test/profile_1/test_citations_links_replace_links_in_styles') do
       session = EBSCO::EDS::Session.new({use_cache: false,
                                          guest: false,
                                          debug: false,
                                          profile: 'eds-api',
-                                         remove_citation_links: false,
-                                         citation_links_template: "https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>",
-                                         citation_db_template: "SearchWorks"})
+                                         citation_link_find: '(http:\/\/)?search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>',
+                                         citation_link_replace: 'https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>',
+                                         citation_db_find: '<i>EBSCOhost<\/i>',
+                                         citation_db_replace: '<i>SearchWorks</i>'})
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
         citation_styles = record.eds_citation_styles
@@ -315,7 +317,35 @@ class EdsApiTests < Minitest::Test
         # puts 'MLA TEST: ' + mla_style.first['data'].inspect
         assert mla_style.first['data'].include?("<i>Caplacizumab for Acquired Thrombotic Thrombocytopenic Purpura</i>. Massachusetts Medical Society, 2016. <i>SearchWorks</i>, https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780.")
       else
-        puts 'WARNING: skipping test_citations_links_and_db_templates_in_styles since asn db not in profile.'
+        puts 'WARNING: skipping test_citations_links_replace_links_in_styles since asn db not in profile.'
+      end
+      session.end
+    end
+  end
+
+  def test_citations_links_replace_links_in_styles_with_proxy
+    VCR.use_cassette('citation_test/profile_2/test_citations_links_replace_links_in_styles_with_proxy') do
+      session = EBSCO::EDS::Session.new({use_cache: false,
+                                         guest: false,
+                                         debug: false,
+                                         profile: 'edsapi',
+                                         citation_link_find: 'https:\/\/stanford\.idm\.oclc\.org\/login\?url=(http:\/\/)?search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>',
+                                         citation_link_replace: 'https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>',
+                                         citation_db_find: '<i>EBSCOhost<\/i>',
+                                         citation_db_replace: '<i>SearchWorks</i>'})
+      if session.dbid_in_profile 'edsdoj'
+        record = session.retrieve({dbid: 'edsdoj', an: 'edsdoj.0c69e36d48524a758c900c1e66dc0d7e'})
+        citation_styles = record.eds_citation_styles
+        style_items = citation_styles.items
+        assert style_items.count >= 9
+        vancouver_style = style_items.select { |item| item['id'] == 'vancouver' }
+        harvardaustralian_style = style_items.select { |item| item['id'] == 'harvardaustralian' }
+        puts 'vancouver_style TEST: ' + vancouver_style.first['data'].inspect
+        assert vancouver_style.first['data'].include?("Available from: https://searchworks.stanford.edu/articles/edsdoj__edsdoj.0c69e36d48524a758c900c1e66dc0d7e")
+        puts 'harvardaustralian TEST: ' + harvardaustralian_style.first['data'].inspect
+        assert harvardaustralian_style.first['data'].include?(" <https://searchworks.stanford.edu/articles/edsdoj__edsdoj.0c69e36d48524a758c900c1e66dc0d7e>.")
+      else
+        puts 'WARNING: skipping test_citations_links_replace_links_in_styles_with_proxy since db not in profile.'
       end
       session.end
     end
@@ -327,14 +357,21 @@ class EdsApiTests < Minitest::Test
                                          guest: false,
                                          debug: false,
                                          profile: 'eds-api',
-                                         remove_citation_links: false,
-                                         citation_links_template: "https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>",
-                                         citation_db_template: "SearchWorks"})
+                                         citation_link_find: '(http:\/\/)?search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>',
+                                         citation_link_replace: 'https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>',
+                                         citation_db_find: '<i>EBSCOhost<\/i>',
+                                         citation_db_replace: '<i>SearchWorks</i>',
+                                         ris_link_find: 'UR\s+-\s+http:\/\/search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>',
+                                         ris_link_replace: 'UR  - https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>',
+                                         ris_db_find: 'DP\s+-\s+EBSCOhost',
+                                         ris_db_replace: 'DP  - SearchWorks'
+                                        })
+
       if session.dbid_in_profile 'asn'
         record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
         citation_exports = record.eds_citation_exports
         # puts citation_exports.items.first['data'].inspect
-        assert citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=edsbas&AN=edsbas.AA261780')
+        assert citation_exports.items.first['data'].include?('UR  - https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780')
         assert citation_exports.items.first['data'].include?('DP  - SearchWorks')
       else
         puts 'WARNING: skipping test_citations_links_and_db_templates_in_exports since asn db not in profile.'

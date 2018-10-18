@@ -19,40 +19,74 @@ module EBSCO
             end :
             @debug = eds_config[:debug]
 
-        # remove links?
-        (ENV.has_key? 'EDS_REMOVE_CITATION_LINKS') ?
-            if %w(y Y yes Yes true True).include?(ENV['EDS_REMOVE_CITATION_LINKS'])
-              @remove_links = true
+        # citation link find and replace?
+        (ENV.has_key? 'EDS_CITATION_LINK_FIND') ?
+            if !ENV['EDS_CITATION_LINK_FIND'].empty?
+              @citation_link_find = ENV['EDS_CITATION_LINK_FIND']
             else
-              @remove_links = false
+              @citation_link_find = ""
             end :
-            @remove_links = eds_config[:remove_citation_links]
+            @citation_link_find = eds_config[:citation_link_find]
 
-        # use links template?
-        (ENV.has_key? 'EDS_CITATION_LINKS_TEMPLATE') ?
-            if ENV['EDS_CITATION_LINKS_TEMPLATE'].empty?
-              @links_template = ""
+        (ENV.has_key? 'EDS_CITATION_LINK_REPLACE') ?
+            if !ENV['EDS_CITATION_LINK_REPLACE'].empty?
+              @citation_link_replace = ENV['EDS_CITATION_LINK_REPLACE']
             else
-              @links_template = ENV['EDS_CITATION_LINKS_TEMPLATE']
+              @citation_link_replace = ""
             end :
-            @links_template = eds_config[:citation_links_template]
+            @citation_link_replace = eds_config[:citation_link_replace]
 
-        if @debug
-          puts 'LINKS TEMPLATE: ' + @links_template.inspect
-        end
-
-        # use db template?
-        (ENV.has_key? 'EDS_CITATION_DB_TEMPLATE') ?
-            if ENV['EDS_CITATION_DB_TEMPLATE'].empty?
-              @db_template = ""
+        # citation db find and replace?
+        (ENV.has_key? 'EDS_CITATION_DB_FIND') ?
+            if !ENV['EDS_CITATION_DB_FIND'].empty?
+              @citation_db_find = ENV['EDS_CITATION_DB_FIND']
             else
-              @db_template = ENV['EDS_CITATION_DB_TEMPLATE']
+              @citation_db_find = ""
             end :
-            @db_template = eds_config[:citation_db_template]
+            @citation_db_find = eds_config[:citation_db_find]
 
-        if @debug
-          puts 'DB TEMPLATE: ' + @db_template.inspect
-        end
+        (ENV.has_key? 'EDS_CITATION_DB_REPLACE') ?
+            if !ENV['EDS_CITATION_DB_REPLACE'].empty?
+              @citation_db_replace = ENV['EDS_CITATION_DB_REPLACE']
+            else
+              @citation_db_replace = ""
+            end :
+            @citation_db_replace = eds_config[:citation_db_replace]
+
+
+        # citation link find and replace?
+        (ENV.has_key? 'EDS_RIS_LINK_FIND') ?
+            if !ENV['EDS_RIS_LINK_FIND'].empty?
+              @ris_link_find = ENV['EDS_RIS_LINK_FIND']
+            else
+              @ris_link_find = ""
+            end :
+            @ris_link_find = eds_config[:ris_link_find]
+
+        (ENV.has_key? 'EDS_RIS_LINK_REPLACE') ?
+            if !ENV['EDS_RIS_LINK_REPLACE'].empty?
+              @ris_link_replace = ENV['EDS_RIS_LINK_REPLACE']
+            else
+              @ris_link_replace = ""
+            end :
+            @ris_link_replace = eds_config[:ris_link_replace]
+
+        # citation db find and replace?
+        (ENV.has_key? 'EDS_RIS_DB_FIND') ?
+            if !ENV['EDS_RIS_DB_FIND'].empty?
+              @ris_db_find = ENV['EDS_RIS_DB_FIND']
+            else
+              @ris_db_find = ""
+            end :
+            @ris_db_find = eds_config[:ris_db_find]
+
+        (ENV.has_key? 'EDS_RIS_DB_REPLACE') ?
+            if !ENV['EDS_RIS_DB_REPLACE'].empty?
+              @ris_db_replace = ENV['EDS_RIS_DB_REPLACE']
+            else
+              @ris_db_replace = ""
+            end :
+            @ris_db_replace = eds_config[:ris_db_replace]
 
         @eds_database_id = dbid
         @eds_accession_number = an
@@ -76,16 +110,29 @@ module EBSCO
 
             if style.key? 'Data'
               data = JSON.parse(style['Data'].to_json)
-              if @remove_links
-                data = removeLinksFromStyles(data)
-              else
-                unless @links_template == ""
-                  data = applyLinksTemplateToStyles(data, dbid, an)
+
+              if data
+                # apply citation link find & replace
+                unless @citation_link_find.empty?
+                  replace_template = ERB.new(@citation_link_replace)
+                  find_template = ERB.new(@citation_link_find)
+                  replace_link = replace_template.result(binding)
+                  find_link_regex = find_template.result(binding)
+                  link_regex = Regexp.new find_link_regex
+                  data = data.gsub!(link_regex, replace_link) || data
                 end
-                unless @db_template == ""
-                  data = applyDbTemplateToStyles(data)
+
+                # apply citation db find & replace
+                unless @citation_db_find.empty?
+                  replace_template = ERB.new(@citation_db_replace)
+                  find_template = ERB.new(@citation_db_find)
+                  replace_db = replace_template.result(binding)
+                  find_db_regex = find_template.result(binding)
+                  link_regex = Regexp.new find_db_regex
+                  data = data.gsub!(link_regex, replace_db) || data
                 end
               end
+
               item['data'] = data
             end
 
@@ -119,16 +166,29 @@ module EBSCO
 
           if citation_result.key? 'Data'
             data = JSON.parse(citation_result['Data'].to_json)
-            if @remove_links
-              data = removeLinksFromExports(data)
-            else
-              unless @links_template == ""
-                data = applyLinksTemplateToExports(data, dbid, an)
+
+            if data
+              # apply ris link find & replace
+              unless @citation_link_find.empty?
+                replace_template = ERB.new(@ris_link_replace)
+                find_template = ERB.new(@ris_link_find)
+                replace_link = replace_template.result(binding)
+                find_link_regex = find_template.result(binding)
+                link_regex = Regexp.new find_link_regex
+                data = data.gsub!(link_regex, replace_link) || data
               end
-              unless @db_template == ""
-                data = applyDbTemplateToExports(data)
+
+              # apply ris db find & replace
+              unless @ris_db_find.empty?
+                replace_template = ERB.new(@ris_db_replace)
+                find_template = ERB.new(@ris_db_find)
+                replace_db = replace_template.result(binding)
+                find_db_regex = find_template.result(binding)
+                link_regex = Regexp.new find_db_regex
+                data = data.gsub!(link_regex, replace_db) || data
               end
             end
+
             item['data'] = data
           end
 
