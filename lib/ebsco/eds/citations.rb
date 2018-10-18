@@ -105,13 +105,18 @@ module EBSCO
             end
 
             if style.key? 'Label'
+              puts if @debug
+              puts style['Label'].inspect if @debug
               item['label'] = JSON.parse(style['Label'].to_json)
             end
 
             if style.key? 'Data'
               data = JSON.parse(style['Data'].to_json)
 
+
               if data
+                puts 'BEFORE: ' + data.inspect if @debug
+
                 # apply citation link find & replace
                 unless @citation_link_find.empty?
                   replace_template = ERB.new(@citation_link_replace)
@@ -131,6 +136,8 @@ module EBSCO
                   link_regex = Regexp.new find_db_regex
                   data = data.gsub!(link_regex, replace_db) || data
                 end
+
+                puts 'AFTER: ' + data.inspect if @debug
               end
 
               item['data'] = data
@@ -168,6 +175,8 @@ module EBSCO
             data = JSON.parse(citation_result['Data'].to_json)
 
             if data
+              puts "BEFORE: \n" if @debug
+              puts data if @debug
               # apply ris link find & replace
               unless @citation_link_find.empty?
                 replace_template = ERB.new(@ris_link_replace)
@@ -187,6 +196,9 @@ module EBSCO
                 link_regex = Regexp.new find_db_regex
                 data = data.gsub!(link_regex, replace_db) || data
               end
+              puts if @debug
+              puts "AFTER: \n" if @debug
+              puts data if @debug
             end
 
             item['data'] = data
