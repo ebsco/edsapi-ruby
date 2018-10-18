@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
+## [1.0.3] - 2018-10-18
+### Changed
+- Citation style and export links can now be removed entirely or replaced by specifying regular expressions in several configuration options that can include ruby erb variable expressions for an item's `dbid` and `an`. This was added to address situations where customer proxy urls are returned. See: [Citation link replacement](https://github.com/ebsco/edsapi-ruby/wiki/Citation-link-replacement)
+
 ## [1.0.2] - 2018-10-15
 ### Added
 - EBSCOhost links are removed from citation styles and exports by default
-
 
 ## [1.0.1] - 2018-10-10
 ### Added
@@ -67,5 +70,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Adds KW (keywords) and SH (subject heading) to solr search fields
 
+[1.0.3]: https://github.com/ebsco/edsapi-ruby/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/ebsco/edsapi-ruby/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/ebsco/edsapi-ruby/compare/1.0.0...1.0.1
