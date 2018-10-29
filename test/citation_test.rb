@@ -329,7 +329,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_citations_links_replace_links_in_styles_with_proxy
-    #VCR.use_cassette('citation_test/profile_2/test_citations_links_replace_links_in_styles_with_proxy') do
+    VCR.use_cassette('citation_test/profile_2/test_citations_links_replace_links_in_styles_with_proxy') do
       session = EBSCO::EDS::Session.new({use_cache: false,
                                          guest: false,
                                          debug: false,
@@ -346,14 +346,14 @@ class EdsApiTests < Minitest::Test
         vancouver_style = style_items.select { |item| item['id'] == 'vancouver' }
         harvardaustralian_style = style_items.select { |item| item['id'] == 'harvardaustralian' }
         # puts 'vancouver_style TEST: ' + vancouver_style.first['data'].inspect
-        # assert vancouver_style.first['data'].include?("Available from: https://searchworks.stanford.edu/articles/edsdoj__edsdoj.0c69e36d48524a758c900c1e66dc0d7e")
+        assert vancouver_style.first['data'].include?("Available from: https://searchworks.stanford.edu/articles")
         # puts 'harvardaustralian TEST: ' + harvardaustralian_style.first['data'].inspect
-        # assert harvardaustralian_style.first['data'].include?(" <https://searchworks.stanford.edu/articles/edsdoj__edsdoj.0c69e36d48524a758c900c1e66dc0d7e>.")
+        assert harvardaustralian_style.first['data'].include?(" <https://searchworks.stanford.edu/articles")
       else
         puts 'WARNING: skipping test_citations_links_replace_links_in_styles_with_proxy since db not in profile.'
       end
       session.end
-    #end
+    end
   end
 
   def test_citations_links_and_db_templates_in_exports
@@ -386,10 +386,10 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_citations_links_and_db_templates_in_exports_with_proxy
-    #VCR.use_cassette('citation_test/profile_2/test_citations_links_and_db_templates_in_exports_with_proxy') do
+    VCR.use_cassette('citation_test/profile_2/test_citations_links_and_db_templates_in_exports_with_proxy') do
       session = EBSCO::EDS::Session.new({use_cache: false,
                                          guest: false,
-                                         debug: true,
+                                         debug: false,
                                          profile: 'edsapi',
                                          ris_link_find: 'UR\s+-\s+https:\/\/stanford.idm.oclc.org\/login\?url=http:\/\/search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>',
                                          ris_link_replace: 'UR  - https://searchworks.stanford.edu/articles/<%= dbid %>__<%= an %>',
@@ -400,39 +400,52 @@ class EdsApiTests < Minitest::Test
       if session.dbid_in_profile 'edsgpr'
         record = session.retrieve({dbid: 'edsgpr', an: 'edsgpr.001022076'})
         citation_exports = record.eds_citation_exports
-        #puts citation_exports.items.first['data']
-        assert citation_exports.items.first['data'].include?('UR  - https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780')
+        # puts citation_exports.items.first['data']
+        assert citation_exports.items.first['data'].include?('UR  - https://searchworks.stanford.edu/articles/edsgpr__edsgpr.001022076')
         assert citation_exports.items.first['data'].include?('DP  - SearchWorks')
       else
         puts 'WARNING: skipping test_citations_links_and_db_templates_in_exports since asn db not in profile.'
       end
       session.end
-    #end
+    end
   end
 
   def test_remove_citation_links_and_db_in_ris_with_proxy
-    #VCR.use_cassette('citation_test/profile_2/test_remove_citation_links_and_db_in_ris_with_proxy') do
-    session = EBSCO::EDS::Session.new({use_cache: false,
-                                       guest: false,
-                                       debug: false,
-                                       profile: 'edsapi',
-                                       ris_link_find: 'UR\s+-\s+https:\/\/stanford.idm.oclc.org\/login\?url=http:\/\/search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>\s+',
-                                       ris_link_replace: '',
-                                       ris_db_find: 'DP\s+-\s+EBSCOhost\s+',
-                                       ris_db_replace: ''
-                                      })
+    VCR.use_cassette('citation_test/profile_2/test_remove_citation_links_and_db_in_ris_with_proxy') do
+      session = EBSCO::EDS::Session.new({use_cache: false,
+                                         guest: false,
+                                         debug: false,
+                                         profile: 'edsapi',
+                                         ris_link_find: 'UR\s+-\s+https:\/\/stanford.idm.oclc.org\/login\?url=http:\/\/search\.ebscohost\.com\/login\.aspx\?direct=true&site=eds-live&db=<%= dbid %>&AN=<%= an %>\s+',
+                                         ris_link_replace: '',
+                                         ris_db_find: 'DP\s+-\s+EBSCOhost\s+',
+                                         ris_db_replace: ''
+                                        })
 
-    if session.dbid_in_profile 'edsgpr'
-      record = session.retrieve({dbid: 'edsgpr', an: 'edsgpr.001022076'})
-      citation_exports = record.eds_citation_exports
-      # puts citation_exports.items.first['data']
-      assert citation_exports.items.first['data'].include?('UR  - https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780')
-      assert citation_exports.items.first['data'].include?('DP  - SearchWorks')
-    else
-      puts 'WARNING: skipping test_remove_citation_links_and_db_in_ris_with_proxy since asn db not in profile.'
+      if session.dbid_in_profile 'edsgpr'
+        record = session.retrieve({dbid: 'edsgpr', an: 'edsgpr.001022076'})
+        citation_exports = record.eds_citation_exports
+        assert !citation_exports.items.first['data'].include?('UR  - https://stanford.idm.oclc.org/login?')
+        assert !citation_exports.items.first['data'].include?('DP  - EBSCOhost')
+      else
+        puts 'WARNING: skipping test_remove_citation_links_and_db_in_ris_with_proxy since asn db not in profile.'
+      end
+      session.end
     end
-    session.end
-    #end
+  end
+
+  def test_solr_response_for_a_list_of_ids_with_caching
+    test_cache_dir = './test/cache'
+    VCR.use_cassette('citation_test/profile_1/test_solr_response_for_a_list_of_ids_with_caching') do
+      session = EBSCO::EDS::Session.new({use_cache: true, eds_cache_dir: test_cache_dir, guest: false, profile: 'eds-api'})
+      citation_list = session.solr_retrieve_list(list: ['asn__108974507', 'cat02060a__d.uga.3690122'])
+      assert citation_list.to_json.to_s.include?('"id":"asn__108974507"')
+      assert citation_list.to_json.to_s.include?('"id":"cat02060a__d.uga.3690122"')
+      session.end
+    end
+
+    # remove test cache
+    FileUtils.remove_dir(test_cache_dir)
   end
 
 end

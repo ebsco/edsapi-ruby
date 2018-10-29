@@ -459,10 +459,12 @@ module EBSCO
       def solr_retrieve_list(list: [], highlight: nil)
         records = []
         if list.any?
-          list.each { |id|
+          list.each.with_index(1) { |id, index|
             dbid = id.split('__',2).first
             accession = id.split('__',2).last
-            records.push retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
+            current_rec = retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
+            current_rec.eds_result_id = index
+            records.push current_rec
           }
         end
         r = empty_results(records.length)
@@ -795,6 +797,8 @@ module EBSCO
 
           conn = connection
 
+          config_path = path.dup
+
           # use a citation api connection?
           if path.include?(@config[:citation_exports_url]) || path.include?(@config[:citation_styles_url])
             conn = citation_connection
@@ -805,18 +809,18 @@ module EBSCO
               when :get
                 unless payload.nil?
                   qs = CGI.unescape(payload.to_query(nil))
-                  path << '?' + qs
+                  config_path << '?' + qs
                 end
-               req.url path
+               req.url config_path
               when :post
                 unless payload.nil?
                   json_payload = JSON.generate(payload)
-                  path << get_cache_id(path, json_payload) if @use_cache
+                  config_path << get_cache_id(path, json_payload) if @use_cache
                   req.body = json_payload
                 end
-                req.url path
+                req.url config_path
               else
-                raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{path}"
+                raise EBSCO::EDS::ApiError, "EBSCO API error: Method #{method} not supported for endpoint #{config_path}"
             end
           end
           resp.body
