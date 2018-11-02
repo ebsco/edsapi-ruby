@@ -89,4 +89,24 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+
+  def test_sanitize_html_fulltext_no_replacements_in_gsub
+    VCR.use_cassette('html_test/profile_2/test_sanitize_html_fulltext_no_replacements_in_gsub') do
+      session_with_sanitize = EBSCO::EDS::Session.new({guest: false,
+                                                       use_cache: false,
+                                                       profile: 'edsapi',
+                                                       decode_sanitize_html: true,
+                                                       all_subjects_search_links: true})
+
+      if session_with_sanitize.dbid_in_profile 'aph'
+        record = session_with_sanitize.retrieve({dbid: 'aph', an: '87564228'})
+        # puts 'HTML AFTER: ' + record.eds_html_fulltext.to_s
+        assert record.eds_html_fulltext.to_s.include? '<h1 id="AN0087564228-1">Expressing Compassion in the Face of Crisis'
+      else
+        puts "WARNING: skipping test_sanitize_html_fulltext_no_replacements_in_gsub, bah db isn't in the profile."
+      end
+      session_with_sanitize.end
+    end
+  end
+
 end

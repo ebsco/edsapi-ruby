@@ -26,11 +26,32 @@ class EdsApiTests < Minitest::Test
         found_custom_fulltext = false
         record.fulltext_links.each do |link|
           found_catalog_link = true if link[:type] == 'cataloglink'
-          found_custom_fulltext = true if link[:type] = 'customlink-fulltext'
+          found_custom_fulltext = true if link[:type] == 'customlink-fulltext'
         end
         assert found_custom_fulltext && found_catalog_link
       else
         puts "WARNING: skipping test_customlinks_fulltext, cmedm edsoai isn't in the profile."
+      end
+      session.end
+    end
+  end
+
+  def test_customlinks_fulltext_missing_protocol
+    VCR.use_cassette('linking_test/profile_2/test_customlinks_fulltext_missing_protocol') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      if session.dbid_in_profile 'eric'
+        record = session.retrieve({dbid: 'eric', an: 'EJ1050530'})
+        found_customlink_fulltext = false
+        found_protocol = false
+        record.fulltext_links.each do |link|
+          found_customlink_fulltext = true if link[:type] == 'customlink-fulltext'
+          if found_customlink_fulltext
+            found_protocol = true if link[:url] == 'https://eric.ed.gov?id=EJ1050530'
+          end
+        end
+        assert found_customlink_fulltext && found_protocol
+      else
+        puts "WARNING: skipping test_customlinks_fulltext_missing_protocol, eric db isn't in the profile."
       end
       session.end
     end
@@ -46,7 +67,7 @@ class EdsApiTests < Minitest::Test
         found_custom_other = false
         record.all_links.each do |link|
           found_catalog_link = true if link[:type] == 'cataloglink'
-          found_custom_other = true if link[:type] = 'customlink-other'
+          found_custom_other = true if link[:type] == 'customlink-other'
         end
         assert found_custom_other && found_catalog_link
       else

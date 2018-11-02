@@ -421,6 +421,14 @@ module EBSCO
         fulltext_links.first || {}
       end
 
+      # add protocol if needed
+      def add_protocol(url)
+        unless url[/\Ahttp:\/\//] || url[/\Ahttps:\/\//]
+          url = "https://#{url}"
+        end
+        url
+      end
+
       # All available fulltext links.
       def fulltext_links
 
@@ -514,6 +522,7 @@ module EBSCO
         if ft_customlinks.count > 0
           ft_customlinks.each do |ft_customlink|
             link_url = ft_customlink['Url']
+            link_url = add_protocol(link_url)
             link_label = ft_customlink['Text']
             link_icon = ft_customlink['Icon']
             links.push({url: link_url, label: link_label, icon: link_icon, type: 'customlink-fulltext', expires: false})
@@ -530,6 +539,7 @@ module EBSCO
         if other_customlinks.count > 0
           other_customlinks.each do |other_customlink|
             link_url = other_customlink['Url']
+            link_url = add_protocol(link_url)
             link_label = other_customlink['Text']
             link_icon = other_customlink['Icon']
             links.push({url: link_url, label: link_label, icon: link_icon, type: 'customlink-other', expires: false})
@@ -947,8 +957,8 @@ module EBSCO
         # need to double-unescape data with an ephtml section
         if html =~ /<ephtml>/
           html = CGI.unescapeHTML(html)
-          html = html.gsub!(/\\"/, '"')
-          html = html.gsub!(/\\n /, '')
+          html = html.gsub(/\\"/, '"')
+          html = html.gsub(/\\n /, '')
         end
 
         Sanitize.fragment(html, sanitize_config)

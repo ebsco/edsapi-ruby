@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
+## [1.0.5] - 2018-11-02
+### Fixed
+- Fixed a bug where fulltext html becomes nil after sanitizing. [#85](https://github.com/ebsco/edsapi-ruby/issues/85) 
+- Fixed a bug where the url protocol is missing from fulltext custom links. [#86](https://github.com/ebsco/edsapi-ruby/issues/86)
+
+
 ## [1.0.4] - 2018-10-29
 ### Fixed
 - List retrieval returns a repeating list of just the first record. 
@@ -75,6 +81,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Adds KW (keywords) and SH (subject heading) to solr search fields
 
+[1.0.5]: https://github.com/ebsco/edsapi-ruby/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/ebsco/edsapi-ruby/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/ebsco/edsapi-ruby/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/ebsco/edsapi-ruby/compare/1.0.1...1.0.2
