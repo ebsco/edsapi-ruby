@@ -105,9 +105,17 @@ module EBSCO
         raise EBSCO::EDS::InvalidParameter, 'Session must specify a valid api profile.' if blank?(@profile)
 
         # these config options can be overridden by environment vars
-        @auth_type =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
-        @org =        (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
-        @cache_dir =  (ENV.has_key? 'EDS_CACHE_DIR') ? ENV['EDS_CACHE_DIR'] : @config[:eds_cache_dir]
+        @auth_type              =  (ENV.has_key? 'EDS_AUTH') ? ENV['EDS_AUTH'] : @config[:auth]
+        @org                    =  (ENV.has_key? 'EDS_ORG') ? ENV['EDS_ORG'] : @config[:org]
+        @cache_dir              =  (ENV.has_key? 'EDS_CACHE_DIR') ? ENV['EDS_CACHE_DIR'] : @config[:eds_cache_dir]
+        @auth_expire            =  (ENV.has_key? 'EDS_AUTH_CACHE_EXPIRES_IN') ? ENV['EDS_AUTH_CACHE_EXPIRES_IN'] : @config[:auth_cache_expires_in]
+        @info_expire            =  (ENV.has_key? 'EDS_INFO_CACHE_EXPIRES_IN') ? ENV['EDS_INFO_CACHE_EXPIRES_IN'] : @config[:info_cache_expires_in]
+        @retrieve_expire        =  (ENV.has_key? 'EDS_RETRIEVE_CACHE_EXPIRES_IN') ? ENV['EDS_RETRIEVE_CACHE_EXPIRES_IN'] : @config[:retrieve_cache_expires_in]
+        @search_expire          =  (ENV.has_key? 'EDS_SEARCH_CACHE_EXPIRES_IN') ? ENV['EDS_SEARCH_CACHE_EXPIRES_IN'] : @config[:search_cache_expires_in]
+        @export_format_expire   =  (ENV.has_key? 'EDS_EXPORT_FORMAT_CACHE_EXPIRES_IN') ? ENV['EDS_EXPORT_FORMAT_CACHE_EXPIRES_IN'] : @config[:export_format_cache_expires_in]
+        @citation_styles_expire =  (ENV.has_key? 'EDS_CITATION_STYLES_CACHE_EXPIRES_IN') ? ENV['EDS_CITATION_STYLES_CACHE_EXPIRES_IN'] : @config[:citation_styles_cache_expires_in]
+
+
         @log_level =  (ENV.has_key? 'EDS_LOG_LEVEL') ? ENV['EDS_LOG_LEVEL'] : @config[:log_level]
 
         (ENV.has_key? 'EDS_GUEST') ?
@@ -847,6 +855,11 @@ module EBSCO
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
                 # auth token invalid
                 when '104', '107'
+                  # delete the auth cache to make sure we have an unexpired auth token
+                  if @use_cache
+                    puts 'DELETING AUTH CACHE...' if @debug
+                    @cache_store.delete_matched('https://' + @api_hosts_list[@api_host_index] + @config[:uid_auth_url])
+                  end
                   @auth_token = nil
                   @auth_token = create_auth_token
                   do_request(method, path: path, payload: payload, attempt: attempt+1)
@@ -1069,7 +1082,15 @@ module EBSCO
           conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
           conn.headers['User-Agent'] = @config[:user_agent]
           conn.request :url_encoded
-          conn.use :eds_caching_middleware, store: @cache_store, logger: @debug ? logger : nil if @use_cache
+          conn.use :eds_caching_middleware,
+                   store: @cache_store,
+                   auth_expire: @auth_expire,
+                   info_expire: @info_expire,
+                   search_expire: @search_expire,
+                   retrieve_expire: @retrieve_expire,
+                   export_format_expire: @export_format_expire,
+                   citation_styles_expire: @citation_styles_expire,
+                   logger: @debug ? logger : nil if @use_cache
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
           conn.response :detailed_logger, logger if @debug
@@ -1109,7 +1130,15 @@ module EBSCO
           conn.headers['x-authenticationToken'] = @auth_token ? @auth_token : ''
           conn.headers['User-Agent'] = @config[:user_agent]
           conn.request :url_encoded
-          conn.use :eds_caching_middleware, store: @cache_store, logger: @debug ? logger : nil if @use_cache
+          conn.use :eds_caching_middleware,
+                   store: @cache_store,
+                   auth_expire: @auth_expire,
+                   info_expire: @info_expire,
+                   search_expire: @search_expire,
+                   retrieve_expire: @retrieve_expire,
+                   export_format_expire: @export_format_expire,
+                   citation_styles_expire: @citation_styles_expire,
+                   logger: @debug ? logger : nil if @use_cache
           conn.use :eds_exception_middleware
           conn.response :json, content_type: /\bjson$/
           conn.response :detailed_logger, logger if @debug

@@ -9,11 +9,16 @@ module Faraday
     def initialize(app, *args)
       super(app)
       options = args.first || {}
-      @expires_in    = options.fetch(:expires_in, 30)
-      @logger        = options.fetch(:logger, nil)
-      @namespace     = options.fetch(:namespace, 'faraday-eds-cache')
-      @store         = options.fetch(:store, :memory_store)
-      @store_options = options.fetch(:store_options, {})
+      @auth_expire            = options.fetch(:auth_expire, 1500)
+      @info_expire            = options.fetch(:info_expire, 86400)
+      @retrieve_expire        = options.fetch(:retrieve_expire, 1800)
+      @search_expire          = options.fetch(:search_expire, 1800)
+      @export_format_expire   = options.fetch(:export_format_expire, 86400)
+      @citation_styles_expire = options.fetch(:citation_styles_expire, 86400)
+      @logger                 = options.fetch(:logger, nil)
+      @namespace              = options.fetch(:namespace, 'faraday-eds-cache')
+      @store                  = options.fetch(:store, :memory_store)
+      @store_options          = options.fetch(:store_options, {})
 
       @store_options[:namespace] ||= @namespace
 
@@ -44,40 +49,45 @@ module Faraday
     end
 
     def cache_response(env)
+
       return unless cacheable?(env) && !env.request_headers['x-faraday-eds-cache']
 
       info "Cache WRITE: #{key(env)}"
-      custom_expires_in = @expires_in
+      custom_expires_in = 1800 # 30 mins
       uri = env.url
 
       if uri.request_uri.include?('/authservice/rest/uidauth')
-        custom_expires_in = 1800 # 30 minutes
-        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+        custom_expires_in = @auth_expire
+        # don't allow expiration to exceed 25 minutes since auth tokens always expire in 30 minutes
+        if custom_expires_in > 1500
+          custom_expires_in = 1500
+        end
+        info "#{uri} - Setting expires: #{custom_expires_in}"
       end
 
       if uri.request_uri.include?('/edsapi/rest/Info')
-        custom_expires_in = 86400 # 24 hours
-        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+        custom_expires_in = @info_expire
+        info "#{uri} - Setting /edsapi/rest/Info expires: #{custom_expires_in}"
       end
 
       if uri.request_uri.include?('/edsapi/rest/Search?')
-        custom_expires_in = 1800 # 30 minutes
-        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+        custom_expires_in = @search_expire
+        info "#{uri} - Setting /edsapi/rest/Search expires: #{custom_expires_in}"
       end
 
       if uri.request_uri.include?('/edsapi/rest/Retrieve?')
-        custom_expires_in = 1800 # 30 minutes
-        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+        custom_expires_in = @retrieve_expire
+        info "#{uri} - Setting /edsapi/rest/Retrieve expires: #{custom_expires_in}"
       end
 
       if uri.request_uri.include?('/edsapi/rest/ExportFormat')
-        custom_expires_in = 86400 # 24 hours
-        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+        custom_expires_in = @export_format_expire
+        info "#{uri} - Setting /edsapi/rest/ExportFormat expires: #{custom_expires_in}"
       end
 
       if uri.request_uri.include?('/edsapi/rest/CitationStyles')
-        custom_expires_in = 86400 # 24 hours
-        info "#{uri} - Setting custom expires: #{custom_expires_in}"
+        custom_expires_in = @citation_styles_expire
+        info "#{uri} - Setting /edsapi/rest/CitationStyles expires: #{custom_expires_in}"
       end
 
       @store.write(key(env), env, expires_in: custom_expires_in)
