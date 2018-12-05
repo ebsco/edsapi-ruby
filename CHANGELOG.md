@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
-## [1.0.6] - 2018-14-02
+## [1.0.7] - 2018-12-05
+### Changed
+- logger dependency removed since it's been part of the standard library.
+
+## [1.0.6] - 2018-11-14
 ### Fixed
 - Fixed a bug where the cached auth key isn't deleted if it expires before its cache expiration. This should only occur in rare cases where the auth token cache expiration exceeds 30 minutes.
 ### Added
@@ -88,6 +92,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Adds KW (keywords) and SH (subject heading) to solr search fields
 
+[1.0.7]: https://github.com/ebsco/edsapi-ruby/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/ebsco/edsapi-ruby/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/ebsco/edsapi-ruby/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/ebsco/edsapi-ruby/compare/1.0.3...1.0.4
