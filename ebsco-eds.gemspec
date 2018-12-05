@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday', '~> 0'
   spec.add_dependency 'faraday-detailed_logger', '~> 2.0'
   spec.add_dependency 'faraday_middleware', '~> 0.11'
-  spec.add_dependency 'logger', '~> 1.2'
   spec.add_dependency 'dotenv', '~> 2.2'
   spec.add_dependency 'climate_control', '~> 0'
   spec.add_dependency 'require_all', '~> 1.3'
