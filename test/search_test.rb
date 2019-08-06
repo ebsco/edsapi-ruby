@@ -184,4 +184,15 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_search_with_left_and_right_numerical_assignment
+    VCR.use_cassette('search_test/profile_2/test_search_with_left_and_right_numerical_assignment') do
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
+      assert_raises(EBSCO::EDS::ApiError) do
+        results = session.search({query: 'un refugee agency and 1=1', results_per_page: 1, mode: 'all', include_facets: false})
+        puts results.inspect
+      end
+      session.end
+    end
+  end
+
 end

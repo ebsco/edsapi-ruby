@@ -32,73 +32,81 @@ module EBSCO
       def initialize(search_results, eds_config = {}, additional_limiters = {}, options = {})
 
         @results = search_results
-        @limiters = additional_limiters
-        @raw_options = options
 
-        # titleize facets?
-        (ENV.has_key? 'EDS_TITLEIZE_FACETS') ?
-            if %w(y Y yes Yes true True).include?(ENV['EDS_TITLEIZE_FACETS'])
-              @titleize_facets_on = true
-            else
-              @titleize_facets_on = false
-            end :
-            @titleize_facets_on = eds_config[:titleize_facets]
+        if Hash === @results
 
-        # convert all results to a list of records
-        @records = []
-        if @results['SearchResult']['Data']['Records']
-          @results['SearchResult']['Data']['Records'].each { |record|
+          @limiters = additional_limiters
+          @raw_options = options
 
-            @records.push(EBSCO::EDS::Record.new(record, eds_config))
+          # titleize facets?
+          (ENV.has_key? 'EDS_TITLEIZE_FACETS') ?
+              if %w(y Y yes Yes true True).include?(ENV['EDS_TITLEIZE_FACETS'])
+                @titleize_facets_on = true
+              else
+                @titleize_facets_on = false
+              end :
+              @titleize_facets_on = eds_config[:titleize_facets]
 
-            # # records hidden in guest mode
-            # if record['Header']['AccessLevel']
-            #   if record['Header']['AccessLevel'].to_i > 1
-            #     @records.push(EBSCO::EDS::Record.new(record))
-            #   else
-            #     @records.push(EBSCO::EDS::Record.new(record))
-            #   end
-            # else
-            #   @records.push(EBSCO::EDS::Record.new(record))
-            # end
+          # convert all results to a list of records
+          @records = []
+          if @results['SearchResult']['Data']['Records']
+            @results['SearchResult']['Data']['Records'].each { |record|
 
-          }
-        end
+              @records.push(EBSCO::EDS::Record.new(record, eds_config))
 
-        # create a special list of research starter records
-        @research_starters = []
-        _related_records = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedRecords',{})
-        if _related_records.count > 0
-          _related_records.each do |related_item|
-            if related_item['Type'] == 'rs'
-              rs_entries = related_item.fetch('Records',{})
-              if rs_entries.count > 0
-                rs_entries.each do |rs_record|
-                  @research_starters.push(EBSCO::EDS::Record.new(rs_record, eds_config))
+              # # records hidden in guest mode
+              # if record['Header']['AccessLevel']
+              #   if record['Header']['AccessLevel'].to_i > 1
+              #     @records.push(EBSCO::EDS::Record.new(record))
+              #   else
+              #     @records.push(EBSCO::EDS::Record.new(record))
+              #   end
+              # else
+              #   @records.push(EBSCO::EDS::Record.new(record))
+              # end
+
+            }
+          end
+
+          # create a special list of research starter records
+          @research_starters = []
+          _related_records = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedRecords',{})
+          if _related_records.count > 0
+            _related_records.each do |related_item|
+              if related_item['Type'] == 'rs'
+                rs_entries = related_item.fetch('Records',{})
+                if rs_entries.count > 0
+                  rs_entries.each do |rs_record|
+                    @research_starters.push(EBSCO::EDS::Record.new(rs_record, eds_config))
+                  end
                 end
               end
             end
           end
-        end
 
-        # create a special list of exact match publications
-        @publication_match = []
-        _related_publications = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedPublications',{})
-        if _related_publications.count > 0
-          _related_publications.each do |related_item|
-            if related_item['Type'] == 'emp'
-              _publication_matches = related_item.fetch('PublicationRecords',{})
-              if _publication_matches.count > 0
-                _publication_matches.each do |publication_record|
-                  @publication_match.push(EBSCO::EDS::Record.new(publication_record, eds_config))
+          # create a special list of exact match publications
+          @publication_match = []
+          _related_publications = @results.fetch('SearchResult',{}).fetch('RelatedContent',{}).fetch('RelatedPublications',{})
+          if _related_publications.count > 0
+            _related_publications.each do |related_item|
+              if related_item['Type'] == 'emp'
+                _publication_matches = related_item.fetch('PublicationRecords',{})
+                if _publication_matches.count > 0
+                  _publication_matches.each do |publication_record|
+                    @publication_match.push(EBSCO::EDS::Record.new(publication_record, eds_config))
+                  end
                 end
               end
             end
           end
-        end
 
-        # titleize facets
-        @titleize_facets = %w[Language Journal SubjectEDS SubjectGeographic Publisher]
+          # titleize facets
+          @titleize_facets = %w[Language Journal SubjectEDS SubjectGeographic Publisher]
+
+        else
+          # response isn't a hash (eg, html error page)
+          raise EBSCO::EDS::ApiError, 'EBSCO API error: Query failed.'
+        end
 
       end
 
