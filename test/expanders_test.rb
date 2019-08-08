@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_some_valid_expanders_in_list
-    VCR.use_cassette('expanders_test/profile_1/test_some_valid_expanders_in_list') do
+    VCR.use_cassette('expanders_test/profile_1/test_some_valid_expanders_in_list', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'earthquake', expanders: ['fake expander', 'fulltext']})
       refute_nil results
@@ -14,7 +14,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_no_valid_expanders_in_list
-    VCR.use_cassette('expanders_test/profile_1/test_no_valid_expanders_in_list') do
+    VCR.use_cassette('expanders_test/profile_1/test_no_valid_expanders_in_list', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'earthquake', expanders: ['fake expander', 'also bogus']})
       refute_nil results
@@ -26,7 +26,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_add_expander
-    VCR.use_cassette('expanders_test/profile_1/test_add_expander') do
+    VCR.use_cassette('expanders_test/profile_1/test_add_expander', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1, expanders: ['thesaurus']})
       results2 = session.add_expander('thesaurus,fulltext,relatedsubjects')
@@ -36,7 +36,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_expander
-    VCR.use_cassette('expanders_test/profile_1/test_remove_expander') do
+    VCR.use_cassette('expanders_test/profile_1/test_remove_expander', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1, expanders: ['thesaurus']})
       results2 = session.add_expander('thesaurus,fulltext,relatedsubjects')
@@ -48,7 +48,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_clear_expanders
-    VCR.use_cassette('expanders_test/profile_1/test_clear_expanders') do
+    VCR.use_cassette('expanders_test/profile_1/test_clear_expanders', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1, expanders: ['thesaurus']})
       refute_nil results

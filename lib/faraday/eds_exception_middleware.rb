@@ -14,15 +14,19 @@ module Faraday
           case response.status
             when 200
             when 400
-              raise EBSCO::EDS::BadRequest.new(error_message(response))
-            # when 401
-            #   raise EBSCO::EDS::Unauthorized.new
-            # when 403
-            #   raise EBSCO::EDS::Forbidden.new
-            # when 404
-            #   raise EBSCO::EDS::NotFound.new
-            # when 429
-            #   raise EBSCO::EDS::TooManyRequests.new
+              if response.body['ErrorNumber'] == '132'
+                raise EBSCO::EDS::NotFound.new(error_message(response))
+              else
+                raise EBSCO::EDS::BadRequest.new(error_message(response))
+              end
+              # when 401
+              #   raise EBSCO::EDS::Unauthorized.new
+              # when 403
+              #   raise EBSCO::EDS::Forbidden.new
+              # when 404
+              #   raise EBSCO::EDS::NotFound.new
+              # when 429
+              #   raise EBSCO::EDS::TooManyRequests.new
             when 500
               raise EBSCO::EDS::InternalServerError.new
             when 503

@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_known_limiters
-    VCR.use_cassette('limiters_test/profile_1/test_known_limiters') do
+    VCR.use_cassette('limiters_test/profile_1/test_known_limiters', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, limiters: ['FT:Y', 'RV:Y']})
       refute_nil results
@@ -15,7 +15,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_unknown_limiters_ids
-    VCR.use_cassette('limiters_test/profile_1/test_unknown_limiters_ids') do
+    VCR.use_cassette('limiters_test/profile_1/test_unknown_limiters_ids', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, limiters: ['XX:Y', 'YY:Y']})
       refute_nil results
@@ -26,7 +26,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_unavailable_limiter_values
-    VCR.use_cassette('limiters_test/profile_1/test_unavailable_limiter_values') do
+    VCR.use_cassette('limiters_test/profile_1/test_unavailable_limiter_values', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:PigLatin']})
       refute_nil results
@@ -37,7 +37,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_some_unavailable_limiter_values
-    VCR.use_cassette('limiters_test/profile_1/test_some_unavailable_limiter_values') do
+    VCR.use_cassette('limiters_test/profile_1/test_some_unavailable_limiter_values', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, limiters: ['LA99:French,PigLatin']})
       refute_nil results
@@ -50,7 +50,7 @@ class EdsApiTests < Minitest::Test
 
   # should be less than 10 result differences between the api and eds date syntax
   def test_both_date_limiter_syntaxes
-    VCR.use_cassette('limiters_test/profile_1/test_both_date_limiter_syntaxes') do
+    VCR.use_cassette('limiters_test/profile_1/test_both_date_limiter_syntaxes', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results_api_date = session.search({query: 'volcano', limters: ['DT1:2014-01/2014-12']})
       results_eds_date = session.search({query: 'volcano', limters: ['DT1:20140101-20141231']})
@@ -61,7 +61,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_add_limiter
-    VCR.use_cassette('limiters_test/profile_1/test_add_limiter') do
+    VCR.use_cassette('limiters_test/profile_1/test_add_limiter', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_limiter('FT', 'y')
@@ -71,7 +71,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_limiter
-    VCR.use_cassette('limiters_test/profile_1/test_remove_limiter') do
+    VCR.use_cassette('limiters_test/profile_1/test_remove_limiter', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_limiter('FT', 'y')
@@ -83,7 +83,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_limiter_value
-    VCR.use_cassette('limiters_test/profile_1/test_remove_limiter_value') do
+    VCR.use_cassette('limiters_test/profile_1/test_remove_limiter_value', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_limiter('LA99', 'French,English')
@@ -100,7 +100,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_clear_limiters
-    VCR.use_cassette('limiters_test/profile_1/test_clear_limiters') do
+    VCR.use_cassette('limiters_test/profile_1/test_clear_limiters', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_limiter('FT', 'y')

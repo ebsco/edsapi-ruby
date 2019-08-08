@@ -323,6 +323,20 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_record_not_found
+    VCR.use_cassette('record_test/profile_2/test_record_not_found') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})
+      if session.dbid_in_profile 'edsbeb'
+        assert_raises(EBSCO::EDS::NotFound) do
+          session.retrieve({dbid: 'edsbeb', an: 'edsbeb.B9789004314924.s017zzz'})
+        end
+      else
+        puts "WARNING: skipping test_record_not_found test, edsbeb db isn't in the profile."
+      end
+      session.end
+    end
+  end
+
   # def test_record_with_no_searchlinks
   #   VCR.use_cassette('record_test/profile_2/test_record_with_no_searchlinks') do
   #     session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi'})

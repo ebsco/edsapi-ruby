@@ -4,7 +4,7 @@ require 'json'
 class EdsApiTests < Minitest::Test
 
   def test_results_list
-    VCR.use_cassette('results_test/profile_1/test_results_list') do
+    VCR.use_cassette('results_test/profile_1/test_results_list', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1})
       assert results.records.length > 0
@@ -20,7 +20,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_date_range
-    VCR.use_cassette('results_test/profile_1/test_results_with_date_range') do
+    VCR.use_cassette('results_test/profile_1/test_results_with_date_range', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, limiters: ['DT1:2014-01/2014-12']})
       assert results.date_range[:mindate] == '2014-01'
@@ -30,7 +30,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_expanders
-    VCR.use_cassette('results_test/profile_1/test_results_with_expanders') do
+    VCR.use_cassette('results_test/profile_1/test_results_with_expanders', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, expanders: ['fulltext']})
       refute_nil results.applied_expanders
@@ -39,7 +39,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_research_starters
-    VCR.use_cassette('results_test/profile_1/test_results_with_research_starters') do
+    VCR.use_cassette('results_test/profile_1/test_results_with_research_starters', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, related_content: ['rs']})
       refute_nil results.research_starters
@@ -48,7 +48,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_related_publications
-    VCR.use_cassette('results_test/profile_1/test_results_with_related_publications') do
+    VCR.use_cassette('results_test/profile_1/test_results_with_related_publications', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'new england journal of medicine', results_per_page: 1, related_content: ['emp']})
       refute_nil results.publication_match
@@ -57,7 +57,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_applied_facets
-    VCR.use_cassette('results_test/profile_1/test_results_applied_facets') do
+    VCR.use_cassette('results_test/profile_1/test_results_applied_facets', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                            {'Id' => 'SourceType', 'Value' => 'News'}] }]
@@ -68,7 +68,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_with_facets_via_actions
-    VCR.use_cassette('results_test/profile_1/test_results_with_facets_via_actions') do
+    VCR.use_cassette('results_test/profile_1/test_results_with_facets_via_actions', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1, actions: ['addfacetfilter(SubjectGeographic:hawaii)']})
       refute_nil results.applied_facets
@@ -77,7 +77,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_all_available_facets
-    VCR.use_cassette('results_test/profile_1/test_results_all_available_facets') do
+    VCR.use_cassette('results_test/profile_1/test_results_all_available_facets', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1})
       available_facets = results.facets
@@ -87,7 +87,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_find_available_facet
-    VCR.use_cassette('results_test/profile_1/test_results_find_available_facet') do
+    VCR.use_cassette('results_test/profile_1/test_results_find_available_facet', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'volcano', results_per_page: 1})
       find_facet = results.facets('SubjectEDS')
@@ -97,7 +97,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_clear_search
-    VCR.use_cassette('results_test/profile_1/test_clear_search') do
+    VCR.use_cassette('results_test/profile_1/test_clear_search', :allow_playback_repeats => true) do
       facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                            {'Id' => 'SourceType', 'Value' => 'News'}] }]
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
@@ -125,7 +125,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_clear_queries
-    VCR.use_cassette('results_test/profile_1/test_clear_queries') do
+    VCR.use_cassette('results_test/profile_1/test_clear_queries', :allow_playback_repeats => true) do
       facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                            {'Id' => 'SourceType', 'Value' => 'News'}] }]
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
@@ -153,7 +153,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_add_remove_query
-    VCR.use_cassette('results_test/profile_1/test_add_remove_query') do
+    VCR.use_cassette('results_test/profile_1/test_add_remove_query', :allow_playback_repeats => true) do
       facet_filters = [{'FilterId' => 1, 'FacetValues' => [{'Id' => 'SourceType', 'Value' => 'Academic Journals'},
                                                            {'Id' => 'SourceType', 'Value' => 'News'}] }]
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
@@ -186,7 +186,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_list_html_fulltext_available
-    VCR.use_cassette('results_test/profile_1/test_results_list_html_fulltext_available') do
+    VCR.use_cassette('results_test/profile_1/test_results_list_html_fulltext_available', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'Horowitz vs Berube', results_per_page: 10})
       assert results.records.length > 0
@@ -196,7 +196,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_results_list_pdf_fulltext_available
-    VCR.use_cassette('results_test/profile_1/test_results_list_pdf_fulltext_available') do
+    VCR.use_cassette('results_test/profile_1/test_results_list_pdf_fulltext_available', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'The Bamboozling Bite of Bitcoin', results_per_page: 10})
       assert results.records.length > 0

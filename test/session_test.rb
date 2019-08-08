@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_create_session_with_user_credentials
-    VCR.use_cassette('session_test/profile_1/test_create_session_with_user_credentials') do
+    VCR.use_cassette('session_test/profile_1/test_create_session_with_user_credentials', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api', user: 'billmckinn', auth: 'user'})
       refute_nil session.session_token, 'Expected session token not to be nil.'
       refute_nil session.auth_token, 'Expected auth token not to be nil.'
@@ -20,7 +20,7 @@ class EdsApiTests < Minitest::Test
   # end
 
   def test_create_session_missing_profile
-    VCR.use_cassette('session_test/test_create_session_missing_profile') do
+    VCR.use_cassette('session_test/test_create_session_missing_profile', :allow_playback_repeats => true) do
       e = assert_raises EBSCO::EDS::InvalidParameter do
         EBSCO::EDS::Session.new({use_cache: false, profile: ''})
       end
@@ -29,7 +29,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_with_unknown_profile
-    VCR.use_cassette('session_test/test_create_session_with_unknown_profile') do
+    VCR.use_cassette('session_test/test_create_session_with_unknown_profile', :allow_playback_repeats => true) do
       assert_raises EBSCO::EDS::BadRequest do
         EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-none'})
       end
@@ -37,7 +37,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_create_session_failed_user_credentials
-    VCR.use_cassette('session_test/profile_1/test_create_session_failed_user_credentials') do
+    VCR.use_cassette('session_test/profile_1/test_create_session_failed_user_credentials', :allow_playback_repeats => true) do
       assert_raises EBSCO::EDS::BadRequest do
         EBSCO::EDS::Session.new({
             use_cache: false,
@@ -53,7 +53,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_api_request_with_unsupported_method
-    VCR.use_cassette('session_test/profile_1/test_api_request_with_unsupported_method') do
+    VCR.use_cassette('session_test/profile_1/test_api_request_with_unsupported_method', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       assert_raises EBSCO::EDS::ApiError do
         session.do_request(:put, path: 'testing')
@@ -63,7 +63,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_api_request_beyond_max_attempt
-    VCR.use_cassette('session_test/profile_1/test_api_request_beyond_max_attempt') do
+    VCR.use_cassette('session_test/profile_1/test_api_request_beyond_max_attempt', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       assert_raises EBSCO::EDS::ApiError do
         session.do_request(:get, path: 'testing', attempt: 5)
@@ -73,7 +73,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_api_request_no_session_token_force_refresh
-    VCR.use_cassette('session_test/profile_1/test_api_request_no_session_token_force_refresh') do
+    VCR.use_cassette('session_test/profile_1/test_api_request_no_session_token_force_refresh', :allow_playback_repeats => true) do
       # should trigger 108
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       session.session_token = ''
@@ -85,7 +85,7 @@ class EdsApiTests < Minitest::Test
 
   def test_api_request_invalid_auth_token_force_refresh
     # should trigger 104 and too many attempts failure
-    VCR.use_cassette('session_test/profile_1/test_api_request_invalid_auth_token_force_refresh') do
+    VCR.use_cassette('session_test/profile_1/test_api_request_invalid_auth_token_force_refresh', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({
           use_cache: false,
           profile: 'eds-api',

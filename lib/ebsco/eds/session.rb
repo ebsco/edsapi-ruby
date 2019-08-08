@@ -340,21 +340,24 @@ module EBSCO
          citation_exports_params = "?an=#{an}&dbid=#{dbid}&format=#{format}"
          citation_exports_response = do_request(:get, path: @config[:citation_exports_url] + citation_exports_params)
          EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_exports_response, eds_config: @config)
-        rescue EBSCO::EDS::BadRequest => e
-          custom_error_message = JSON.parse e.message.gsub('=>', ':')
-          # ErrorNumber 112 - Invalid Argument Value
-          # ErrorNumber 132 - Record not found
-          if custom_error_message['ErrorNumber'] == '112'
-            unknown_export_format = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Invalid citation export format"}
-            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_export_format, eds_config: @config)
-          elsif custom_error_message['ErrorNumber'] == '132'
-            record_not_found = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Record not found"}
-            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: record_not_found, eds_config: @config)
-          else
-            unknown_error = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
-            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
+         rescue EBSCO::EDS::NotFound => e
+           custom_error_message = JSON.parse e.message.gsub('=>', ':')
+           # ErrorNumber 132 - Record not found
+           if custom_error_message['ErrorNumber'] == '132'
+             record_not_found = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Record not found"}
+             EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: record_not_found, eds_config: @config)
+           end
+         rescue EBSCO::EDS::BadRequest => e
+            custom_error_message = JSON.parse e.message.gsub('=>', ':')
+            # ErrorNumber 112 - Invalid Argument Value
+            if custom_error_message['ErrorNumber'] == '112'
+              unknown_export_format = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Invalid citation export format"}
+              EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_export_format, eds_config: @config)
+            else
+              unknown_error = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
+              EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: unknown_error, eds_config: @config)
+            end
           end
-        end
       end
 
       # fetch the citation from the citation rest endpoint
@@ -363,6 +366,13 @@ module EBSCO
           citation_styles_params = "?an=#{an}&dbid=#{dbid}&styles=#{format}"
           citation_styles_response = do_request(:get, path: @config[:citation_styles_url] + citation_styles_params)
           EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: citation_styles_response, eds_config: @config)
+        rescue EBSCO::EDS::NotFound => e
+          custom_error_message = JSON.parse e.message.gsub('=>', ':')
+          # ErrorNumber 132 - Record not found
+          if custom_error_message['ErrorNumber'] == '132'
+            record_not_found = {"Format"=>format, "Label"=>"", "Data"=>"", "Error"=>"Record not found"}
+            EBSCO::EDS::Citations.new(dbid: dbid, an: an, citation_result: record_not_found, eds_config: @config)
+          end
         rescue EBSCO::EDS::BadRequest => e
           custom_error_message = JSON.parse e.message.gsub('=>', ':')
           unknown_error = {"Id"=>format, "Label"=>"", "Data"=>"", "Error"=>custom_error_message['ErrorDescription']}
