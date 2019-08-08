@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
+## [1.0.8] - 2019-07-09
+### Fixed
+- Throws error when query fails with a 200 status code and html error message (query = `the meaning of life or 4=2`), see #90.
+- Raises a specific "record not found" error instead of a generic "bad request" error when a record cannot be retrieved, see #88.
+
 ## [1.0.7] - 2018-12-05
 ### Changed
 - logger dependency removed since it's been part of the standard library.
@@ -92,6 +97,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Adds KW (keywords) and SH (subject heading) to solr search fields
 
+[1.0.8]: https://github.com/ebsco/edsapi-ruby/compare/1.0.7...1.0.8
 [1.0.7]: https://github.com/ebsco/edsapi-ruby/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/ebsco/edsapi-ruby/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/ebsco/edsapi-ruby/compare/1.0.4...1.0.5
