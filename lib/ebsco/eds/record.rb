@@ -961,7 +961,12 @@ module EBSCO
           html = html.gsub(/\\n /, '')
         end
 
-        Sanitize.fragment(html, sanitize_config)
+        sanitized_html = Sanitize.fragment(html, sanitize_config)
+        # sanitize 5.0 fails to restore element case after doing lowercase
+        sanitized_html = sanitized_html.gsub(/<searchlink/, '<searchLink')
+        sanitized_html = sanitized_html.gsub(/<\/searchlink>/, '</searchLink>')
+        sanitized_html
+
       end
 
       # dynamically add item metadata as 'eds_extra_ItemNameOrLabel'
