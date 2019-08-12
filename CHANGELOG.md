@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
-## [1.0.8] - 2019-07-09
+## [1.0.8] - 2019-08-12
 ### Fixed
 - Throws error when query fails with a 200 status code and html error message (query = `the meaning of life or 4=2`), see #90.
 - Raises a specific "record not found" error instead of a generic "bad request" error when a record cannot be retrieved, see #88.

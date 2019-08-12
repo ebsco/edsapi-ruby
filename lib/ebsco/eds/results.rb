@@ -33,7 +33,7 @@ module EBSCO
 
         @results = search_results
 
-        if Hash === @results
+        if @results.is_a?(Hash)
 
           @limiters = additional_limiters
           @raw_options = options
