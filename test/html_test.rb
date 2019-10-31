@@ -81,7 +81,7 @@ class EdsApiTests < Minitest::Test
     if session_with_sanitize.dbid_in_profile 'bah'
       record = session_with_sanitize.retrieve({dbid: 'bah', an: '116897973'})
       #puts 'HTML AFTER: ' + record.eds_html_fulltext.to_s
-      assert record.eds_html_fulltext.to_s.include? '<h1 id="AN0116897973-3">YOU\'VE GOT TO BE KITTEN ME! </h1>'
+      assert record.eds_html_fulltext.to_s.include? '<h1 id="AN0116897973-3">YOU\'VE GOT TO BE KITTEN ME!&nbsp;</h1>'
     else
       puts "WARNING: skipping test_sanitize_html_fulltext, bah db isn't in the profile."
     end

@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_info_request
-    VCR.use_cassette('info_test/profile_1/test_info_request') do
+    VCR.use_cassette('info_test/profile_1/test_info_request', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       assert session.info.available_search_modes.length == 4
       refute_nil session.info.available_sorts

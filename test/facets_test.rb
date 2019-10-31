@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class EdsApiTests < Minitest::Test
 
   def test_set_include_facets
-    VCR.use_cassette('facets_test/profile_1/test_set_include_facets') do
+    VCR.use_cassette('facets_test/profile_1/test_set_include_facets', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1, :include_facets => false})
       assert session.search_options.SearchCriteria.IncludeFacets == 'n'
@@ -14,7 +14,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_add_facet
-    VCR.use_cassette('facets_test/profile_1/test_add_facet') do
+    VCR.use_cassette('facets_test/profile_1/test_add_facet', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_facet('SubjectGeographic', 'massachusetts')
@@ -24,7 +24,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_facet
-    VCR.use_cassette('facets_test/profile_1/test_remove_facet') do
+    VCR.use_cassette('facets_test/profile_1/test_remove_facet', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_facet('SubjectGeographic', 'massachusetts')
@@ -36,7 +36,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_remove_facet_value
-    VCR.use_cassette('facets_test/profile_1/test_remove_facet_value') do
+    VCR.use_cassette('facets_test/profile_1/test_remove_facet_value', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_facet('SubjectGeographic', 'massachusetts')
@@ -48,7 +48,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_clear_facets
-    VCR.use_cassette('facets_test/profile_1/test_clear_facets') do
+    VCR.use_cassette('facets_test/profile_1/test_clear_facets', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'patriots', results_per_page: 1})
       results2 = session.add_facet('SubjectGeographic', 'massachusetts')
@@ -60,7 +60,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_sanitize_facets
-    VCR.use_cassette('facets_test/profile_2/test_sanitize_facets') do
+    VCR.use_cassette('facets_test/profile_2/test_sanitize_facets', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       # using session's add_facet method
       results = session.search({query: 'interest', results_per_page: 1})
@@ -75,7 +75,7 @@ class EdsApiTests < Minitest::Test
   end
 
   def test_gpo_facet_bug_workaround
-    VCR.use_cassette('facets_test/profile_2/test_gpo_facet_bug_workaround') do
+    VCR.use_cassette('facets_test/profile_2/test_gpo_facet_bug_workaround', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi'})
       results = session.search({query: 'poverty', results_per_page: 1})
       results2 = session.add_facet('ContentProvider', 'Government Printing Office Catalog')
@@ -84,7 +84,7 @@ class EdsApiTests < Minitest::Test
         session.add_facet('SourceType', 'Government Documents')
       end
       # turn on recover_from_bad_source_type
-      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi', recover_from_bad_source_type: true})
+      session = EBSCO::EDS::Session.new({use_cache: false, profile: 'edsapi', :allow_playback_repeats => true, recover_from_bad_source_type: true})
       results = session.search({query: 'poverty', results_per_page: 1})
       results2 = session.add_facet('ContentProvider', 'Government Printing Office Catalog')
       assert results2.stat_total_hits > 0
