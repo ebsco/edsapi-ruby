@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dotenv', '~> 2.2'
   spec.add_dependency 'climate_control', '~> 0'
   spec.add_dependency 'require_all', '~> 2.0'
-  spec.add_dependency 'bibtex-ruby', '~> 5.0', '>= 5.0.0'
+  spec.add_dependency 'bibtex-ruby', '~> 5.1', '>= 5.1.0'
   spec.add_dependency 'citeproc', '>= 1.0.4', '< 2.0'
   spec.add_dependency 'csl', '~> 1.4'
   spec.add_dependency 'citeproc-ruby', '~> 1.0', '>= 1.0.2'
