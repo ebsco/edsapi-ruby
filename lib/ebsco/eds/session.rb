@@ -243,11 +243,15 @@ module EBSCO
             if @search_options.nil? || !add_actions
               @search_options = EBSCO::EDS::Options.new(options, @info)
             end
-
             _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
             @search_results = EBSCO::EDS::Results.new(_response, @config,
                                                       @info.available_limiters, options)
-
+            if @search_results.stat_total_hits.to_i == 0 && @config[:smarttext_failover] == true
+              @search_options.add_actions('SetSearchMode(smart)', @info)
+              _response = do_request(:post, path: '/edsapi/rest/Search', payload: @search_options)
+              @search_results = EBSCO::EDS::Results.new(_response, @config,
+                                                      @info.available_limiters, options, true)
+            end
             # create temp format facet results if needed
             if options['f']
               if options['f'].key?('eds_publication_type_facet')

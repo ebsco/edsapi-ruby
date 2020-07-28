@@ -29,7 +29,7 @@ module EBSCO
 
       # Creates search results from the \EDS API search response. It includes information about the results and a list
       # of Record items.
-      def initialize(search_results, eds_config = {}, additional_limiters = {}, options = {})
+      def initialize(search_results, eds_config = {}, additional_limiters = {}, options = {}, smarttext_failover = false)
 
         @results = search_results
 
@@ -102,6 +102,9 @@ module EBSCO
 
           # titleize facets
           @titleize_facets = %w[Language Journal SubjectEDS SubjectGeographic Publisher]
+
+          # set flag that query was rerun with smarttext after no results were found
+          @smarttext_failover = smarttext_failover
 
         else
           # response isn't a hash (eg, html error page)
