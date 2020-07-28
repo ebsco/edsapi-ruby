@@ -59,7 +59,8 @@ module EBSCO
             :ris_link_find => '',
             :ris_link_replace => '',
             :ris_db_find => '',
-            :ris_db_replace => ''
+            :ris_db_replace => '',
+            :smarttext_failover => false
         }
         @valid_config_keys = @config.keys
       end
