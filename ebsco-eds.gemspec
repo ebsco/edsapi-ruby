@@ -6,8 +6,8 @@ require 'ebsco/eds/version'
 Gem::Specification.new do |spec|
   spec.name          = 'ebsco-eds'
   spec.version       = EBSCO::EDS::VERSION
-  spec.authors       = ['Bill McKinney','Eric Frierson']
-  spec.email         = ['bmckinney@ebsco.com, efrierson@ebsco.com']
+  spec.authors       = ['Madeline Dale','Eric Frierson']
+  spec.email         = ['mdale@ebsco.com, efrierson@ebsco.com']
   spec.summary       = 'Summary: EBSCO EDS API'
   spec.description   = 'Description: EBSCO EDS API'
   spec.homepage      = 'https://github.com/ebsco/edsapi-ruby'
