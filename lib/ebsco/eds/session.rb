@@ -480,9 +480,13 @@ module EBSCO
           list.each.with_index(1) { |id, index|
             dbid = id.split('__',2).first
             accession = id.split('__',2).last
-            current_rec = retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
-            current_rec.eds_result_id = index
-            records.push current_rec
+            begin
+              current_rec = retrieve(dbid: dbid, an: accession, highlight: highlight, ebook: @config[:ebook_preferred_format])
+              current_rec.eds_result_id = index
+              records.push current_rec
+            rescue EBSCO::EDS::BadRequest, EBSCO::EDS::NotFound => e
+              puts "Request for #{id} in #{self.class.name}#solr_retrieve_list failed with #{e}" if @debug
+            end
           }
         end
         r = empty_results(records.length)
