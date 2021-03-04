@@ -16,6 +16,10 @@ require 'minitest-vcr'
 
 Dotenv.load('.env.test')
 
+puts "---==In test_helper==--"
+puts ENV['EDS_DECODE_SANITIZE_HTML']
+puts ENV['EDS_PASS']
+puts "---==END In test-helper==--"
 if ENV['CODECOV_TOKEN']
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
