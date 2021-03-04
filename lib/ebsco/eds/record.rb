@@ -144,10 +144,16 @@ module EBSCO
 
         # decode and sanitize html in item data?
         @decode_sanitize_html = false
+        puts "---==EDS CONFIG==---"
+        puts eds_config.inspect
+        puts "---==END: EDS CONFIG==---"
         if eds_config
           @decode_sanitize_html = eds_config[:decode_sanitize_html]
         end
         if ENV.has_key? 'EDS_DECODE_SANITIZE_HTML'
+          puts "---==IN ENV HAS KEY BLOCK==---"
+          puts ENV['EDS_DECODE_SANITIZE_HTML']
+          puts "---==END: HAS KEY BLOCK==---"
           @decode_sanitize_html = ENV['EDS_DECODE_SANITIZE_HTML']
         end
 
