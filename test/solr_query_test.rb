@@ -347,9 +347,9 @@ class EdsApiTests < Minitest::Test
       range = results.to_solr.fetch('date_range',{})
       refute_empty range
       assert range[:mindate] == '1000-01'
-      assert range[:maxdate] == '2020-01'
+      assert range[:maxdate] == '2022-01'
       assert range[:minyear] == '1000'
-      assert range[:maxyear] == '2020'
+      assert range[:maxyear] == '2022'
       session.end
     end
   end
