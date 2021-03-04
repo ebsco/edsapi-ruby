@@ -44,7 +44,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'csl-styles', '~> 1.0', '>= 1.0.1.5'
   spec.add_dependency 'activesupport', '>= 5.2', '< 6.1'
   spec.add_dependency 'net-http-persistent', '~> 3.1'
-  spec.add_dependency 'sanitize', '~> 5.0'
   spec.add_dependency 'public_suffix', '~>4.0'
 
   spec.add_development_dependency 'bundler'
