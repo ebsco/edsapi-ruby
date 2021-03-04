@@ -1,7 +1,6 @@
 require 'yaml'
 require 'json'
 require 'cgi'
-require 'sanitize'
 
 module EBSCO
 
@@ -151,6 +150,9 @@ module EBSCO
         if ENV.has_key? 'EDS_DECODE_SANITIZE_HTML'
           @decode_sanitize_html = ENV['EDS_DECODE_SANITIZE_HTML']
         end
+
+        require_sanitize if @decode_sanitize_html
+
 
         if results_record.key? 'Record'
           @record = results_record['Record'] # single record returned by retrieve api
@@ -1003,6 +1005,12 @@ module EBSCO
           end.join('&lt;br /&gt;')
         end
         subjects
+      end
+
+      def require_sanitize
+        require 'sanitize'
+      rescue Gem::LoadError, LoadError
+        raise EBSCO::EDS::MissingDependency.new 'Sanitize is turned on, but the sanitize gem is not loaded'
       end
 
     end # Class Record
