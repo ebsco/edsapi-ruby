@@ -14,6 +14,7 @@ class EdsApiTests < Minitest::Test
       refute_nil results.search_queries
       refute_nil results.page_number
       refute_nil results.search_criteria
+      refute_nil results.smarttext_failover
       assert results.search_terms == ['volcano']
       session.end
     end
