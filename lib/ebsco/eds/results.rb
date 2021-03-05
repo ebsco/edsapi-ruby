@@ -17,6 +17,8 @@ module EBSCO
       attr_accessor :records
       # Array of EBSCO::EDS::Record Research Starters
       attr_reader :research_starters
+      # Bool
+      attr_reader :smarttext_failover
       # Array of EBSCO::EDS::Record Exact Publication Matches
       attr_reader :publication_match
 
