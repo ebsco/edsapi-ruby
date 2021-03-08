@@ -1,4 +1,4 @@
-<img src="https://discovery.ebsco.com/files/pulse-images/EDS-logo_1LINE.png"/>
+![image](https://user-images.githubusercontent.com/13452564/110336225-a7440c80-7ff2-11eb-996d-6b4395438a22.png)
 
 A Ruby interface to the EBSCO Discovery Services API.
 
