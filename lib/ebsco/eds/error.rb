@@ -46,5 +46,8 @@ module EBSCO
     # raised when connection fails
     class ConnectionFailed < Error; end
 
+    # raised when missing a dependency
+    class MissingDependency < Error; end
+
   end
 end
