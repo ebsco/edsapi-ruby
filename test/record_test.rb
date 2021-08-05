@@ -279,6 +279,20 @@ class EdsApiTests < Minitest::Test
     end
   end
 
+  def test_record_with_subject_search_links_with_link_tag
+    VCR.use_cassette('record_test/profile_2/test_record_with_subject_search_links_with_link_tag') do
+      session = EBSCO::EDS::Session.new({guest: false, use_cache: false, profile: 'edsapi', decode_sanitize_html: true})
+      if session.dbid_in_profile 'hap'
+        record = session.retrieve({dbid: 'hap', an: 'hap.359464'})
+        assert record.eds_subjects.start_with?('<searchLink fieldcode="DE"')
+        assert record.eds_subjects.include?('Emigrant remittances')
+      else
+        puts "WARNING: skipping test_record_with_subject_search_links_with_link_tag, hap db isn't in the profile."
+      end
+      session.end
+    end
+  end
+
   def test_records_with_different_geographic_subject_tags
     VCR.use_cassette('record_test/profile_2/test_records_with_different_geographic_subject_tags') do
 
