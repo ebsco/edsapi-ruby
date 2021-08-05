@@ -999,7 +999,13 @@ module EBSCO
       # add searchlinks when they don't exist
       def add_subject_searchlinks(data)
         subjects = data
-        unless data.include? 'searchLink'
+        if data.include? '&lt;link '
+          subjects = bib_subjects
+          subjects = subjects.map do |su|
+            '&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22' + su + '%22&quot;&gt;' + su + '&lt;/searchLink&gt;'
+          end.join('&lt;br /&gt;')
+        end
+        unless subjects.include? 'searchLink'
           subjects = subjects.split('&lt;br /&gt;').map do |su|
             '&lt;searchLink fieldCode=&quot;DE&quot; term=&quot;%22' + su + '%22&quot;&gt;' + su + '&lt;/searchLink&gt;'
           end.join('&lt;br /&gt;')
