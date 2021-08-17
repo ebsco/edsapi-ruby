@@ -326,11 +326,11 @@ module EBSCO
         payload = { DbId: dbid, An: an, HighlightTerms: highlight, EbookPreferredFormat: ebook }
         retrieve_response = do_request(:post, path: @config[:retrieve_url], payload: payload)
         record = EBSCO::EDS::Record.new(retrieve_response, @config)
-        record_citation_exports = get_citation_exports({dbid: dbid, an: an, format: @config[:citation_exports_formats]})
+        record_citation_exports = get_citation_exports(dbid: dbid, an: an, format: @config[:citation_exports_formats])
         unless record_citation_exports.nil?
           record.set_citation_exports(record_citation_exports)
         end
-        record_citation_styles = get_citation_styles({dbid: dbid, an: an, format: @config[:citation_styles_formats]})
+        record_citation_styles = get_citation_styles(dbid: dbid, an: an, format: @config[:citation_styles_formats])
         unless record_citation_styles.nil?
           record.set_citation_styles(record_citation_styles)
         end
