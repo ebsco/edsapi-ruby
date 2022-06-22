@@ -6,7 +6,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citations') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '108974507'})
+        record = session.retrieve(dbid: 'asn', an: '108974507')
         citation_exports = record.eds_citation_exports
         citation_styles = record.eds_citation_styles
         assert citation_exports.items.first['data'].include?('polymeric chains and tailor their functionalities')
@@ -25,7 +25,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_not_found_bad_record') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        styles = session.get_citation_styles({dbid: 'asn', an: '999999'})
+        styles = session.get_citation_styles(dbid: 'asn', an: '999999')
         assert styles.items.first['error'] == "Record not found"
         assert styles.items.first['data'] == ""
 
@@ -40,7 +40,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_exports_not_found_bad_record') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        exports = session.get_citation_exports({dbid: 'asn', an: '999999'})
+        exports = session.get_citation_exports(dbid: 'asn', an: '999999')
         assert exports.items.first['error'] == "Record not found"
       else
         puts 'WARNING: skipping test_journal_citation_exports_not_found_bad_record since asn db not in profile.'
@@ -53,7 +53,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_style_one_specified') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        mla_style = session.get_citation_styles({dbid: 'asn', an: '108974507', format: 'mla'})
+        mla_style = session.get_citation_styles(dbid: 'asn', an: '108974507', format: 'mla')
         assert mla_style.items.count == 1
         assert mla_style.items.first['id'] == 'mla'
       else
@@ -67,7 +67,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_export_one_specified') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        ris_export = session.get_citation_exports({dbid: 'asn', an: '108974507', format: 'ris'})
+        ris_export = session.get_citation_exports(dbid: 'asn', an: '108974507', format: 'ris')
         assert ris_export.items.count == 1
         assert ris_export.items.first['id'] == 'RIS'
         refute_nil ris_export.items.first['data']
@@ -82,7 +82,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_export_one_specified_unsupported') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        bogus_export = session.get_citation_exports({dbid: 'asn', an: '108974507', format: 'bogus'})
+        bogus_export = session.get_citation_exports(dbid: 'asn', an: '108974507', format: 'bogus')
         bogus_export.items.first['error'] == "Invalid citation export format"
       else
         puts 'WARNING: skipping test_journal_citation_export_one_specified_unsupported since asn db not in profile.'
@@ -95,7 +95,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_style_list_specified') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        list_of_styles = session.get_citation_styles({dbid: 'asn', an: '108974507', format: 'mla,apa'})
+        list_of_styles = session.get_citation_styles(dbid: 'asn', an: '108974507', format: 'mla,apa')
         assert list_of_styles.items.count == 2
         mla_style = list_of_styles.items.select { |item| item['id'] == 'mla' }
         refute_nil mla_style
@@ -113,7 +113,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_style_list_specified_one_bad') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        list_of_styles = session.get_citation_styles({dbid: 'asn', an: '108974507', format: 'mla,bogus'})
+        list_of_styles = session.get_citation_styles(dbid: 'asn', an: '108974507', format: 'mla,bogus')
         assert list_of_styles.items.count == 2
         mla_style = list_of_styles.items.select { |item| item['id'] == 'mla' }
         refute_nil mla_style
@@ -131,7 +131,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_journal_citation_export_list_specified') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        list_of_exports = session.get_citation_exports({dbid: 'asn', an: '108974507', format: 'ris,bibtex'})
+        list_of_exports = session.get_citation_exports(dbid: 'asn', an: '108974507', format: 'ris,bibtex')
         assert list_of_exports.items.first['error'] == "Invalid citation export format"
       else
         puts 'WARNING: skipping test_journal_citation_export_list_specified since asn db not in profile.'
@@ -144,7 +144,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_book_citations') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'cat02060a', an: 'd.uga.3690122'})
+        record = session.retrieve(dbid: 'cat02060a', an: 'd.uga.3690122')
         citation_exports = record.eds_citation_exports
         citation_styles = record.eds_citation_styles
         assert citation_exports.items.count == 1
@@ -163,7 +163,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_conference_citations') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        record = session.retrieve(dbid: 'asn', an: '118411536')
         citation_exports = record.eds_citation_exports
         citation_styles = record.eds_citation_styles
         assert citation_exports.items.count == 1
@@ -200,7 +200,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_specified_styles_in_config') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', citation_styles_formats: 'apa,mla,chicago'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '108974507'})
+        record = session.retrieve(dbid: 'asn', an: '108974507')
         citation_styles = record.eds_citation_styles
         style_items = citation_styles.items
         assert style_items.count >= 3
@@ -227,7 +227,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_citations_keep_links') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api', citation_link_find: ''})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        record = session.retrieve(dbid: 'asn', an: '118411536')
         citation_exports = record.eds_citation_exports
         citation_styles = record.eds_citation_styles
         assert citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536')
@@ -252,7 +252,7 @@ class EdsApiTests < Minitest::Test
                                          debug: false
                                         })
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        record = session.retrieve(dbid: 'asn', an: '118411536')
         citation_exports = record.eds_citation_exports
         citation_styles = record.eds_citation_styles
         # assert(!citation_exports.items.first['data'].include?('UR  - http://search.ebscohost.com/login.aspx?direct=true&site=eds-live&db=asn&AN=118411536'))
@@ -272,7 +272,7 @@ class EdsApiTests < Minitest::Test
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api',
                                          citation_link_find: '[.,]\s+(&lt;i&gt;EBSCOhost|viewed|Available|Retrieved from|http:\/\/search.ebscohost.com|Disponível em).+$'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '118411536'})
+        record = session.retrieve(dbid: 'asn', an: '118411536')
         citation_styles = record.eds_citation_styles
         abnt_style = citation_styles.items.select { |item| item['id'] == 'abnt' }
         assert(!abnt_style.first['data'].include?('search.ebscohost.com'))
@@ -287,7 +287,7 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('citation_test/profile_1/test_citations_include_doi') do
       session = EBSCO::EDS::Session.new({use_cache: false, guest: false, profile: 'eds-api'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'asn', an: '108974507'})
+        record = session.retrieve(dbid: 'asn', an: '108974507')
         citation_styles = record.eds_citation_styles
         style_items = citation_styles.items
         assert style_items.count >= 9
@@ -311,7 +311,7 @@ class EdsApiTests < Minitest::Test
                                          citation_db_find: '<i>EBSCOhost<\/i>',
                                          citation_db_replace: '<i>SearchWorks</i>'})
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
+        record = session.retrieve(dbid: 'edsbas', an: 'edsbas.AA261780')
         citation_styles = record.eds_citation_styles
         style_items = citation_styles.items
         assert style_items.count >= 9
@@ -339,7 +339,7 @@ class EdsApiTests < Minitest::Test
                                          citation_db_find: '<i>EBSCOhost<\/i>',
                                          citation_db_replace: '<i>SearchWorks</i>'})
       if session.dbid_in_profile 'edsdoj'
-        record = session.retrieve({dbid: 'edsgpr', an: 'edsgpr.001022076'})
+        record = session.retrieve(dbid: 'edsgpr', an: 'edsgpr.001022076')
         citation_styles = record.eds_citation_styles
         style_items = citation_styles.items
         assert style_items.count >= 9
@@ -373,7 +373,7 @@ class EdsApiTests < Minitest::Test
                                         })
 
       if session.dbid_in_profile 'asn'
-        record = session.retrieve({dbid: 'edsbas', an: 'edsbas.AA261780'})
+        record = session.retrieve(dbid: 'edsbas', an: 'edsbas.AA261780')
         citation_exports = record.eds_citation_exports
         # puts citation_exports.items.first['data'].inspect
         assert citation_exports.items.first['data'].include?('UR  - https://searchworks.stanford.edu/articles/edsbas__edsbas.AA261780')
@@ -398,7 +398,7 @@ class EdsApiTests < Minitest::Test
                                         })
 
       if session.dbid_in_profile 'edsgpr'
-        record = session.retrieve({dbid: 'edsgpr', an: 'edsgpr.001022076'})
+        record = session.retrieve(dbid: 'edsgpr', an: 'edsgpr.001022076')
         citation_exports = record.eds_citation_exports
         # puts citation_exports.items.first['data']
         assert citation_exports.items.first['data'].include?('UR  - https://searchworks.stanford.edu/articles/edsgpr__edsgpr.001022076')
@@ -423,7 +423,7 @@ class EdsApiTests < Minitest::Test
                                         })
 
       if session.dbid_in_profile 'edsgpr'
-        record = session.retrieve({dbid: 'edsgpr', an: 'edsgpr.001022076'})
+        record = session.retrieve(dbid: 'edsgpr', an: 'edsgpr.001022076')
         citation_exports = record.eds_citation_exports
         assert !citation_exports.items.first['data'].include?('UR  - https://stanford.idm.oclc.org/login?')
         assert !citation_exports.items.first['data'].include?('DP  - EBSCOhost')

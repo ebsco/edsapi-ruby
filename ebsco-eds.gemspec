@@ -6,8 +6,8 @@ require 'ebsco/eds/version'
 Gem::Specification.new do |spec|
   spec.name          = 'ebsco-eds'
   spec.version       = EBSCO::EDS::VERSION
-  spec.authors       = ['Mike Abrahamson','Ellie Collier','Madeline Dale','Eric Frierson','Carolyn Clini']
-  spec.email         = ['mabrahamson@ebsco.com','ecollier@ebsco.com','mdale@ebsco.com', 'efrierson@ebsco.com', 'cclini@ebsco.com']
+  spec.authors       = ['Mike Abrahamson','Ellie Collier','Carolyn Clini']
+  spec.email         = ['mabrahamson@ebsco.com','ecollier@ebsco.com', 'cclini@ebsco.com']
   spec.summary       = 'Summary: EBSCO EDS API'
   spec.description   = 'Description: EBSCO EDS API'
   spec.homepage      = 'https://github.com/ebsco/edsapi-ruby'
@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'citeproc-ruby', '~> 1.0', '>= 1.0.2'
   spec.add_dependency 'csl-styles', '~> 1.0', '>= 1.0.1.5'
   spec.add_dependency 'activesupport', '>= 5.2'
-  spec.add_dependency 'net-http-persistent', '~> 3.1'
+  spec.add_dependency 'net-http-persistent', '>= 3.1', '< 5'
   spec.add_dependency 'public_suffix', '~>4.0'
 
   spec.add_development_dependency 'bundler'
