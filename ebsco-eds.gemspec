@@ -31,12 +31,9 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.4'
 
-  spec.add_dependency 'faraday', '~> 0'
+  spec.add_dependency 'faraday', '< 2.0'
   spec.add_dependency 'faraday-detailed_logger', '~> 2.0'
-  spec.add_dependency 'faraday_middleware', '~> 0.11'
-  spec.add_dependency 'dotenv', '~> 2.2'
-  spec.add_dependency 'climate_control', '~> 0'
-  spec.add_dependency 'require_all', '~> 2.0'
+  spec.add_dependency 'faraday_middleware', '~> 1.0'
   spec.add_dependency 'bibtex-ruby', '>= 5.1.0', '< 7.0'
   spec.add_dependency 'citeproc', '>= 1.0.4', '< 2.0'
   spec.add_dependency 'csl', '>= 1.4.0', '< 1.6'
@@ -47,6 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'public_suffix', '~>4.0'
 
   spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'dotenv', '~> 2.2'
   spec.add_development_dependency 'rake', '~> 12.3'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.0'

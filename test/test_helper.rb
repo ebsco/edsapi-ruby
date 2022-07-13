@@ -8,7 +8,6 @@ end
 require 'minitest/autorun'
 require 'ebsco/eds'
 require 'dotenv'
-require 'climate_control'
 require 'active_support'
 require 'fileutils'
 require 'vcr'
@@ -36,4 +35,3 @@ VCR.configure do |c|
 end
 
 MinitestVcr::Spec.configure!
-
