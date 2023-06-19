@@ -29,17 +29,18 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.4'
+  spec.required_ruby_version = '>= 3.2'
 
-  spec.add_dependency 'faraday', '< 2.0'
+  spec.add_dependency 'faraday', '~> 2.0'
   spec.add_dependency 'faraday-detailed_logger', '~> 2.0'
-  spec.add_dependency 'faraday_middleware', '~> 1.0'
+  spec.add_dependency 'faraday-net_http_persistent', '~> 2.0'
+  # spec.add_dependency 'faraday_middleware', '~> 1.0'
   spec.add_dependency 'bibtex-ruby', '>= 5.1.0', '< 7.0'
   spec.add_dependency 'citeproc', '>= 1.0.4', '< 2.0'
   spec.add_dependency 'csl', '>= 1.4.0', '< 1.6'
   spec.add_dependency 'citeproc-ruby', '~> 1.0', '>= 1.0.2'
   spec.add_dependency 'csl-styles', '~> 1.0', '>= 1.0.1.5'
-  spec.add_dependency 'activesupport', '>= 5.2'
+  spec.add_dependency 'activesupport', '~> 7.0'
   spec.add_dependency 'net-http-persistent', '>= 3.1', '< 5'
   spec.add_dependency 'public_suffix', '~>4.0'
 
@@ -52,6 +53,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr', '~> 5.0', '>= 5.0.0'
   spec.add_development_dependency 'minitest-vcr', '~> 1.4', '>= 1.4.0'
   spec.add_development_dependency 'webmock', '~> 3.6'
-  spec.add_development_dependency 'sanitize', '~> 5.0'
+  spec.add_development_dependency 'sanitize', '~> 6.0'
 
 end
