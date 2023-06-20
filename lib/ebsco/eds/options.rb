@@ -83,20 +83,20 @@ module EBSCO
       # Caution: experimental, not ready for production
       # query-1=AND,volcano&sort=relevance&includefacets=y&searchmode=all&autosuggest=n&view=brief&resultsperpage=20&pagenumber=1&highlight=y
       def to_query_string
-        qs = ''
+        qs = 'query='
 
         # SEARCH CRITERIA:
 
         # query
-        #  if @SearchCriteria.Queries[0].has_key? :BooleanOperator
-        #   qs << 'query=' + @SearchCriteria.Queries[0][:BooleanOperator]
-        # else
-        #   qs << 'query=AND'
-        # end
-        # if @SearchCriteria.Queries[0].has_key? :FieldCode
-        #   qs << ',' + @SearchCriteria.Queries[0][:FieldCode]
-        # end
-        qs << 'query=' + @SearchCriteria.Queries[0][:Term]
+        if @SearchCriteria.Queries[0].has_key? :BooleanOperator
+          qs << @SearchCriteria.Queries[0][:BooleanOperator] + ","
+        else
+          qs << 'AND,'
+        end
+        if @SearchCriteria.Queries[0].has_key? :FieldCode
+          qs << @SearchCriteria.Queries[0][:FieldCode] + ':'
+        end
+        qs << @SearchCriteria.Queries[0][:Term]
 
         # mode
         qs << '&searchmode=' + @SearchCriteria.SearchMode
@@ -213,9 +213,13 @@ module EBSCO
             # ====================================================================================
             when :query, 'q'
 
+              match = value.match /((?<boolean_operator>AND|OR|NOT),)?((?<field_code>AU|SU|TI|TX|AB|SO|IS|IB|DE|SE|SH|KW):)?(?<term>.*)/
+
+              _boolean_operator = match[:boolean_operator]
+
               # add blacklight search_fields
-              _field_code = ''
-              if options.has_key? 'search_field'
+              _field_code = match[:field_code]
+              if _field_code.nil? || options.has_key?('search_field')
                 _field = options['search_field']
                 case _field
                   when 'author'
@@ -247,11 +251,18 @@ module EBSCO
                 end
               end
 
-              if not _field_code == ''
-                @Queries =  [{:FieldCode => _field_code, :Term => value}]
-              else
-                @Queries =  [{:Term => value}]
+              _term = match[:term]
+              if _term.nil?
+                _term = value
               end
+
+              query = {}
+              query.merge!({ :BooleanOperator => _boolean_operator }) unless _boolean_operator.nil?
+              query.merge!({ :FieldCode => _field_code }) unless _field_code.nil?
+              query.merge!({ :Term => _term }) unless _term.nil?
+
+              @Queries =  [query]
+
               _has_query = true
 
             # ====================================================================================
