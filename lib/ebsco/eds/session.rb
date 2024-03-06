@@ -4,8 +4,8 @@ require 'ebsco/eds/results'
 require 'net/http/persistent'
 require 'faraday'
 require 'faraday/detailed_logger'
-require 'faraday_middleware'
-require 'faraday/adapter/net_http_persistent'
+# require 'faraday_middleware'
+require 'faraday/net_http_persistent'
 require 'faraday_eds_middleware'
 require 'logger'
 require 'json'
@@ -1114,7 +1114,9 @@ module EBSCO
           conn.response :detailed_logger, logger if @debug
           conn.options[:open_timeout] = @config[:open_timeout]
           conn.options[:timeout] = @config[:timeout]
-          conn.adapter :net_http_persistent
+          conn.adapter :net_http_persistent, pool_size: 5 do |http|
+            http.idle_timeout = 100
+          end
         end
       end
 
@@ -1134,7 +1136,9 @@ module EBSCO
           conn.response :detailed_logger, logger if @debug
           conn.options[:open_timeout] = @config[:open_timeout]
           conn.options[:timeout] = @config[:timeout]
-          conn.adapter :net_http_persistent
+          conn.adapter :net_http_persistent, pool_size: 5 do |http|
+            http.idle_timeout = 100
+          end
         end
       end
 
