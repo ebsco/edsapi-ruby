@@ -117,14 +117,18 @@ module EBSCO
 
 
         @log_level =  (ENV.has_key? 'EDS_LOG_LEVEL') ? ENV['EDS_LOG_LEVEL'] : @config[:log_level]
-
         (ENV.has_key? 'EDS_GUEST') ?
             if %w(n N no No false False).include?(ENV['EDS_GUEST'])
               @guest = false
             else
               @guest = true
             end :
-            @guest = @config[:guest]
+            if (%w(n N no No false False).include?(@config[:guest]) || @config[:guest] == false)
+              @guest = false
+            else
+              @guest = true
+            end
+            
 
         (ENV.has_key? 'EDS_USE_CACHE') ?
             if %w(n N no No false False).include?(ENV['EDS_USE_CACHE'])
