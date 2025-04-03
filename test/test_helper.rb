@@ -11,7 +11,6 @@ require 'dotenv'
 require 'active_support'
 require 'fileutils'
 require 'vcr'
-require 'minitest-vcr'
 
 Dotenv.load('.env.test')
 
@@ -33,5 +32,3 @@ VCR.configure do |c|
   c.filter_sensitive_data('<EDS_USER>') { ENV['EDS_USER'] }
   c.filter_sensitive_data('<EDS_PASS>') { ENV['EDS_PASS'] }
 end
-
-MinitestVcr::Spec.configure!
