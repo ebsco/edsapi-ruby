@@ -217,7 +217,7 @@ class EdsApiTests < Minitest::Test
           'hl'=>'off' }
       results = session.search(query)
       refute_nil results.to_solr
-      assert results.to_solr.to_s.include?('"suggestion"=>[{"word"=>"bleeding", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"suggestion" => [{"word" => "bleeding", "freq" => 1}]}]')
       session.end
     end
   end
@@ -236,8 +236,8 @@ class EdsApiTests < Minitest::Test
           'auto_correct' => true}
       results = session.search(query)
       refute_nil results.to_solr
-      assert results.to_solr.to_s.include?('"correction"=>[{"word"=>"string theory", "freq"=>1}]}]')
-      assert results.to_solr.to_s.include?('"suggestion"=>[{"word"=>"string thery", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"correction" => [{"word" => "string theory", "freq" => 1}]}]')
+      assert results.to_solr.to_s.include?('"suggestion" => [{"word" => "string thery", "freq" => 1}]}]')
       session.end
     end
   end
@@ -347,9 +347,9 @@ class EdsApiTests < Minitest::Test
       range = results.to_solr.fetch('date_range',{})
       refute_empty range
       assert range[:mindate] == '1000-01'
-      assert range[:maxdate] == '2023-01'
+      assert range[:maxdate] == '2026-01'
       assert range[:minyear] == '1000'
-      assert range[:maxyear] == '2023'
+      assert range[:maxyear] == '2026'
       session.end
     end
   end
@@ -358,8 +358,8 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('solr_query_test/profile_1/test_auto_correct_in_spellcheck_response', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'string thery', results_per_page: 1, auto_correct: true})
-      assert results.to_solr.to_s.include?('"corrections"=>["string", {"numFound"=>1, "startOffset"=>0, "endOffset"=>7, "origFreq"=>0, "correction"=>[{"word"=>"string theory", "freq"=>1}]')
-      assert results.to_solr.to_s.include?('"suggestions"=>["string", {"numFound"=>1, "startOffset"=>0, "endOffset"=>7, "origFreq"=>0, "suggestion"=>[{"word"=>"string thery", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"corrections" => ["string", {"numFound" => 1, "startOffset" => 0, "endOffset" => 7, "origFreq" => 0, "correction" => [{"word" => "string theory", "freq" => 1}]')
+      assert results.to_solr.to_s.include?('"suggestions" => ["string", {"numFound" => 1, "startOffset" => 0, "endOffset" => 7, "origFreq" => 0, "suggestion" => [{"word" => "string thery", "freq" => 1}]}]')
       session.end
     end
   end

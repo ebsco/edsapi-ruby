@@ -4,9 +4,8 @@ require 'ebsco/eds/results'
 require 'net/http/persistent'
 require 'faraday'
 require 'faraday/detailed_logger'
-require 'faraday_middleware'
-require 'faraday/adapter/net_http_persistent'
 require 'faraday_eds_middleware'
+require 'faraday/net_http_persistent'
 require 'logger'
 require 'json'
 require 'active_support'
@@ -128,7 +127,7 @@ module EBSCO
             else
               @guest = true
             end
-            
+
 
         (ENV.has_key? 'EDS_USE_CACHE') ?
             if %w(n N no No false False).include?(ENV['EDS_USE_CACHE'])
