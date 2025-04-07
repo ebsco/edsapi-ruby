@@ -217,7 +217,7 @@ class EdsApiTests < Minitest::Test
           'hl'=>'off' }
       results = session.search(query)
       refute_nil results.to_solr
-      assert results.to_solr.to_s.include?('"suggestion"=>[{"word"=>"bleeding", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"suggestion" => [{"word" => "bleeding", "freq" => 1}]}]')
       session.end
     end
   end
@@ -236,8 +236,8 @@ class EdsApiTests < Minitest::Test
           'auto_correct' => true}
       results = session.search(query)
       refute_nil results.to_solr
-      assert results.to_solr.to_s.include?('"correction"=>[{"word"=>"string theory", "freq"=>1}]}]')
-      assert results.to_solr.to_s.include?('"suggestion"=>[{"word"=>"string thery", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"correction" => [{"word" => "string theory", "freq" => 1}]}]')
+      assert results.to_solr.to_s.include?('"suggestion" => [{"word" => "string thery", "freq" => 1}]}]')
       session.end
     end
   end
@@ -358,8 +358,8 @@ class EdsApiTests < Minitest::Test
     VCR.use_cassette('solr_query_test/profile_1/test_auto_correct_in_spellcheck_response', :allow_playback_repeats => true) do
       session = EBSCO::EDS::Session.new({use_cache: false, profile: 'eds-api'})
       results = session.search({query: 'string thery', results_per_page: 1, auto_correct: true})
-      assert results.to_solr.to_s.include?('"corrections"=>["string", {"numFound"=>1, "startOffset"=>0, "endOffset"=>7, "origFreq"=>0, "correction"=>[{"word"=>"string theory", "freq"=>1}]')
-      assert results.to_solr.to_s.include?('"suggestions"=>["string", {"numFound"=>1, "startOffset"=>0, "endOffset"=>7, "origFreq"=>0, "suggestion"=>[{"word"=>"string thery", "freq"=>1}]}]')
+      assert results.to_solr.to_s.include?('"corrections" => ["string", {"numFound" => 1, "startOffset" => 0, "endOffset" => 7, "origFreq" => 0, "correction" => [{"word" => "string theory", "freq" => 1}]')
+      assert results.to_solr.to_s.include?('"suggestions" => ["string", {"numFound" => 1, "startOffset" => 0, "endOffset" => 7, "origFreq" => 0, "suggestion" => [{"word" => "string thery", "freq" => 1}]}]')
       session.end
     end
   end
