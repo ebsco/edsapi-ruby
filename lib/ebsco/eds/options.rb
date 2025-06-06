@@ -336,6 +336,10 @@ module EBSCO
                 end
               end
 
+              if value.has_key?('eds_pub_date_facet')
+                _my_limiters.push({:Id => 'DT1', :Values => value['eds_pub_date_facet']})
+              end
+
               # date limiters
               if value.has_key?('eds_publication_year_range_facet')
                 _list = value['eds_publication_year_range_facet']
@@ -437,6 +441,7 @@ module EBSCO
                   filter_id += 1
                 end
               end
+
               # PublicationYear
               if value.has_key?('eds_publication_year_facet')
                 year_list = value['eds_publication_year_facet']
